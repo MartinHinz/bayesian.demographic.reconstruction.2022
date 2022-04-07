@@ -79,7 +79,12 @@ pollen_locations.sf <- st_as_sf(pollen_locations,
                                 crs = 4326)  # coordinate references system in epsg))
 pollen_locations.sf.lv95 <- st_transform(pollen_locations.sf, crs = 2056)
 
-mapview(pollen_locations.sf)
+pollenmap <- tempfile(fileext = ".png")
+mapshot(
+  mapview(pollen_locations.sf),
+  file = pollenmap
+  )
+knitr::include_graphics(pollenmap)
 
 ```
 
@@ -251,22 +256,27 @@ c14 <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "14c_s
 We can show this on the map:
 
 ```{r}
-mapview(st_as_sf(c14,
-                 coords = c("lng", "lat"), 
-                 crs = 4326),layer.name = "14C Data"
-        )
+c14map <- tempfile(fileext = ".png")
+mapshot(
+  mapview(st_as_sf(c14,
+                   coords = c("lng", "lat"), 
+                   crs = 4326),layer.name = "14C Data"
+          ),
+  file = c14map
+  )
+knitr::include_graphics(c14map)
 ```
 
 Next, we calibrate the 14C data using rcarbon: <!--# uncal vs cal? -->
 
 ```{r}
-c14.calibrated <- calibrate(x = c14$bp, errors = c14$std)
+c14.calibrated <- calibrate(x = c14$bp, errors = c14$std, verbose = F)
 ```
 
 Subsequently, we perform the sum calibration, whereby we perform a binning at the level of the sites:
 
 ```{r}
-sumcal <- spd(c14.calibrated, timeRange = 1950-timeframe, bins = c14$site, runm = sw)
+sumcal <- spd(c14.calibrated, timeRange = 1950-timeframe, bins = c14$site, runm = sw, verbose = F)
 ```
 
 Below is the visualisation of the sum calibration:
@@ -295,11 +305,16 @@ sites <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "sit
 We can depict this on the map:
 
 ```{r}
-mapview(st_as_sf(sites,
-                 coords = c("LV03_Rechtswert_fuzzy", "LV03_Hochwert_fuzzy"),
-                 crs = 21781),
-        layer.name = "Sites"
+sitesmap <- tempfile(fileext = ".png")
+mapshot(
+  mapview(st_as_sf(sites,
+                   coords = c("LV03_Rechtswert_fuzzy", "LV03_Hochwert_fuzzy"),
+                   crs = 21781),
+          layer.name = "Sites"
+  ),
+  file = sitesmap
 )
+knitr::include_graphics(sitesmap)
 ```
 
 The dates come in two categories, rough and very rough We use the rough datings where they are available. Where they are not, we fall back on the very rough dates. But first we load the concordance table:
@@ -400,9 +415,9 @@ plot(res.lss$date, res.lss$moving_mean,type="l")
 Picking the data points every 50 years again:
 
 ```{r}
-res.lss[res.lss$date %in%
-seq(from=timeframe[1],
-    to=timeframe[2], by=50),]
+res.lss <- res.lss[res.lss$date %in% seq(from=timeframe[1],
+                                         to=timeframe[2], by=50),
+        ]
 res.lss$age <- 1950-res.lss$date
 ```
 
@@ -713,6 +728,12 @@ Very few parameters have already reached the effective sample size of 10000 sugg
 
 ## Finale Run after Convergence
 
+The final run after convergence to get more than the min 10000 effective samples for each parameter takes quite some time. On my machine, it took nearly 5 hours. Therefore, I add a switch here for not doing this analysis, but feel free to proceed yourself, if you like:
+
+```{r}
+do_final_run = F
+```
+
 First we set our new meta-parameters:
 
 ```{r}
@@ -736,7 +757,7 @@ In order to work memory-efficiently (the model can need a lot of memory quickly!
 
 ```{r}
 start_time <- Sys.time()
-while (!enough_samples) {
+while (!enough_samples & do_final_run) {
   
   gc() # Garbage collector for more RAM
 
@@ -777,6 +798,13 @@ When the model has finished running, we should stop the clusters:
 ```{r}
 stopCluster(cl)
 ```
+
+If the final run above was skipped, but you have already the results from a previous run, you can load this at this stage:
+
+```{r}
+collector <- readRDS("mcmc_collector.RDS")
+```
+
 
 For comparison with the priors, we simulate from these, first for p:
 
