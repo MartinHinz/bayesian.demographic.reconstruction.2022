@@ -93,7 +93,7 @@ plot(img)
 
 We download the data from neotoma:
 
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE}
 pollen_data <- get_download(pollen_locations$neotoma_id)
 ```
 
