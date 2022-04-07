@@ -110,17 +110,9 @@ pollen_data <- get_download(pollen_locations$neotoma_id)
 ```
 
 ```
-## API call was successful. Returned record for Le Loclat
-```
-
-```
 ## Warning: 
 ## There were multiple entries for Lycopodium tablets 
 ## get_download has mapped aliases for the taxa in the taxon.list.
-```
-
-```
-## API call was successful. Returned record for Moossee
 ```
 
 ```
@@ -136,10 +128,6 @@ pollen_data <- get_download(pollen_locations$neotoma_id)
 ```
 
 ```
-## API call was successful. Returned record for Burgaschisee
-```
-
-```
 ## Warning: 
 ## There were multiple entries for Abies alba 
 ## get_download has mapped aliases for the taxa in the taxon.list.
@@ -152,19 +140,11 @@ pollen_data <- get_download(pollen_locations$neotoma_id)
 ```
 
 ```
-## API call was successful. Returned record for Soppensee
-```
-
-```
 ## Warning: 
 ## There were multiple entries for Lycopodium tablets 
 ## get_download has mapped aliases for the taxa in the taxon.list.
 ## There were multiple entries for Pinus 
 ## get_download has mapped aliases for the taxa in the taxon.list.
-```
-
-```
-## API call was successful. Returned record for Rotsee
 ```
 
 Then we load a few help scripts which can be found under "code/neotoma_helpers.R".
@@ -639,7 +619,13 @@ Then we pick every 50th date:
 res.open_smoothed <- res.open_smoothed[res.open_smoothed$age %in%
 seq(from=1000,
     to=10000, by=50),]
-ggplot(res.open_smoothed,aes(x=1950-age,y=moving_mean)) + geom_point(aes(color=site), alpha =.5)  + geom_smooth(span = 0.05, color = "black")+ scale_x_continuous(breaks=seq(timeframe[1],timeframe[2],200), limits = timeframe) + labs(y = "Openness score [PCA]",x = "Date",colour = "Sites")  + theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggplot(res.open_smoothed,aes(x=1950-age,y=moving_mean)) +
+  geom_point(aes(color=site), alpha =.5) +
+  geom_smooth(span = 0.05, color = "black") +
+  scale_x_continuous(breaks=seq(timeframe[1],timeframe[2],200), limits = timeframe) +
+  labs(y = "Openness score [PCA]",x = "Date",colour = "Sites") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ```
@@ -659,7 +645,9 @@ res.open_final <- res.open_smoothed %>%
   select(age,mean,sd) %>%
   unique()  %>% arrange(desc(age))
 
-ggplot(res.open_final,aes(x=1950-age)) + geom_line(aes(y=mean)) + geom_segment(aes(y=mean-sd, yend =mean+sd, xend=1950-age), alpha = .25)
+ggplot(res.open_final,aes(x=1950-age)) +
+  geom_line(aes(y=mean)) +
+  geom_segment(aes(y=mean-sd, yend =mean+sd, xend=1950-age), alpha = .25)
 ```
 
 ![](analysis_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
@@ -756,8 +744,15 @@ The dates come in two categories, rough and very rough We use the rough datings 
 
 
 ```r
-chrono_rough <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "chrono_rough.csv")), row.names = 1)
-chrono_vrough <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "chrono_very_rough.csv")), row.names = 1)
+chrono_rough <- read.csv(file = normalizePath(
+  file.path(here(), "data","raw_data", "chrono_rough.csv")
+  ),
+  row.names = 1)
+
+chrono_vrough <- read.csv(file = normalizePath(
+  file.path(here(), "data","raw_data", "chrono_very_rough.csv")
+  ),
+  row.names = 1)
 ```
 
 Next, we prepare the beginning and end as a column:
@@ -888,7 +883,10 @@ ggplot() +
   geom_line(data = res.open_final, aes(x = 1950-age, y = scale(mean)), col="darkgreen", alpha = 0.75) +
   geom_line(data = res.sumcal, aes(x = 1950-calBP, y = scale(PrDens)), col="red", alpha = 0.75) +
   geom_line(data = res.aorist, aes(x = date, y = scale(sum)), col="gray", alpha = 0.75) + 
-  geom_line(data = res.lss, aes(x = date, y = scale(moving_mean)), col="brown", alpha = 0.75) + scale_colour_manual(values = c("darkgreen", "red", "gray", "brown"), labels = c("Openness Indicator", "Sum Calibration", "Aoristic Sum", "Dendro Dated Settlements"))
+  geom_line(data = res.lss, aes(x = date, y = scale(moving_mean)), col="brown", alpha = 0.75) +
+  scale_colour_manual(values = c("darkgreen", "red", "gray", "brown"),
+                      labels = c("Openness Indicator", "Sum Calibration", "Aoristic Sum", "Dendro Dated Settlements")
+                      )
 ```
 
 ![](analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
@@ -901,7 +899,8 @@ all_proxies <- merge(res.sumcal, res.open_final, by.x = "calBP", by.y = "age") %
   merge(res.aorist, by.x = "calBP", by.y = "age") %>%
   merge(res.lss, by.x = "calBP", by.y = "age") %>%
   select(calBP, PrDens, mean, sum, moving_mean) %>%
-  rename(age = calBP, sumcal = PrDens, openness = mean, aoristic_sum = sum, dendro = moving_mean) %>% filter(age < 8000 & age > 3000)
+  rename(age = calBP, sumcal = PrDens, openness = mean, aoristic_sum = sum, dendro = moving_mean) %>%
+  filter(age < 8000 & age > 3000)
 
 all_proxies
 ```
@@ -1013,7 +1012,11 @@ We might like to store the result for the actual analysis:
 
 
 ```r
-write.csv(all_proxies, file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv"), mustWork = F))
+write.csv(all_proxies, file = normalizePath(
+  file.path(here(), "data","preprocessed_data", "all_proxies.csv"
+            ),
+  mustWork = F)
+  )
 ```
 
 ## Transforming the Data
@@ -1022,7 +1025,10 @@ If the data has already been created in a previous run, we can also reload it di
 
 
 ```r
-all_proxies <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
+all_proxies <- read.csv(file = normalizePath(
+  file.path(here(), "data","preprocessed_data", "all_proxies.csv")
+  ),
+  row.names = 1)
 ```
 
 First we reverse the order of the data so that it is sorted from oldest to youngest:
@@ -1183,7 +1189,16 @@ cl <- makeCluster(ncore)
 registerDoParallel(cl)
 
 # Export common values for the cluster
-clusterExport(cl, c("model_code", "model_inits", "model_data", "model_constants", "model_monitors", "batches", "thinning"))
+clusterExport(cl,
+              c("model_code",
+                "model_inits",
+                "model_data",
+                "model_constants",
+                "model_monitors",
+                "batches",
+                "thinning"
+                )
+              )
 
 # Set random seeds
 for (j in seq_along(cl)) {
@@ -1237,7 +1252,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 57.241 secs
+## Time difference of 58.40906 secs
 ```
 
 At the end of the 1st run, the model is instantiated in the individual cluster partitions, possibly already converged. But we now check the convergence in continued runs.
@@ -1281,7 +1296,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 34.28344 secs
+## Time difference of 35.15003 secs
 ```
 
 Once the model has converged, we can look at the result of estimating the population density based on the number of settlements. For this we extract the mean and 95% highest posterior density interval:
@@ -1303,7 +1318,11 @@ This converged run is sufficient to check some initial parameter values. For exa
 
 
 ```r
-MCMCchains(mcmcSamples, params = "p") %>% as.data.frame %>% rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>% pivot_longer(everything()) %>% ggplot(aes(x = value, y = name)) + stat_halfeye()
+MCMCchains(mcmcSamples, params = "p") %>%
+  as.data.frame %>%
+  rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>%
+  pivot_longer(everything()) %>%
+  ggplot(aes(x = value, y = name)) + stat_halfeye()
 ```
 
 ![](analysis_files/figure-html/unnamed-chunk-61-1.png)<!-- -->
@@ -1312,7 +1331,10 @@ The model trusts mainly the openness index, the aoristic sum and the dendro data
 
 
 ```r
-MCMCsummary(mcmcSamples) %>% as.data.frame() %>% rownames_to_column() %>% ggplot() + geom_bar(aes(y=n.eff, x=rowname), stat = "identity") + coord_flip()
+MCMCsummary(mcmcSamples) %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  ggplot() + geom_bar(aes(y=n.eff, x=rowname), stat = "identity") + coord_flip()
 ```
 
 ![](analysis_files/figure-html/unnamed-chunk-62-1.png)<!-- -->
@@ -1356,7 +1378,7 @@ In order to work memory-efficiently (the model can need a lot of memory quickly!
 start_time <- Sys.time()
 while (!enough_samples & do_final_run) {
   
-  gc() # Garbage collector for more RAM
+  gc(verbose=F) # Garbage collector for more RAM
 
   # Start sampling  
   mcmcSamples <- clusterEvalQ(cl, {
@@ -1391,7 +1413,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 0.011204 secs
+## Time difference of 0.01296329 secs
 ```
 
 When the model has finished running, we should stop the clusters:
@@ -1468,13 +1490,13 @@ MCMCtrace(collector, params = "PopDens", priors = PopDens, pdf = F, ind = T, Rha
 ![](analysis_files/figure-html/unnamed-chunk-70-1.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-2.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-3.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-4.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-5.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-6.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-7.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-8.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-9.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-10.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-11.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-12.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-13.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-14.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-15.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-16.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-17.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-18.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-19.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-20.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-21.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-22.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-23.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-24.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-25.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-26.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-27.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-28.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-29.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-30.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-31.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-32.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-33.png)<!-- -->
 
 ```r
-gc()
+gc(verbose=F)
 ```
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5255223  280.7    8869264   473.7    8869264   473.7
-## Vcells 849683110 6482.6 4523060390 34508.3 5653821027 43135.3
+## Ncells   5255263  280.7    8869357   473.7    8869357   473.7
+## Vcells 849683411 6482.6 4523061061 34508.3 5653821329 43135.3
 ```
 
 Finally, we can plot the result in comparison to the input data, superimposing them (scaled) on the estimation result in their original form rather than as difference data:
@@ -1486,13 +1508,13 @@ all_chains <- as.matrix(collector)
 
 rm(collector)
 
-gc()
+gc(verbose=F)
 ```
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5104131  272.6    8869264   473.7    8869264   473.7
-## Vcells 844631417 6444.1 3618448312 27606.6 5653821027 43135.3
+## Ncells   5104172  272.6    8869357   473.7    8869357   473.7
+## Vcells 844631769 6444.1 3618448849 27606.6 5653821329 43135.3
 ```
 
 ```r
@@ -1507,13 +1529,13 @@ for(this_column in colnames(all_chains)) {
    this_mcmc_summary[this_column, "hpdi_u"] <- hdpi_i[2]
 }
 
-gc()
+gc(verbose=F)
 ```
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5104208  272.6    8869264   473.7    8869264   473.7
-## Vcells 844631942 6444.1 2894758650 22085.3 5653821027 43135.3
+## Ncells   5104249  272.6    8869357   473.7    8869357   473.7
+## Vcells 844632294 6444.1 2894759080 22085.3 5653821329 43135.3
 ```
 
 ```r
@@ -1526,10 +1548,22 @@ ggplot(all_proxies_orig) +
   geom_line(aes(x = 1950-age, y = scale(sumcal), col="Sum Calibration"), alpha = 0.5) +
   geom_line(aes(x = 1950-age, y = scale(dendro), col="Dendro Dated Settlements"), alpha = 0.5) +
   geom_line(aes(x = 1950-age, y = scale(aoristic_sum), col="Aoristic Sum"), alpha = 0.5) +
-  geom_line(data = PopDens_summary, aes(x = rev(1950-all_proxies_orig$age), y=mean, col = "Estimation Result")) + 
-  geom_line(data = PopDens_summary, aes(x = rev(1950-all_proxies_orig$age), y=hpdi_l, col = "Estimation Result"), lty=2) + 
-  geom_line(data = PopDens_summary, aes(x = rev(1950-all_proxies_orig$age), y=hpdi_u, col = "Estimation Result"), lty=2) + theme_minimal() + 
-  scale_colour_manual(values = c("Openness" = "darkgreen", "Sum Calibration" = "red", "Aoristic Sum" = "gray", "Dendro Dated Settlements" = "brown", "Estimation" = "black"), name = "") + theme(legend.position="bottom") + ylab("Scaled values for Proxies,\n P/km² for Estimation") + xlab("cal BCE")
+  geom_line(data = PopDens_summary,
+            aes(x = rev(1950-all_proxies_orig$age), y=mean, col = "Estimation Result")) + 
+  geom_line(data = PopDens_summary,
+            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_l, col = "Estimation Result"), lty=2) + 
+  geom_line(data = PopDens_summary,
+            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_u, col = "Estimation Result"), lty=2) +
+  theme_minimal() + 
+  scale_colour_manual(
+    values = c("Openness" = "darkgreen",
+               "Sum Calibration" = "red",
+               "Aoristic Sum" = "gray",
+               "Dendro Dated Settlements" = "brown",
+               "Estimation" = "black"), name = "") +
+  theme(legend.position="bottom") +
+  ylab("Scaled values for Proxies,\n P/km² for Estimation") +
+  xlab("cal BCE")
 ```
 
 ![](analysis_files/figure-html/unnamed-chunk-71-1.png)<!-- -->
@@ -1538,7 +1572,12 @@ And finally, the final estimate of the influence of the different proxies on the
 
 
 ```r
-all_chains[,grep("^p\\[", params)] %>% as.data.frame %>% rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>% pivot_longer(everything()) %>% ggplot(aes(x = value, y = name)) + stat_halfeye()
+all_chains[,grep("^p\\[", params)] %>%
+  as.data.frame %>%
+  rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>%
+  pivot_longer(everything()) %>%
+  ggplot(aes(x = value, y = name)) +
+  stat_halfeye()
 ```
 
 ![](analysis_files/figure-html/unnamed-chunk-72-1.png)<!-- -->

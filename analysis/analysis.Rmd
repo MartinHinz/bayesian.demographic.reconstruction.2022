@@ -93,7 +93,7 @@ plot(img)
 
 We download the data from neotoma:
 
-```{r}
+```{r message=FALSE}
 pollen_data <- get_download(pollen_locations$neotoma_id)
 ```
 
@@ -232,7 +232,13 @@ Then we pick every 50th date:
 res.open_smoothed <- res.open_smoothed[res.open_smoothed$age %in%
 seq(from=1000,
     to=10000, by=50),]
-ggplot(res.open_smoothed,aes(x=1950-age,y=moving_mean)) + geom_point(aes(color=site), alpha =.5)  + geom_smooth(span = 0.05, color = "black")+ scale_x_continuous(breaks=seq(timeframe[1],timeframe[2],200), limits = timeframe) + labs(y = "Openness score [PCA]",x = "Date",colour = "Sites")  + theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggplot(res.open_smoothed,aes(x=1950-age,y=moving_mean)) +
+  geom_point(aes(color=site), alpha =.5) +
+  geom_smooth(span = 0.05, color = "black") +
+  scale_x_continuous(breaks=seq(timeframe[1],timeframe[2],200), limits = timeframe) +
+  labs(y = "Openness score [PCA]",x = "Date",colour = "Sites") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 Finally, we calculate the average of all profiles as the final supra-regional openness index.
@@ -245,7 +251,9 @@ res.open_final <- res.open_smoothed %>%
   select(age,mean,sd) %>%
   unique()  %>% arrange(desc(age))
 
-ggplot(res.open_final,aes(x=1950-age)) + geom_line(aes(y=mean)) + geom_segment(aes(y=mean-sd, yend =mean+sd, xend=1950-age), alpha = .25)
+ggplot(res.open_final,aes(x=1950-age)) +
+  geom_line(aes(y=mean)) +
+  geom_segment(aes(y=mean-sd, yend =mean+sd, xend=1950-age), alpha = .25)
 ```
 
 ### ^14^C Summenkalibration
@@ -327,8 +335,15 @@ The dates come in two categories, rough and very rough We use the rough datings 
 
 ```{r}
 
-chrono_rough <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "chrono_rough.csv")), row.names = 1)
-chrono_vrough <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "chrono_very_rough.csv")), row.names = 1)
+chrono_rough <- read.csv(file = normalizePath(
+  file.path(here(), "data","raw_data", "chrono_rough.csv")
+  ),
+  row.names = 1)
+
+chrono_vrough <- read.csv(file = normalizePath(
+  file.path(here(), "data","raw_data", "chrono_very_rough.csv")
+  ),
+  row.names = 1)
 ```
 
 Next, we prepare the beginning and end as a column:
@@ -436,7 +451,10 @@ ggplot() +
   geom_line(data = res.open_final, aes(x = 1950-age, y = scale(mean)), col="darkgreen", alpha = 0.75) +
   geom_line(data = res.sumcal, aes(x = 1950-calBP, y = scale(PrDens)), col="red", alpha = 0.75) +
   geom_line(data = res.aorist, aes(x = date, y = scale(sum)), col="gray", alpha = 0.75) + 
-  geom_line(data = res.lss, aes(x = date, y = scale(moving_mean)), col="brown", alpha = 0.75) + scale_colour_manual(values = c("darkgreen", "red", "gray", "brown"), labels = c("Openness Indicator", "Sum Calibration", "Aoristic Sum", "Dendro Dated Settlements"))
+  geom_line(data = res.lss, aes(x = date, y = scale(moving_mean)), col="brown", alpha = 0.75) +
+  scale_colour_manual(values = c("darkgreen", "red", "gray", "brown"),
+                      labels = c("Openness Indicator", "Sum Calibration", "Aoristic Sum", "Dendro Dated Settlements")
+                      )
 ```
 
 We merge the dataset and restrict it to our observation window:
@@ -446,7 +464,8 @@ all_proxies <- merge(res.sumcal, res.open_final, by.x = "calBP", by.y = "age") %
   merge(res.aorist, by.x = "calBP", by.y = "age") %>%
   merge(res.lss, by.x = "calBP", by.y = "age") %>%
   select(calBP, PrDens, mean, sum, moving_mean) %>%
-  rename(age = calBP, sumcal = PrDens, openness = mean, aoristic_sum = sum, dendro = moving_mean) %>% filter(age < 8000 & age > 3000)
+  rename(age = calBP, sumcal = PrDens, openness = mean, aoristic_sum = sum, dendro = moving_mean) %>%
+  filter(age < 8000 & age > 3000)
 
 all_proxies
 ```
@@ -454,7 +473,11 @@ all_proxies
 We might like to store the result for the actual analysis:
 
 ```{r}
-write.csv(all_proxies, file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv"), mustWork = F))
+write.csv(all_proxies, file = normalizePath(
+  file.path(here(), "data","preprocessed_data", "all_proxies.csv"
+            ),
+  mustWork = F)
+  )
 ```
 
 ## Transforming the Data
@@ -462,7 +485,10 @@ write.csv(all_proxies, file = normalizePath(file.path(here(), "data","preprocess
 If the data has already been created in a previous run, we can also reload it directly at this point:
 
 ```{r}
-all_proxies <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
+all_proxies <- read.csv(file = normalizePath(
+  file.path(here(), "data","preprocessed_data", "all_proxies.csv")
+  ),
+  row.names = 1)
 ```
 
 First we reverse the order of the data so that it is sorted from oldest to youngest:
@@ -615,7 +641,16 @@ cl <- makeCluster(ncore)
 registerDoParallel(cl)
 
 # Export common values for the cluster
-clusterExport(cl, c("model_code", "model_inits", "model_data", "model_constants", "model_monitors", "batches", "thinning"))
+clusterExport(cl,
+              c("model_code",
+                "model_inits",
+                "model_data",
+                "model_constants",
+                "model_monitors",
+                "batches",
+                "thinning"
+                )
+              )
 
 # Set random seeds
 for (j in seq_along(cl)) {
@@ -721,13 +756,20 @@ lines(1950-model_data$age, result$`95%_HPDU`, lty=2)
 This converged run is sufficient to check some initial parameter values. For example, we can see how the proportional importance of the proxies is distributed:
 
 ```{r}
-MCMCchains(mcmcSamples, params = "p") %>% as.data.frame %>% rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>% pivot_longer(everything()) %>% ggplot(aes(x = value, y = name)) + stat_halfeye()
+MCMCchains(mcmcSamples, params = "p") %>%
+  as.data.frame %>%
+  rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>%
+  pivot_longer(everything()) %>%
+  ggplot(aes(x = value, y = name)) + stat_halfeye()
 ```
 
 The model trusts mainly the openness index, the aoristic sum and the dendro data play a subordinate role. The sum calibration has a higher weight. However, the shape of the distributions also indicates that we may have too few effective samples to make a reliable statement about the highest posterior density intervals. Let's take a look at the effective samples:
 
 ```{r fig.width=5,fig.height=12}
-MCMCsummary(mcmcSamples) %>% as.data.frame() %>% rownames_to_column() %>% ggplot() + geom_bar(aes(y=n.eff, x=rowname), stat = "identity") + coord_flip()
+MCMCsummary(mcmcSamples) %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  ggplot() + geom_bar(aes(y=n.eff, x=rowname), stat = "identity") + coord_flip()
 ```
 
 Very few parameters have already reached the effective sample size of 10000 suggested for a reliable estimate. Therefore, we extend the run until this number is reached.
@@ -765,7 +807,7 @@ In order to work memory-efficiently (the model can need a lot of memory quickly!
 start_time <- Sys.time()
 while (!enough_samples & do_final_run) {
   
-  gc() # Garbage collector for more RAM
+  gc(verbose=F) # Garbage collector for more RAM
 
   # Start sampling  
   mcmcSamples <- clusterEvalQ(cl, {
@@ -848,7 +890,7 @@ for(i in (model_constants$nYears-1):1) {
 PopDens <- nSites * MeanSiteSize / model_constants$AreaSwissPlateau
 
 MCMCtrace(collector, params = "PopDens", priors = PopDens, pdf = F, ind = T, Rhat = T)
-gc()
+gc(verbose=F)
 ```
 
 Finally, we can plot the result in comparison to the input data, superimposing them (scaled) on the estimation result in their original form rather than as difference data:
@@ -860,7 +902,7 @@ all_chains <- as.matrix(collector)
 
 rm(collector)
 
-gc()
+gc(verbose=F)
 
 params <- colnames(all_chains)
 
@@ -873,7 +915,7 @@ for(this_column in colnames(all_chains)) {
    this_mcmc_summary[this_column, "hpdi_u"] <- hdpi_i[2]
 }
 
-gc()
+gc(verbose=F)
 
 PopDens_summary <- this_mcmc_summary[grep("^PopDens", params),]
 
@@ -884,14 +926,31 @@ ggplot(all_proxies_orig) +
   geom_line(aes(x = 1950-age, y = scale(sumcal), col="Sum Calibration"), alpha = 0.5) +
   geom_line(aes(x = 1950-age, y = scale(dendro), col="Dendro Dated Settlements"), alpha = 0.5) +
   geom_line(aes(x = 1950-age, y = scale(aoristic_sum), col="Aoristic Sum"), alpha = 0.5) +
-  geom_line(data = PopDens_summary, aes(x = rev(1950-all_proxies_orig$age), y=mean, col = "Estimation Result")) + 
-  geom_line(data = PopDens_summary, aes(x = rev(1950-all_proxies_orig$age), y=hpdi_l, col = "Estimation Result"), lty=2) + 
-  geom_line(data = PopDens_summary, aes(x = rev(1950-all_proxies_orig$age), y=hpdi_u, col = "Estimation Result"), lty=2) + theme_minimal() + 
-  scale_colour_manual(values = c("Openness" = "darkgreen", "Sum Calibration" = "red", "Aoristic Sum" = "gray", "Dendro Dated Settlements" = "brown", "Estimation" = "black"), name = "") + theme(legend.position="bottom") + ylab("Scaled values for Proxies,\n P/km² for Estimation") + xlab("cal BCE")
+  geom_line(data = PopDens_summary,
+            aes(x = rev(1950-all_proxies_orig$age), y=mean, col = "Estimation Result")) + 
+  geom_line(data = PopDens_summary,
+            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_l, col = "Estimation Result"), lty=2) + 
+  geom_line(data = PopDens_summary,
+            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_u, col = "Estimation Result"), lty=2) +
+  theme_minimal() + 
+  scale_colour_manual(
+    values = c("Openness" = "darkgreen",
+               "Sum Calibration" = "red",
+               "Aoristic Sum" = "gray",
+               "Dendro Dated Settlements" = "brown",
+               "Estimation" = "black"), name = "") +
+  theme(legend.position="bottom") +
+  ylab("Scaled values for Proxies,\n P/km² for Estimation") +
+  xlab("cal BCE")
 ```
 
 And finally, the final estimate of the influence of the different proxies on the result:
 
 ```{r}
-all_chains[,grep("^p\\[", params)] %>% as.data.frame %>% rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>% pivot_longer(everything()) %>% ggplot(aes(x = value, y = name)) + stat_halfeye()
+all_chains[,grep("^p\\[", params)] %>%
+  as.data.frame %>%
+  rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>%
+  pivot_longer(everything()) %>%
+  ggplot(aes(x = value, y = name)) +
+  stat_halfeye()
 ```
