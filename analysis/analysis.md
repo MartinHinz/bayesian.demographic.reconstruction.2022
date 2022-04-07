@@ -21,166 +21,18 @@ For this analysis we need the following libraries:
 
 ```r
 library(tidyverse)
-```
-
-```
-## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
-```
-
-```
-## ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
-## ✓ tibble  3.1.2     ✓ dplyr   1.0.7
-## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
-## ✓ readr   1.4.0     ✓ forcats 0.5.1
-```
-
-```
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()
-```
-
-```r
 library(ggdist)
 library(reshape2)
-```
-
-```
-## 
-## Attache Paket: 'reshape2'
-```
-
-```
-## Das folgende Objekt ist maskiert 'package:tidyr':
-## 
-##     smiths
-```
-
-```r
 library(here)
-```
-
-```
-## here() starts at /home/martin/r_projekte/bayesian.demographic.reconstruction.2022
-```
-
-```r
 library(RcppRoll)
 library(sf)
-```
-
-```
-## Linking to GEOS 3.9.1, GDAL 3.4.0, PROJ 8.2.0; sf_use_s2() is TRUE
-```
-
-```r
 library(mapview)
 library(vegan)
-```
-
-```
-## Lade nötiges Paket: permute
-```
-
-```
-## Lade nötiges Paket: lattice
-```
-
-```
-## This is vegan 2.5-7
-```
-
-```r
 library(neotoma)
 library(analogue)
-```
-
-```
-## analogue version 0.17-6
-```
-
-```r
 library(rcarbon)
-```
-
-```
-## Registered S3 method overwritten by 'spatstat.geom':
-##   method     from
-##   print.boxx cli
-```
-
-```
-## 
-## Attache Paket: 'rcarbon'
-```
-
-```
-## Das folgende Objekt ist maskiert 'package:vegan':
-## 
-##     calibrate
-```
-
-```
-## Das folgende Objekt ist maskiert 'package:dplyr':
-## 
-##     combine
-```
-
-```r
 library(doParallel)
-```
-
-```
-## Lade nötiges Paket: foreach
-```
-
-```
-## 
-## Attache Paket: 'foreach'
-```
-
-```
-## Die folgenden Objekte sind maskiert von 'package:purrr':
-## 
-##     accumulate, when
-```
-
-```
-## Lade nötiges Paket: iterators
-```
-
-```
-## Lade nötiges Paket: parallel
-```
-
-```r
 library(nimble)
-```
-
-```
-## nimble version 0.11.1 is loaded.
-## For more information on NIMBLE and a User Manual,
-## please visit http://R-nimble.org.
-```
-
-```
-## 
-## Attache Paket: 'nimble'
-```
-
-```
-## Das folgende Objekt ist maskiert 'package:permute':
-## 
-##     getType
-```
-
-```
-## Das folgende Objekt ist maskiert 'package:stats':
-## 
-##     simulate
-```
-
-```r
 library(coda)
 library(MCMCvis)
 library(fmcmc)
@@ -193,43 +45,9 @@ For the aorist analysis we also use the package aoristAAR, which is not availabl
 
 ```r
 if(!require('devtools')) install.packages('devtools')
-```
-
-```
-## Lade nötiges Paket: devtools
-```
-
-```
-## Lade nötiges Paket: usethis
-```
-
-```
-## 
-## Attache Paket: 'devtools'
-```
-
-```
-## Das folgende Objekt ist maskiert 'package:permute':
-## 
-##     check
-```
-
-```r
 library(devtools)
 install_github('ISAAKiel/aoristAAR')
-```
-
-```
-## Skipping install of 'aoristAAR' from a github remote, the SHA1 (057343a2) has not changed since last install.
-##   Use `force = TRUE` to force installation
-```
-
-```r
 require(aoristAAR)
-```
-
-```
-## Lade nötiges Paket: aoristAAR
 ```
 
 ## Data collection
@@ -277,10 +95,12 @@ mapshot(
   mapview(pollen_locations.sf),
   file = pollenmap
   )
-knitr::include_graphics(pollenmap)
+
+img <- magick::image_read(pollenmap)
+plot(img)
 ```
 
-<img src="/tmp/RtmpszACE5/file2fa955bcf5b7.png" width="992" />
+![](analysis_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 We download the data from neotoma:
 
@@ -865,10 +685,12 @@ mapshot(
           ),
   file = c14map
   )
-knitr::include_graphics(c14map)
+
+img <- magick::image_read(c14map)
+plot(img)
 ```
 
-<img src="/tmp/RtmpszACE5/file2fa97e3bc562.png" width="992" />
+![](analysis_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
 
 Next, we calibrate the 14C data using rcarbon: <!--# uncal vs cal? -->
 
@@ -924,10 +746,11 @@ mapshot(
   ),
   file = sitesmap
 )
-knitr::include_graphics(sitesmap)
+img <- magick::image_read(sitesmap)
+plot(img)
 ```
 
-<img src="/tmp/RtmpszACE5/file2fa95103077b.png" width="992" />
+![](analysis_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
 
 The dates come in two categories, rough and very rough We use the rough datings where they are available. Where they are not, we fall back on the very rough dates. But first we load the concordance table:
 
@@ -1414,7 +1237,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 1.01565 mins
+## Time difference of 57.241 secs
 ```
 
 At the end of the 1st run, the model is instantiated in the individual cluster partitions, possibly already converged. But we now check the convergence in continued runs.
@@ -1458,7 +1281,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 35.97649 secs
+## Time difference of 34.28344 secs
 ```
 
 Once the model has converged, we can look at the result of estimating the population density based on the number of settlements. For this we extract the mean and 95% highest posterior density interval:
@@ -1568,7 +1391,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 0.01258278 secs
+## Time difference of 0.011204 secs
 ```
 
 When the model has finished running, we should stop the clusters:
@@ -1650,8 +1473,8 @@ gc()
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5248968  280.4    9352151   499.5    9352151   499.5
-## Vcells 849675502 6482.6 4523045245 34508.1 5653711326 43134.4
+## Ncells   5255223  280.7    8869264   473.7    8869264   473.7
+## Vcells 849683110 6482.6 4523060390 34508.3 5653821027 43135.3
 ```
 
 Finally, we can plot the result in comparison to the input data, superimposing them (scaled) on the estimation result in their original form rather than as difference data:
@@ -1668,8 +1491,8 @@ gc()
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5097876  272.3    9352151   499.5    9352151   499.5
-## Vcells 844623809 6444.0 3618436196 27606.5 5653711326 43134.4
+## Ncells   5104131  272.6    8869264   473.7    8869264   473.7
+## Vcells 844631417 6444.1 3618448312 27606.6 5653821027 43135.3
 ```
 
 ```r
@@ -1689,8 +1512,8 @@ gc()
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5097953  272.3    9352151   499.5    9352151   499.5
-## Vcells 844624334 6444.0 2894748957 22085.2 5653711326 43134.4
+## Ncells   5104208  272.6    8869264   473.7    8869264   473.7
+## Vcells 844631942 6444.1 2894758650 22085.3 5653821027 43135.3
 ```
 
 ```r

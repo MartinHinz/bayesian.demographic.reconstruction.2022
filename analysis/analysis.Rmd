@@ -10,6 +10,8 @@ bibliography: references.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+if (!webshot::is_phantomjs_installed()) webshot::install_phantomjs()
+library(magick)
 ```
 
 ## Preface
@@ -20,7 +22,7 @@ Running through the analysis can take a long time, especially the Bayesian model
 
 For this analysis we need the following libraries:
 
-```{r}
+```{r message=FALSE}
 library(tidyverse)
 library(ggdist)
 library(reshape2)
@@ -43,7 +45,7 @@ If you have not yet installed these libraries (and receive a corresponding error
 
 For the aorist analysis we also use the package aoristAAR, which is not available on CRAN, but would have to be installed directly from GitHub:
 
-```{r}
+```{r message=FALSE}
 if(!require('devtools')) install.packages('devtools')
 library(devtools)
 install_github('ISAAKiel/aoristAAR')
@@ -84,8 +86,9 @@ mapshot(
   mapview(pollen_locations.sf),
   file = pollenmap
   )
-knitr::include_graphics(pollenmap)
 
+img <- magick::image_read(pollenmap)
+plot(img)
 ```
 
 We download the data from neotoma:
@@ -264,7 +267,9 @@ mapshot(
           ),
   file = c14map
   )
-knitr::include_graphics(c14map)
+
+img <- magick::image_read(c14map)
+plot(img)
 ```
 
 Next, we calibrate the 14C data using rcarbon: <!--# uncal vs cal? -->
@@ -314,7 +319,8 @@ mapshot(
   ),
   file = sitesmap
 )
-knitr::include_graphics(sitesmap)
+img <- magick::image_read(sitesmap)
+plot(img)
 ```
 
 The dates come in two categories, rough and very rough We use the rough datings where they are available. Where they are not, we fall back on the very rough dates. But first we load the concordance table:
