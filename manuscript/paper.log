@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/Arch Linux) (preloaded format=pdflatex 2022.2.16)  7 APR 2022 08:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/Arch Linux) (preloaded format=pdflatex 2022.2.16)  8 APR 2022 11:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -402,36 +402,36 @@ File: l3backend-pdftex.def 2021-12-14 L3 backend support: PDF output (pdfTeX)
 ) (./paper.aux)
 \openout1 = `paper.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 103.
-LaTeX Font Info:    ... okay on input line 103.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 103.
-LaTeX Font Info:    ... okay on input line 103.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 103.
-LaTeX Font Info:    ... okay on input line 103.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 103.
-LaTeX Font Info:    ... okay on input line 103.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 103.
-LaTeX Font Info:    ... okay on input line 103.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 103.
-LaTeX Font Info:    ... okay on input line 103.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 103.
-LaTeX Font Info:    ... okay on input line 103.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 103.
-LaTeX Font Info:    ... okay on input line 103.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 103.
-LaTeX Font Info:    ... okay on input line 103.
-LaTeX Info: Redefining \microtypecontext on input line 103.
-Package microtype Info: Applying patch `item' on input line 103.
-Package microtype Info: Applying patch `toc' on input line 103.
-Package microtype Info: Applying patch `eqnum' on input line 103.
-Package microtype Info: Applying patch `footnote' on input line 103.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Info: Redefining \microtypecontext on input line 104.
+Package microtype Info: Applying patch `item' on input line 104.
+Package microtype Info: Applying patch `toc' on input line 104.
+Package microtype Info: Applying patch `eqnum' on input line 104.
+Package microtype Info: Applying patch `footnote' on input line 104.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 103.
+LaTeX Info: Redefining \showhyphens on input line 104.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -459,7 +459,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring OFF on input line 103.
+Package hyperref Info: Link coloring OFF on input line 104.
 (/usr/share/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
 (/usr/share/texmf-dist/tex/latex/refcount/refcount.sty
@@ -469,9 +469,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count305
 )
-LaTeX Info: Redefining \ref on input line 103.
-LaTeX Info: Redefining \pageref on input line 103.
-LaTeX Info: Redefining \nameref on input line 103.
+LaTeX Info: Redefining \ref on input line 104.
+LaTeX Info: Redefining \pageref on input line 104.
+LaTeX Info: Redefining \nameref on input line 104.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -507,122 +507,139 @@ LaTeX Info: Redefining \nameref on input line 103.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-05.
+06.
 (/usr/share/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-05.
+06.
 (/usr/share/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-105.
+106.
 (/usr/share/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-105.
+106.
 (/usr/share/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 105.
+(Font)              <12> on input line 106.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 105.
+(Font)              <8> on input line 106.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 105.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 105
+(Font)              <6> on input line 106.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 106
 .
 (/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/share/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 105
+LaTeX Font Info:    Trying to load font information for U+msb on input line 106
 .
 (/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (/usr/share/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
-) (./paper.toc
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 4.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 4.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 4.
 )
-\tf@toc=\write3
-\openout3 = `paper.toc'.
-
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 112.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 112.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 112.
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-52.
+58.
 (/usr/share/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [2] [3] [4] [5]
-Overfull \hbox (88.7023pt too wide) detected at line 227
-\OML/lmm/m/it/10 max[]growth[]rate \OMS/lmsy/m/n/10 ^^X \OML/lmm/m/it/10 dgamma
-\OT1/lmr/m/n/10 (\OML/lmm/m/it/10 shape \OT1/lmr/m/n/10 = 5\OML/lmm/m/it/10 ; s
-cale \OT1/lmr/m/n/10 = 0\OML/lmm/m/it/10 :\OT1/lmr/m/n/10 05)[] \OML/lmm/m/it/1
-0 N[]=N[] < \OT1/lmr/m/n/10 (\OML/lmm/m/it/10 max[]growth[]rate \OT1/lmr/m/n/10
- + 1)[] \OML/lmm/m/it/10 N[]=N[] < \OT1/lmr/m/n/10 (\OML/lmm/m/it/10 max[]growt
-h[]rate \OT1/lmr/m/n/10 + 1)
- []
+) [2] [3] [4]
 
-<../figures/unnamed-chunk-1-1.pdf, id=72, 436.63126pt x 283.0575pt>
-File: ../figures/unnamed-chunk-1-1.pdf Graphic file (type pdf)
-<use ../figures/unnamed-chunk-1-1.pdf>
-Package pdftex.def Info: ../figures/unnamed-chunk-1-1.pdf  used on input line 2
-31.
+LaTeX Warning: Reference `fig:gammadist' on page 5 undefined on input line 237.
+
+
+[5]
+<../figures/gammadist-1.pdf, id=56, 436.63126pt x 283.0575pt>
+File: ../figures/gammadist-1.pdf Graphic file (type pdf)
+<use ../figures/gammadist-1.pdf>
+Package pdftex.def Info: ../figures/gammadist-1.pdf  used on input line 239.
 (pdftex.def)             Requested size: 436.63019pt x 283.0568pt.
-[6 <../figures/unnamed-chunk-1-1.pdf>]
-<../figures/unnamed-chunk-2-1.pdf, id=87, 453.695pt x 315.1775pt>
-File: ../figures/unnamed-chunk-2-1.pdf Graphic file (type pdf)
-<use ../figures/unnamed-chunk-2-1.pdf>
-Package pdftex.def Info: ../figures/unnamed-chunk-2-1.pdf  used on input line 2
-73.
-(pdftex.def)             Requested size: 453.6939pt x 315.17673pt.
-[7 <../figures/unnamed-chunk-2-1.pdf>] [8]
+[6 <../figures/gammadist-1.pdf>]
+<../figures/c14map-1.pdf, id=74, 467.7475pt x 318.18875pt>
+File: ../figures/c14map-1.pdf Graphic file (type pdf)
+<use ../figures/c14map-1.pdf>
+Package pdftex.def Info: ../figures/c14map-1.pdf  used on input line 289.
+(pdftex.def)             Requested size: 467.74634pt x 318.18796pt.
+<../figures/compdendroc14-1.pdf, id=75, 460.72125pt x 307.1475pt>
+File: ../figures/compdendroc14-1.pdf Graphic file (type pdf)
+<use ../figures/compdendroc14-1.pdf>
+Package pdftex.def Info: ../figures/compdendroc14-1.pdf  used on input line 295
+.
+(pdftex.def)             Requested size: 460.72012pt x 307.14674pt.
+<../figures/aoristmap-1.pdf, id=77, 467.7475pt x 318.18875pt>
+File: ../figures/aoristmap-1.pdf Graphic file (type pdf)
+<use ../figures/aoristmap-1.pdf>
+Package pdftex.def Info: ../figures/aoristmap-1.pdf  used on input line 303.
+(pdftex.def)             Requested size: 467.74634pt x 318.18796pt.
+<../figures/aoristcurve-1.pdf, id=79, 460.72125pt x 307.1475pt>
+File: ../figures/aoristcurve-1.pdf Graphic file (type pdf)
+<use ../figures/aoristcurve-1.pdf>
+Package pdftex.def Info: ../figures/aoristcurve-1.pdf  used on input line 311.
+(pdftex.def)             Requested size: 460.72012pt x 307.14674pt.
+[7] [8 <../figures/c14map-1.pdf>] [9 <../figures/compdendroc14-1.pdf>] [10 <../
+figures/aoristmap-1.pdf>] [11 <../figures/aoristcurve-1.pdf>]
+<../figures/pollensites-1.pdf, id=150, 467.7475pt x 318.18875pt>
+File: ../figures/pollensites-1.pdf Graphic file (type pdf)
+<use ../figures/pollensites-1.pdf>
+Package pdftex.def Info: ../figures/pollensites-1.pdf  used on input line 319.
+(pdftex.def)             Requested size: 467.74634pt x 318.18796pt.
+[12 <../figures/pollensites-1.pdf>]
 
-LaTeX Warning: Command \" invalid in math mode on input line 299.
+LaTeX Warning: Command \" invalid in math mode on input line 333.
 
-[9] [10] [11] [12]
+[13] [14] [15] [16]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
-07.
+53.
 (/usr/share/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [13] [14] (./paper.aux) ) 
+) [17] [18] (./paper.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
 Here is how much of TeX's memory you used:
- 13885 strings out of 478353
- 217619 string characters out of 5854635
- 562367 words of memory out of 5000000
- 31545 multiletter control sequences out of 15000+600000
- 468546 words of font info for 156 fonts, out of 8000000 for 9000
+ 13938 strings out of 478353
+ 218792 string characters out of 5854635
+ 564517 words of memory out of 5000000
+ 31580 multiletter control sequences out of 15000+600000
+ 471706 words of font info for 159 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 74i,6n,77p,1712b,490s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}
-{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/usr/share/texmf-dist/
-fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-maths
-y.enc}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf
--dist/fonts/enc/dvips/lm/lm-ts1.enc}</usr/share/texmf-dist/fonts/type1/public/l
-m/lmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/shar
-e/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></usr/share/texmf-dist/fonts/type1
-/public/lm/lmex10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><
-/usr/share/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf-dist/fo
-nts/type1/public/lm/lmr10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr1
-2.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf-
-dist/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf-dist/fonts/type1/public/l
-m/lmr9.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/share/
-texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf-dist/fonts/type1/p
-ublic/lm/lmtt10.pfb>
-Output written on paper.pdf (14 pages, 341469 bytes).
+ 74i,17n,77p,1712b,490s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf-dist/fo
+nts/enc/dvips/lm/lm-mathex.enc}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-rm.
+enc}{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf-d
+ist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf-dist/fonts/enc/dvips/lm/
+lm-ts1.enc}</usr/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/share/
+texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf-dist/fonts/type1/
+public/lm/lmbx9.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmex10.pfb></u
+sr/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf-dist/fon
+ts/type1/public/lm/lmmi7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr10
+.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf-d
+ist/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf-dist/fonts/type1/public/l
+m/lmr7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/share/te
+xmf-dist/fonts/type1/public/lm/lmr9.pfb></usr/share/texmf-dist/fonts/type1/publ
+ic/lm/lmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/s
+hare/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on paper.pdf (18 pages, 1966917 bytes).
 PDF statistics:
- 282 PDF objects out of 1000 (max. 8388607)
- 226 compressed objects within 3 object streams
- 61 named destinations out of 1000 (max. 500000)
- 36963 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 377 PDF objects out of 1000 (max. 8388607)
+ 300 compressed objects within 3 object streams
+ 73 named destinations out of 1000 (max. 500000)
+ 39063 words of extra memory for PDF output out of 42996 (max. 10000000)
 

@@ -1,5 +1,5 @@
 ---
-title: "Bayesian Hierarchical Model for estimating prehistoric population development on the Swiss Plateau"
+title: "Bayesian Hierarchical Model for estimating holocene prehistoric population development on the Swiss Plateau"
 author:
   - Martin Hinz:
       email: martin.hinz@iaw.unibe.ch
@@ -15,7 +15,7 @@ author:
       correspondence: false
   - Caroline Heitz:
       email: caroline.heitz@arch.ox.ac.uk
-      institute: [OX, IAW, OCCR]
+      institute: [IAW, OCCR, OX]
       correspondence: false
   - Jan Kolář:
       email: jan.kolar@ibot.cas.cz
@@ -24,10 +24,10 @@ author:
 institute:
   - IAW: Institute of Archaeological Sciences, University of Bern
   - OCCR: Oeschger Centre for Climate Change Research, University of Bern
+  - SFB1266: CRC 1266 - Scales of Transformation, University of Kiel
   - OX: Associated Researcher, School of Archaeology, University of Oxford
   - IBOT: Department of Vegetation Ecology, Institute of Botany of the Czech Academy of Sciences
   - IAMFAMU: Institute of Archaeology and Museology, Faculty of Arts, Masaryk University
-  - SFB1266: CRC 1266 - Scales of Transformation, University of Kiel
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   bookdown::word_document2:
@@ -37,7 +37,12 @@ output:
     - --lua-filter=../templates/scholarly-metadata.lua
     - --lua-filter=../templates/author-info-blocks.lua
     - --lua-filter=../templates/pagebreak.lua
-  bookdown::pdf_book: default
+  bookdown::pdf_document2:
+    toc: no
+    pandoc_args:
+    - --lua-filter=../templates/scholarly-metadata.lua
+    - --lua-filter=../templates/author-info-blocks.lua
+    - --lua-filter=../templates/pagebreak.lua
 bibliography: references.bib
 csl: "../templates/journal-of-archaeological-science.csl" # Insert path for the bib-style
 abstract: |
@@ -60,7 +65,7 @@ Highlights: `r rmarkdown::metadata$highlights`
 
 <!-- The following code chunk defines some general settings how code chunks should behave. -->
 
-```{r setup, echo = FALSE}
+```{r setup, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
@@ -70,6 +75,23 @@ knitr::opts_chunk$set(
   fig.path = "../figures/",
   dpi = 300
 )
+
+library(ggplot2)
+library(ggmap)
+library(sp)
+library(sf)
+library(ggsn)
+library(rnaturalearth)
+library(ggrepel)
+
+switzerland <- ne_countries(country = "Switzerland")
+bbox_ch <- bbox(switzerland) %>% as.vector()
+
+swiss_background <- get_stamenmap( bbox = bbox_ch, maptype = "terrain-background", color="bw", zoom = 8)
+
+my_basemap <- ggmap(swiss_background, darken = c(0.6, "white"))
+
+my_scalebar <- scalebar(transform = T, dist_unit = "km", dist=50, model = "WGS84", st.dist = 0.025, st.size = 3, x.min = bbox_ch[1], x.max = bbox_ch[3]-0.2, y.min = bbox_ch[2]+0.15, y.max = bbox_ch[4], border.size = 0.5)
 ```
 
 <!-- The actual document text starts here: -->
@@ -92,7 +114,7 @@ Müller and Diachenko [@muller_tracing_2019] has compiled a list of currently us
 2.  The uncertainty of evidence is not adequately reflected. In most cases, individual curves are presented as estimates, but the size of the error bars for these estimates is almost never apparent.
 3.  Nature of the archaeological data is taken into account only insufficiently. What is meant here is that they take little account of the inherent uncertainties of the proxies themselves, for lack of an evaluative framework, and that transfer functions from the proxy to the actual size to be observed, i.e. population size or density, are hardly ever evaluated more intensively. In the best case, a critical appraisal of the informative value is provided, but a quantification of the relationship between, for example, a doubling of a proxy value and the change in population density does not take place and cannot take place for lack of a suitable framework or external data for calibration.
 
-\[Beispiele bringen? Bring some examples here...\]
+$$Beispiele bringen? Bring some examples here...$$
 
 Archaeological data used to estimate population trends have the following characteristics:
 
@@ -104,7 +126,7 @@ Archaeological data used to estimate population trends have the following charac
 -   Indirect: It is actually always proxy data that are collected as substitute values for the information that is actually needed (i.e. population density or size). The transfer functions that link the collected data with the data to be obtained are unknown and are at best established by observing the (also ethnological) presence. However, since living conditions, circumstances and economic parameters differ greatly between the present time and prehistory, these transfer functions can only be evaluated as a first approximation.
 -   Contradicting: Particularly when considering several proxies, differences in transfer functions and data quality and noisiness inevitably lead to contrasts. However, this usually only leads to the rejection of a proxy for a certain time period, without mutually supporting or contradictory information leading to a quantitative evaluation of the proxy and its uncertainties.
 
-In recent years, a new method has been established in the field of demographic estimations. Bayesian demographic forecasting has been designed to solve all these problems, which also exist for demographic estimations using recent data. In their book on the subject, Bryant and Zhang \[BrynatandZhang\] state that Bayesian data modeling can be used to deal with exactly those problems that also affect archaeological data. Especially for limited, unreliable and noisy data, Bayesian approaches are optimally suited. Various even contradictory data can be brought into a common framework and support each other. Similarly, unlikelihood and uncertainty of a model approach can be quantified. This is well-accepted in archaeological applications through the Bayesian calibration and modelling of stratigraphic conditions and radiometric data. Furthermore, spatially and temporally missing data can be taken into account: Where these data are missing, the uncertainty automatically increases, but this does not prevent general modelling and estimation. Finally, hierarchically structured model suites, in which sub-models are created for the utilisation of individual proxies, can also be used to estimate transfer functions between individual proxies and the value to be modelled, thanks to the interaction of a large number of data sources and evidence.
+In recent years, a new method has been established in the field of demographic estimations. Bayesian demographic forecasting has been designed to solve all these problems, which also exist for demographic estimations using recent data. In their book on the subject, Bryant and Zhang [@bryant2018] state that Bayesian data modeling can be used to deal with exactly those problems that also affect archaeological data. Especially for limited, unreliable and noisy data, Bayesian approaches are optimally suited. Various even contradictory data can be brought into a common framework and support each other. Similarly, unlikelihood and uncertainty of a model approach can be quantified. This is well-accepted in archaeological applications through the Bayesian calibration and modelling of stratigraphic conditions and radiometric data. Furthermore, spatially and temporally missing data can be taken into account: Where these data are missing, the uncertainty automatically increases, but this does not prevent general modelling and estimation. Finally, hierarchically structured model suites, in which sub-models are created for the utilisation of individual proxies, can also be used to estimate transfer functions between individual proxies and the value to be modelled, thanks to the interaction of a large number of data sources and evidence.
 
 Bayesian modelling techniques have also been used recently as a tool for hypothesis testing of demographic trends or underlying models based on 14C data.Most notably are the recently published papers by Crema et al. However, the approach taken by Crema et al. is clearly different from the one presented in this paper.In these analyses, deductive models are generated and their plausibility is tested on the basis of 14C data only. This is a clear step in the direction of a model-based, and thus scientific, analysis.However, on the one hand, the use of only one proxy, and its use exclusively for testing hypotheses developed independently, creates problems comparable to those of inductive approaches used so far: due to the lack of a combination with other indicators, one is limited to the problems and conditions of sum calibration as a tool. Furthermore, this approach loses significant potential information that would be gained by a direct evaluation of the time series.Thus, the credibility of a model can only be checked as a whole, without the dynamic developments that can arise in the course of demographic processes being represented. Therefore, we would like to better exploit the capabilities of Bayesian hierarchical models through a combination of inductive data analysis and model-passed data integration of different proxies.
 
@@ -124,7 +146,7 @@ A special class of Bayesian hierarchical models are so-called State Space Models
 
 This basic structure of the model makes it particularly useful and suitable for the purpose of demographic reconstruction using archaeological, but also other data, which depend on population density in the past. This population density itself is not accessible or measurable by our means. All we have at our disposal are observations derived by unknown transfer functions. These can be of very different natures, such as number of archaeologically observable settlements, or other effects that can be observed through time series, and which are influenced by population in a given area. In our example, these are the openness indicators from pollen data, which we can interpret primarily in terms of human influence and its intensity. On a more abstract level, we can also include expert estimates, as these also happen on (often unspecified) bases that are at least indirectly influenced by past population density. The specifics of the individual data we used in this modelling are discussed in the section \@ref(dataproxies).
 
-# Methods
+# Materials and Methods
 
 ## Process Model
 
@@ -136,18 +158,18 @@ $$
 N_t = N_{t-1} * \lambda_t
 $$
 
-A distribution that is particularly suitable for modelling frequencies is the Poisson distribution. It is a univariate discrete probability distribution that can be used to model the number of events that occur independently of each other at a constant mean rate in a fixed time interval or spatial area. It is determined by a real parameter $\lambda$ >0, which describes the expected value and simultaneously the variance of the distribution. Thus, the relationship shown above can also be rearranged as follows:
+A distribution that is particularly suitable for modelling frequencies is the Poisson distribution. It is a univariate discrete probability distribution that can be used to model the number of events that occur independently of each other at a constant mean rate in a fixed time interval or spatial area. It is determined by a real parameter $\lambda$ \>0, which describes the expected value and simultaneously the variance of the distribution. Thus, the relationship shown above can also be rearranged as follows:
 
 $$
+\begin{split}
 N_t \sim dpois(\lambda_t) \\
 \lambda_t = N_t
-$$
-If we now have information about the change in population development, we can use this to enter it into the model via a change in $\lambda$. This is done in the form of a regression: If $x \in R^n$ is a vector of independent variables, then the model takes the form
+\end{split}
+$$ If we now have information about the change in population development, we can use this to enter it into the model via a change in $\lambda$. This is done in the form of a regression: If $x \in R^n$ is a vector of independent variables, then the model takes the form
 
 $$
 log({E} (Y\mid x))=\alpha + \beta' x
-$$
-In the case of population trends, the expected value would be equal to the value of the population in the previous time period, plus or minus the changes resulting from the variables:
+$$ In the case of population trends, the expected value would be equal to the value of the population in the previous time period, plus or minus the changes resulting from the variables:
 
 $$
 log(\lambda_t) = log(N_t) + \sum_{i=1}^n \beta_i x_{t,i}
@@ -158,24 +180,24 @@ The values for population size $N_t$ as well as for population change $\lambda_t
 Thus, we can define the limits, the $max\_change\_rate$ as an time independent variable, again without already specifying them with fixed values at this stage. The estimation of these parameters for the entire model, as well as the estimation of the respective population change per time section, results from the modelling and the interaction with the data, respectively. Overall, this represents a hierarchical model that can be noted as follows:
 
 $$
+\begin{split}
 max\_growth\_rate \sim dgamma(shape = 5, scale=0.05) \\
 N_t/N_{t-1} < (max\_growth\_rate + 1) \\
 N_{t-1}/N_t < (max\_growth\_rate + 1)
+\end{split}
 $$
 
-The gamma distribution used centres the probability in a range $[0,1[$, adding 1 makes this range $[1-2[$ (See also Figure X).
+The gamma distribution used centres the probability in a range $[0,1[$, adding 1 makes this range $[1-2[$ (See also Figure \@ref(fig:gammadist)).
 
-```{r}
+```{r gammadist}
 plot(density(rgamma(100000,shape=5,scale = 0.05)+1), xlim=c(0,5), main ="gamma(shape = 5, scale=0.05) + 1" )
 ```
 
 This prevents the number of sites from explosively increasing between two time periods, which would lead to problems for the convergence of the model. The interaction of these parameters results in the following prior probability distribution for $\lambda$ and thus the growth (or change) rate of the population:
 
-\[Prior Probability Simulation einbauen\]
-
 ## Data/Proxies
 
-In principle, a large number of different data sources can be integrated into the overall model as observations, provided that these observations a) can be understood as dependent on the population density in the past, and b) a model-like description of this dependence can be created. A non-exhaustive list can be found in the following table:
+In principle, a large number of different data sources can be integrated into the overall model as observations, provided that these observations a) can be understood as dependent on the population density in the past, and b) a model-like description of this dependence can be created. A non-exhaustive list can be found in the following table \@ref(tab:tableproxies):
 
 | Proxies                                        |
 |------------------------------------------------|
@@ -196,35 +218,76 @@ In principle, a large number of different data sources can be integrated into th
 | aDNA based estimates                           |
 | ...                                            |
 
-: (#tab:table_proxies) A incomplete list of possible observation that can be linked to population developments in the past. Proxies used in this study are highlighted.
+: (\#tab:tableproxies) A incomplete list of possible observation that can be linked to population developments in the past. Proxies used in this study are highlighted.
 
-Our working region consists of the Swiss Plateau, which on the one hand offers excellent data for demographic estimation, but on the other hand poses very specific problems for such an undertaking. If we have high-resolution information on the temporal sequence of individual settlements at the lakeside settlements by means of dendro data, this also causes a research problem with regard to the ^14^C data often used as a proxy. Since many periods of the Swiss prehistoric dry land settlements are unknown, and archaeology is based primarily on the wet land settlements, the dendro data are used primarily here, since they are much more precise. As a result, ^14^C data could be largely absent in this time period. If the amount of ^14^C data were now evaluated directly and naively over time, it would show that in the phases of particularly active settlement of the lakeshore, the ^14^C sum calibration shows minima.
+Our working region consists of the Swiss Plateau, which on the one hand offers excellent data for demographic estimation, but on the other hand poses very specific problems for such an undertaking. If we have high-resolution information on the temporal sequence of individual settlements at the lakeside settlements by means of dendro data, this also might cause a research problem with regard to the ^14^C data often used as a proxy.
 
-```{r}
-library(ggplot2)
-joined_data <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "preprocessed_data", "all_proxies.csv"))
-
-ggplot(joined_data) + geom_line(aes(x=1950-age, y=scale(sumcal, center = F), color = "red"), alpha = 0.75)  + geom_line(aes(x=1950-age, y=scale(dendro, center = F), color = "blue"), alpha = 0.75) + theme_minimal()  +
-    labs(x = "years BCE",
-         y = "scaled values",
-         color = "Legend") + ggtitle("Number of dendro and 14C dated sites on the Swiss Plateau (scaled)") +
-    scale_color_manual(values = c("blue", "red"), labels = c("dendro dated", "14C dated"))
+```{r echo=FALSE}
+dendro <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "dendro_years.csv"))
 ```
 
+The dataset we use for the number of dendrodated wetland settlements in the Three Lakes region was collected by Julian Laabs for his PhD thesis [@laabs2019]. Details on the creation of this data series will be published at the referenced location. The time series used here runs from `r abs(min(dendro$date))` to `r abs(max(dendro$date))` BCE, and contains the number of chronologically registered fell phases at individual settlements. This results in a time series that reflects the settlement of the lakeshores in the Neolithic and Bronze Age periods.
 
-In fact, there is a not uninteresting fit between the two data series. However, it must be assumed that the two dating methods, even if they would contradict each other, actually complement each other, and thus allow a better overall unified picture of the actual settlement density than each of the individual proxies would allow on their own.
+Since many periods of the Swiss prehistoric dry land settlements are unknown, and archaeology is based primarily on the wet land settlements, the dendro data are used primarily here, since they are much more precise. As a result, ^14^C data could be largely absent in this time period. If the amount of ^14^C data were now evaluated directly and naively over time, it would show that in the phases of particularly active settlement of the lakeshore, the ^14^C sum calibration shows minima.
 
-We have integrated the ^14^C data as one of the proxies in the model, in the form of a sum calibration. The dataset consists of 1135 ^14^C dates from 246 sites, and dates between 10730 and 235 BP uncal. We binned the data at site levels to obtain a temporally dispersed count and thus an expected value of contemporaneous ^14^C dated sites. For the creation of the cumulative calibration, the corresponding functions of the R package rcarbon [!citation!] were used in the standard settings.
+```{r echo=FALSE}
+c14 <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "14c_swiss_plateau.csv"))
+```
 
-\[Histogramm 14C Datierungen\]
+The dataset for the ^14^C sum calibration primarily consists of data from the XRONOS database, supplemented by dates from the unpublished PhD thesis of Julian Laabs [@laabs2019] and the data collection of [@martínez-grau2021]. It contains a total of `r nrow(c14)` single ^14^C data from `r length(unique(c14$site))` sites. The dates were selected so that their distribution area coincides with the catchment area of the pollen proxy explained below (see also Figure \@ref(fig:c14map)). The dates in the dataset range in ^14^C years from `r max(c14$bp)` to `r min(c14$bp)` BP uncal. This time window extends beyond the study horizon in order to minimise boundary effects, which, however, cannot be completely avoided due to the Hallstatt plateau. But it was precisely to reduce its influence that the time window of the investigation was chosen to be 7000 -- 1000 BCE.
 
-Zugleich stand uns ein Datensatz über die Anzahl der Dendrodatierten Feuchtbodensiedlungen in der Drei-Seen-Region zur Verfügung, welcher durch Julian Laabs für seine PhD-These gesammelt worden ist und deren Hintergrunddaten am genannten Ort veröffentlicht werden. Die hier verwendete Zeitreihe läuft von X bis Y, und enthält die Anzahl von zeitliche verzeichneten Schlagphasen an einzelnen Siedlungen. Somit ergibt sich hier eine Zeitreihe, die die Besiedlung der Seeufer in der Zeit des Neolithikums und der Bronzezeit (?) wiederspiegelt.
+We binned the data at site levels to obtain a temporally dispersed count and thus an expected value of contemporaneous ^14^C dated sites. For the creation of the cumulative calibration, the corresponding functions of the R package rcarbon [@crema2021] were used in the standard settings.
 
-In order to add another indicator of archaeological evidence of occupation, we have included the data of the Cantonal Archaeology, and thus the Heritage Management, which are primarily derived from scattered surface finds, and which often have a low depth of information and thus dating accuracy. This information is incorporated into our model as a typologically dated aorist time series. Although the dating accuracy is very low, the advantage here lies in the fact that we are not bound to the conditions and problems of radiocarbon dates, and thus involved in the issue of sum calibration. Much more, these data provide an independent indicator with regard to the methodology of the ^14^C data, even if they are influenced by the same transmission filters and archaeological conditions as the evaluation of ^14^C data. Data from x sites were included in the aoristic sum, which is a very rough indicator due to the low dating accuracy in archaeological phases, but which nevertheless has an important role in the normalisation of the data due to its independence from calibration effects.
+```{r c14map, fig.cap="The location of the ^14^C dated sites in the dataset."}
+my_basemap + geom_point(data = c14, aes(x = lng, y = lat), color = "darkred", alpha = 0.75) + blank() + my_scalebar
+```
 
-\[Abbildung Aoristische Kurve\]
+```{r compdendroc14, fig.cap="Comparison of the scaled number of ^14^C and dendrodated sites over time in the dataset used."}
+joined_data <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "preprocessed_data", "all_proxies.csv"))
 
-Die durch die vielen sehen Natur räumlich gegebenen Gegebenheiten ermöglichen neben einer hoch präzisen Datierung von archäologischen Fundstellen gleichzeitig aber auch ein sehr dichtes Netz an pollenanalytischen Untersuchungen. Diesen Fakt machen wir uns zu Nutze, in dem wir aus den Pollendaten einem überregionalen Offenheitsanzeiger für den Bewuchs generieren. Genaueres dazu wird im Methoden Kapitel ausgeführt. Dieser Indikator hat spezifisch den Vorteil, dass er nicht an Überlieferungsbedingungen gebunden ist, wie ist die archäologischen Indikatoren sind. Damit wird er besonders wertvoll, um systematische Verzierungen anzuzeigen oder auszugleichen, die sich durch zeitlich spezifische Siedlungsweisen und Überlieferungsbedingungen ergeben.
+ggplot(joined_data) + geom_line(aes(x=1950-age, y=scale(sumcal, center = F), color = "darkred"), alpha = 0.75)  + geom_line(aes(x=1950-age, y=scale(dendro, center = F), color = "darkblue"), alpha = 0.75) + theme_minimal()  +
+    labs(x = "years BCE",
+         y = "scaled values",
+         color = "Legend") + 
+    scale_color_manual(values = c("darkblue", "darkred"), labels = c("dendro dated", "14C dated"))+
+  theme(legend.position="bottom")
+```
+
+We can now compare these two data sets (Figure \@ref(fig:compdendroc14)). In fact, there is a not uninteresting fit between the two data series. However, it must be assumed that the two dating methods, even if they would contradict each other, actually complement each other, and thus allow a better overall unified picture of the actual settlement density than each of the individual proxies would allow on their own.
+
+```{r echo=FALSE}
+aorist <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "site_data_fuzzy.csv"))
+aorist_latlng_coords <- st_as_sf(aorist,coords = c("LV03_Rechtswert_fuzzy", "LV03_Hochwert_fuzzy"),crs = 21781) %>% sf::st_transform(
+  4326
+) %>% st_coordinates() %>% as.data.frame()
+```
+
+```{r aoristmap, fig.cap="The location of the sites from the find reports of the cantonal archaeology (heritage management). The locations are fuzzified by ~1km."}
+my_basemap + geom_point(data = aorist_latlng_coords, aes(x = X, y = Y), color = "black", alpha = 0.75) + blank() + my_scalebar
+```
+
+In order to add another indicator of archaeological evidence of occupation, we have included the data of the Cantonal Archaeology (Figure \@ref(fig:aoristmap)), and thus the Heritage Management, which are primarily derived from scattered surface finds, and which often have a low depth of information and thus dating accuracy. This information is incorporated into our model as a typologically dated aorist time series. Although the dating accuracy is very low, the advantage here lies in the fact that we are not bound to the conditions and problems of radiocarbon dates, and thus involved in the issue of sum calibration. Much more, these data provide an independent indicator with regard to the methodology of the ^14^C data, even if they are influenced by the same transmission filters and archaeological conditions as the evaluation of ^14^C data. Data from x sites were included in the aoristic sum, which is a very rough indicator due to the low dating accuracy in archaeological phases, but which nevertheless has an important role in the normalisation of the data due to its independence from calibration effects.
+
+```{r aoristcurve, fig.cap="Comparison of the scaled number of ^14^C and dendrodated sites over time in the dataset used."}
+ggplot(joined_data) + geom_line(aes(x=1950-age, y=aoristic_sum, color = "darkgray"), alpha = 0.75) +
+  theme_minimal()  +
+    labs(x = "years BCE",
+         y = "aoristic sum",
+         color = "Legend") + 
+    scale_color_manual(values = "darkgray", labels = "Aoristic Sum")+
+  theme(legend.position="bottom")
+```
+
+The natural conditions provided by the many lakes enable not only highly precise dating of archaeological sites, but also a very dense network of pollen analysis. We make use of this fact by generating a supra-regional openness indicator for the vegetation from the pollen data (Figure \@ref(fig:pollensites)). This indicator has the specific advantage that it is not dependent on preservation conditions, as archaeological indicators are. This makes it particularly valuable for indicating or compensating for systematic distortions that result from temporally specific settlement patterns and archaeological preservation conditions.
+
+```{r pollensites, fig.cap="Location of the pollen profiles used for the openness indicator."}
+pollen_sites <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "pollen_locations.csv"))
+
+my_basemap +
+  geom_point(data = pollen_sites, aes(x = lng, y = lat), color = "darkgreen", alpha = 0.75) + blank() +
+  geom_text_repel(data = pollen_sites, aes(x = lng, y = lat, label = name), alpha = 0.75, nudge_x = 0.2, nudge_y=0.02) +
+  my_scalebar
+```
 
 <!--# Ab hier muss noch umformuliert werden, ist cp aus dem Cambridge Artikel -->
 
@@ -234,13 +297,13 @@ Wir wendeten eine Hauptkomponentenanalyse (PCA) nach der von Feeser et al. (2019
 
 <!--# Ende cp aus dem Cambridge Artikel -->
 
-\[Abbildung Offenheitsanzeiger\]
+$$Abbildung Offenheitsanzeiger$$
 
 Leider fallen im Bereich des Schweizer Mittelland es Daten aus Bestattungen weg, die sich auch nutzbringend in ein solches Modell einbauen lassen würden. Hier sind es auch wieder schlicht Überlieferungsbedingungen, die eine Nutzung in dieser Untersuchung verwähren. Dennoch sehen wir für andere Regionen in der Integration von demographischen Indikatoren Ausgestaltungsdaten ein sehr hohes Potenzial, um den Methodenkanon und die Proxydichte zu erweitern.
 
 Letzt endlich haben wir uns auch dazu entschlossen, Expertenschätzungen in das Modell zu integrieren. These expert estimates are certainly very valuable, as they represent a quantification of - in the strict sense - hardly quantifiable holistic assessments and the intuitive combination of different variables. However, as they are very subjectively generated, they must be considered as relatively uncertain estimates and must at least be contrasted with each other and with independent data in order to achieve a minimum degree of verifiability and intersubjectively comprehensible methodology in data evaluation. Für unser Arbeitsgebiet gibt es eine begrenzte Anzahl von Expertenschätzungen, die verschiedene Zeit Epochen umfassen, und die sich deutlich in ihren Aussagen widersprechen.
 
-\[Tabelle Expertenschätzungen\]
+$$Tabelle Expertenschätzungen$$
 
 ## Observational Models
 
