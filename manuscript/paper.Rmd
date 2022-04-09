@@ -161,18 +161,20 @@ $$
 A distribution that is particularly suitable for modelling frequencies is the Poisson distribution. It is a univariate discrete probability distribution that can be used to model the number of events that occur independently of each other at a constant mean rate in a fixed time interval or spatial area. It is determined by a real parameter $\lambda$ \>0, which describes the expected value and simultaneously the variance of the distribution. Thus, the relationship shown above can also be rearranged as follows:
 
 $$
-\begin{split}
-N_t \sim dpois(\lambda_t) \\
-\lambda_t = N_t
-\end{split}
-$$ If we now have information about the change in population development, we can use this to enter it into the model via a change in $\lambda$. This is done in the form of a regression: If $x \in R^n$ is a vector of independent variables, then the model takes the form
+\begin{aligned}
+N_t &\sim dpois(\lambda_t) \\
+\lambda_t &= N_t
+\end{aligned}
+$$If we now have information about the change in population development, we can use this to enter it into the model via a change in $\lambda$. This is done in the form of a regression: If $x \in R^n$ is a vector of independent variables, then the model takes the form
 
 $$
 log({E} (Y\mid x))=\alpha + \beta' x
-$$ In the case of population trends, the expected value would be equal to the value of the population in the previous time period, plus or minus the changes resulting from the variables:
+$$
+
+In the case of population trends, the expected value would be equal to the value of the population in the previous time period, plus or minus the changes resulting from the variables:
 
 $$
-log(\lambda_t) = log(N_t) + \sum_{i=1}^n \beta_i x_{t,i}
+log(\lambda_t) = log(N_{t-1}) + \sum_{i=1}^n \beta_i x_{t,i}
 $$
 
 The values for population size $N_t$ as well as for population change $\lambda_t$ are time-dependent. At each individual point in time in the time series, these variables can or will also take on different values. However, we can narrow down the structure of population change even further. We can assume that, considered overall over time, the population change the population change will not exceed certain limits over the entire time span, without it being possible here to specify this already.
@@ -180,16 +182,16 @@ The values for population size $N_t$ as well as for population change $\lambda_t
 Thus, we can define the limits, the $max\_change\_rate$ as an time independent variable, again without already specifying them with fixed values at this stage. The estimation of these parameters for the entire model, as well as the estimation of the respective population change per time section, results from the modelling and the interaction with the data, respectively. Overall, this represents a hierarchical model that can be noted as follows:
 
 $$
-\begin{split}
-max\_growth\_rate \sim dgamma(shape = 5, scale=0.05) \\
-N_t/N_{t-1} < (max\_growth\_rate + 1) \\
-N_{t-1}/N_t < (max\_growth\_rate + 1)
-\end{split}
+\begin{aligned}
+max\_growth\_rate &\sim dgamma(shape = 5, scale=0.05) \\
+N_t/N_{t-1} &< (max\_growth\_rate + 1) \\
+N_{t-1}/N_t &< (max\_growth\_rate + 1)
+\end{aligned}
 $$
 
 The gamma distribution used centres the probability in a range $[0,1[$, adding 1 makes this range $[1-2[$ (See also Figure \@ref(fig:gammadist)).
 
-```{r gammadist}
+```{r gammadist, fig.cap="The gamma-distributed maximum growth rate prior of the model."}
 plot(density(rgamma(100000,shape=5,scale = 0.05)+1), xlim=c(0,5), main ="gamma(shape = 5, scale=0.05) + 1" )
 ```
 
@@ -218,7 +220,7 @@ In principle, a large number of different data sources can be integrated into th
 | aDNA based estimates                           |
 | ...                                            |
 
-: (\#tab:tableproxies) A incomplete list of possible observation that can be linked to population developments in the past. Proxies used in this study are highlighted.
+: (#tab:tableproxies) A incomplete list of possible observation that can be linked to population developments in the past. Proxies used in this study are highlighted.
 
 Our working region consists of the Swiss Plateau, which on the one hand offers excellent data for demographic estimation, but on the other hand poses very specific problems for such an undertaking. If we have high-resolution information on the temporal sequence of individual settlements at the lakeside settlements by means of dendro data, this also might cause a research problem with regard to the ^14^C data often used as a proxy.
 
@@ -289,67 +291,99 @@ my_basemap +
   my_scalebar
 ```
 
-<!--# Ab hier muss noch umformuliert werden, ist cp aus dem Cambridge Artikel -->
+The utilisation of this proxy is based on the assumption that the higher the population density in an area, the greater the human influence on the natural environment [@lechterbeck2014], and that the agricultural space of an area is closely related to the population density [@zimmermann2004]. Evidence of land clearing in pollen diagrams can therefore give further indications regarding population dynamics. The exact methodological procedure for obtaining this proxy from several, in our case 5, different pollen diagrams of sites mainly in the hinterland of the large Alpine lakes can be found in a previous publication [@heitz2021]. The technical procedure is also documented in the accompanying R-script. The percentage pollen data based on a pollen sum of all terrestrial taxa of the individual sites were combined into one data set by means of a principal component analysis (Figure \@ref(fig:pollenproxy)). Only terrestrial pollen taxa with a frequency of more than 1/3 and, if present, with an average frequency of at least more than 0.1% were selected to reduce potential disturbance by rare species. Cereal pollen was explicitly retained as an important anthropogenic indicator. As each sample is absolutely dated, the data on the x-axis can be plotted against the openness value on the y-axis to obtain a time series time series for land clearing.
 
-Es ist eine allgemein akzeptierte Annahme, dass der menschliche Einfluss umso größer ist, je höher die Bevölkerungsdichte in einem Gebiet ist (Lechterbeck et al. 2014), und dass die Bevölkerungsdichte eines Gebiets eng mit der landwirtschaftlichen Fläche zusammenhängt (Zimmermann et al. 2004). Hinweise auf Landrodung in Pollendiagrammen können daher zusätzliche Anhaltspunkte für die Bevölkerungsdynamik liefern. Da ein einzelnes Pollenprofil eine Kombination von (außer-)lokalen und regionalen Signalen darstellt, haben wir für überregionale Analysen verschiedene Pollendiagramme von 5 kleinen Seen im Hinterland der großen Alpenseen kombiniert (Abb. 7): Le Loclat (Hadorn 1992, 1994), Moossee (Rey et al. 2019a, 2019b), Burgäschisee (Rey et al. 2019a, 2019b), Soppensee (Hajdas und Michczynski 2010; Lotter 1999), Rotsee (Lotter 1988a, 1988b, 1990). Die Daten wurden aus der Neotoma-Datenbank extrahiert (Williams et al. 2018; dort Datensatznummern 26632, 40454, 46280, 40955, 44723, 4382). Die prozentualen Pollendaten, die auf einer Pollensumme aller terrestrischen Taxa der einzelnen Standorte basieren, wurden zu einem Datensatz zusammengefasst (Abb. 8a). Nur terrestrische Pollentaxa mit einer Häufigkeit von mehr als 1/3 und, falls vorhanden, mit einer durchschnittlichen Häufigkeit von mindestens mehr als 0,1 % wurden ausgewählt, um die potenzielle Störung durch seltene Arten zu reduzieren. Getreidepollen wurden ausdrücklich als wichtiger anthropogener Indikator beibehalten.
+```{r pollenproxy, fig.cap="Value on the first dimension of the PCA against dating of the samples for the individual pollen profiles and their combined average value as the openness indicator."}
+knitr::include_graphics(file.path(rstudioapi::getActiveProject(), "analysis", "analysis_files", "figure-html", "pollenproxy-1.png"))
+```
 
-Wir wendeten eine Hauptkomponentenanalyse (PCA) nach der von Feeser et al. (2019) vorgeschlagenen Methode an und skalierten die relativen Pollenanteile der einzelnen Taxone durch z-Scores-Standardisierung. In der Paläoökologie können multivariate Ordinationsverfahren wie die PCA verwendet werden, um zugrundeliegende Gradienten innerhalb der Daten aufzudecken (Feeser et al. 2019; Hinz et al. 2012). Aufgrund der Verbreitung der Buche (Fagus) gibt es einen starken erklärbaren Gradienten im Datensatz, der das gewünschte Ergebnis verschleiern würde. Um dies zu eliminieren, entschieden wir uns, eine Partial Constrained PCA durchzuführen. Das Ergebnis der partiellen PCA, die die Pollendaten zwischen 7000 und 1 cal BCE einschließt, zeigt, dass 20,5 % der Variabilität im Datensatz durch die erste Achse erklärt wird (die zweite Achse macht 12,6 % aus, Abb. 8b). Zu den Taxa mit hohen Werten auf der ersten Achse gehören neben Wildgrasarten auch klassische anthropogene Indikatoren (z. B. Cerealia, Urtica, Artemisa und Plantago); negative Werte werden in Übereinstimmung mit anderen Studien im Allgemeinen arborealen Taxa zugeschrieben (vgl. Behre 1981). Da dunkle mesophile Buchen-Tannenwälder als natürliche Vegetation unseres Untersuchungsgebiets angenommen werden können (vgl. Rey et al. 2017), wird eine erhöhte Offenheit der Landschaft als Ausdruck des menschlichen Einflusses auf die natürliche Vegetation interpretiert. die natürliche Vegetation widerspiegelt. Da jede Probe absolut datiert ist, können die Daten auf der x-Achse gegen den Offenheitswert auf der y-Achse aufgetragen werden, um eine Zeitreihe Zeitreihe für die Landrodung zu erhalten.
+Unfortunately, in the Swiss Plateau there is no data from burials that could be usefully incorporated into such this model. Preservation conditions again simply prevent their use in this study. Nevertheless, we see a very high potential for other regions in the integration of demographic indicators from burial data in order to enlarge the canon of methods and the range of proxies.
 
-<!--# Ende cp aus dem Cambridge Artikel -->
+The values of the sum calibration, the openness index and the dendrodated settlements were smoothed by means of a moving average with a window of 50 years. Since the aoristic sum already had a very coarse temporal resolution, this was not applied for this measure. The range of the smoothing window corresponded to the sample interval, with which a unified resolution of 50 years was obtained for all proxies as time slices for the model. In addition, all data were restricted to a window of observation of 7000-1000 BCE. The upper limit is set by the post-glacial changes in the pollen spectra, which are hardly associated with human influence before 7000 in the working area, and which would consequently distort the openness indicator. The lower limit is defined by the Hallstatt Plateau (with buffer), which would have direct and indirect research influences on the ^14^C proxy.
 
-$$Abbildung Offenheitsanzeiger$$
+## Observational Model
 
-Leider fallen im Bereich des Schweizer Mittelland es Daten aus Bestattungen weg, die sich auch nutzbringend in ein solches Modell einbauen lassen würden. Hier sind es auch wieder schlicht Überlieferungsbedingungen, die eine Nutzung in dieser Untersuchung verwähren. Dennoch sehen wir für andere Regionen in der Integration von demographischen Indikatoren Ausgestaltungsdaten ein sehr hohes Potenzial, um den Methodenkanon und die Proxydichte zu erweitern.
+During the development of the overall model, we abandoned the implementation of dedicated observation models adapted to the conditions of the individual proxies and their generating processes. In previous implementations, which we have also presented at various conferences, the underdetermination by the currently usable data of the model with many degrees of freedom led to equifinality of the solutions and, thus, to a high path dependency of the individual model runs. Therefore, it was almost impossible to achieve convergence of the overall model. Nevertheless, we believe that for a future application of the model with more data, a larger geographical coverage and especially a regionalised approach with information transfer by means of partial pooling, this more specific approach will be feasible and a very useful approach.
 
-Letzt endlich haben wir uns auch dazu entschlossen, Expertenschätzungen in das Modell zu integrieren. These expert estimates are certainly very valuable, as they represent a quantification of - in the strict sense - hardly quantifiable holistic assessments and the intuitive combination of different variables. However, as they are very subjectively generated, they must be considered as relatively uncertain estimates and must at least be contrasted with each other and with independent data in order to achieve a minimum degree of verifiability and intersubjectively comprehensible methodology in data evaluation. Für unser Arbeitsgebiet gibt es eine begrenzte Anzahl von Expertenschätzungen, die verschiedene Zeit Epochen umfassen, und die sich deutlich in ihren Aussagen widersprechen.
-
-$$Tabelle Expertenschätzungen$$
-
-## Observational Models
-
-Für die einzelnen Datensätze existieren unabhängige Beobachtungsmodelle, die die unbeobachtbare latente Variable der Bevölkerungsdichte mit ihrem Effekt auf die beobachteten Proxies selbst bzw. spezifika darstellen. Dies geschieht einerseits in Hinsicht darauf, wie sich die hinter den Proxies liegenden Eigenschaften der Landschaft mit Bevölkerungsdichte und ihren Auswirkungen verbinden lassen, anderseits aber auch in Hinsicht darauf, wie die Beobachteten Werte selbst zu diesen Prozessen in Beziehung stehen (z.B. Überlieferungs- und Auffindungswahrscheinlichkeiten). Die implementierung der einzelnen Modelle ist teilweise sehr unterschiedlich, in Hinsicht auf die Zahl bekannter Archäologischer Fundstellen, welche hinter verschiedenen Proxies stehen, wiederum strukturell sehr ähnlich.
-
-### Expert Estimations
-
-Das einfachste Modell ergibt sich hinsichtlich der Expertenschätzungen. Bei diesen gehen wir davon aus, das zeitabhängig die Expertenschätzungen normalverteilt um den realen Wert der Bevölkerungsdichte schwanken. Die eigentlichen Werte der Schätzungen sind im gleichen Mass wie die zu schätzende versteckte latente Bevölkerungsdichte, die es zu schätzen gilt. Daher ist eine explizite Modellierung einer Transferfunktion nicht nötig, bzw. es ist kein eigentlicher "Messfehler" vorhanden.
-
-Da die Schätzungen im Allgemeinen einen konstanten Wert darstellen, welcher für eine bestimmte Zeitspanne gegeben ist, und der reale Wert der Bevölkerungsdichte in jedem Zeitschritt ein anderer sein dürfte, kann hier ein partielles Pooling nicht durchgeführt werden. Vielmehr ist der Fehler der Schätzung in jedem Zeitabschnitt ein anderer, und zwischen den einzelnen Experten kann auch keine Übertragung der Information stattfinden, da davon auszugehen ist, dass jeder Experte in unterschiedlicher Weise den realen Wert über- oder unterschätzt. Daraus ergibt sich eine experten- und Zeitschrittabhängige Formulierung des Verhältnisses von der Expertenschätzung zu den im Modell zu schätzenden Bevölkerungdichten.
+The implementation we introduce in this paper represents a Poisson regression in which the indicators used inform the change in the number of settlements from time step to time step. For this purpose, the individual proxies were z-normalised. The absolute differences from one time step to another were then computed from the resulting time series. Thus, if the value of the proxy increases, this results in a positive difference from the previous time step, and vice versa.
 
 $$
-Z_{i, t} \sim N(N_t, \sigma_{i, t}) \\
-\sigma_{i, t} \sim N(N_t, 1/N_t^2)
+\begin{aligned}
+z_t &= \frac{x_t - \bar{x}} {\sigma_x}\ |\ \sigma_x := Standard\ Deviation  \\
+\delta z{_t} &= z_t - z_{t-1}
+\end{aligned}
 $$
 
-$N_t$ stellt dabei die zum Zeitpunkt t geschätze Bevölkerungsgrösse dar. Dabei ist davon auszugehen, dass die Standardabweichung der Schätzung ($\sigma_{i,t}$) abhängig ist von der absolute Grösse des Schätzwertes sowie unabhängig je Experte. Diese wird dementsprechend aufgrund des im Modell vorhandenen Schätzwertes errechnet.
-
-### Openness Indicator
-
-Für den Offenheitsindikator haben wir die kombinierten überregionalen Werte, die sich aus den genutzten Pollendiagrammen bzw. deren zeitspezifischen Werten auf der ersten Dimension der PCA. Für diesen Wert nehmen wir einen Messfehler an, das Verhältnis zwischen den Beobachten Werten und der tatsächlichen Landöffnung der Umwelt zeitabhängig darstellt. Der Beobachtete Wert der Landöffung $V_t$ schwankt dabei normalverteilt um den tatsächlichen Wert $I_t$, wobei wir annehmen, dass hier eine zeitunabhängige Schätzungenauigkeit $\sigma_v$ besteht, über die ein partielles Pooling stattfinden kann. Insgesamt ergibt sich für diesen ersten Teil folgende Formel:
+The sum of the resulting differences between the time steps, together with the settlement number of the previous step as the expected value, then forms $\lambda_t$ as the expected value for the settlement number of the current time step.
 
 $$
-V_t \sim N(I_t, \sigma_v) \\
-\sigma_v \sim \Gamma(0.5, 0.5)
+log(\lambda_t) = log(N_{t-1}) + \sum_{i=1}^n \beta_i \delta z_{i, t}
 $$
 
-Somit ist $\sigma_v$ auf die gleiche Weise spezifiziert wie $\sigma_\lambda$ des Prozessmodells: eine Abweichung muss positiv sein, werte grösser als 1 sind eher unwahrscheinlich.
-
-In weiteren Hierarchieschritten wird nun die Beziehung der Landöffnung zur Menschlichen Besiedlung modelliert. Hierbei gehen wir davon aus, dass die Landöffnung linear zur Grösse der Bevölkerung innerhalb eines Zeitschrittes skaliert, das aber zwischen einzelnen Zeitschritten (durch technische Innovationen oder Veränderungen in den naturräumlichen Gegebenheiten oder kulturellen Präferenzen) eine unterschiedliche Intensität menschlicher Aktivitäten auf die Landöffnung möglich sind ($B_t$), wobei wir insgesamt gepooled davon ausgehen, das dieser Wert normalverteilt um einen Mittelwert schankt. Hinzu kommt eine Grundsätzliche Landöffnung, die wir zeitunabhängig annehmen, und die die natürlichen Landöffnungsprozesse (Feuer durch Blitzschlag u.ä., $BaseOpen$) wiederspiegelt.
-
-Insgesamt ergibt sich daraus folgendes Modell:
+Here, $\beta_i$ is a scaling factor that represents the influence of the respective proxy. It is a confidence value of the model for the respective proxy, so that the sum of all $\beta_i$ results in 1.
 
 $$
-I_t = N_t * B_t + BaseOpen \\
-BaseOpen \sim N(0,1000) \\
-B_t \sim N(\mu_b, \sigma_b) \\
-\mu_b \sim N(0.5,1) \\
-\sigma_b \sim \Gamma(0.5,0.5)
+\sum_{i=1}^n \beta_i = 1
 $$
 
-Für $\sigma_b$ ist wiederum eine Gamma-Verteilung mit Fokus auf positive Werte kleiner als 1 angenommen, für den Mittelwert $\mu_b$ nehmen wir eine breite Normalverteilung um 0.5 an, was bedeutet, das (in Zusammenspiel mit $BaseOpen$) darauf hinausläuft, dass wir im Mittel einen positiven Einfluss von menschlicher Bevölkerung auf Landöffnung annehmen, aber viel Spielraum für das Modell zur spezifikation des Wertes lassen (weakly informative prior).
+A probability distribution that can be used for this purpose in a hierarchical Bayesian model is the Dirichlet distribution, which is a multivariate generalization of the beta distribution, commonly used as prior distributions in Bayesian statistics. Its density function gives the probabilities of $i$ different exclusive events. It has a parameter vector $\alpha = (\alpha_1, ..., \alpha_i)\ |\ (\alpha_1, ..., \alpha_i) > 0$, for which we have chosen a weakly informative log-normal prior. The priors for the log-normal distribution in turn come from a weakly informative exponential distribution for the mean and a log-nomal distribution with $\mu$ of 1 and $\sigma_{log}$ of 0.1:
 
-### Aoristic Analysis
+$$
+\begin{aligned}
+\beta_i &\sim Dir(\alpha_{1-i}) \\
+\alpha_i &\sim LogNormal(\mu_{alpha_i}, \sigma_{alpha_i}) \\
+\mu_{alpha_i} &\sim Exp(1) \\
+\sigma_{alpha_i} &\sim LogNormal(1,0.1)
+\end{aligned}
+$$
+
+As an intuition, this means that we consider the sum of the proxies as determinant for the number of settlements. The estimation therefore assumes that all proxies together give the best possible estimation result, whereby the share of each individual proxy is considered variable and is estimated within the model. The error value is represented by the Poisson process in the process model, rather than directly as an estimation error for the individual proxies. Thus, our model does not correspond to a classical state space model, where the measured values are each considered to be error-prone. In the implementation, the model finds the best possible combination or compromise between the individual indicators to describe a settlement dynamic that is given by them.
+
+```{r expertestimations, fig.cap="Expert estimations for the population density on the Swiss Plateau from different authors."}
+expert_estimations <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "estimates.csv"))
+
+ggplot(expert_estimations) + geom_segment(aes(x=from, xend = to, y = estimate, yend = estimate, color = source)) + xlab("cal BCE") + ylab("Density p/km²") + theme_minimal()
+```
+
+In earlier implementations, expert estimates were also integrated into the model. However, since these are highly contradictory for the working area (Figure \@ref(fig:expertestimations), therefore have little influence on the model, and also lead to a significantly longer runtime, we have refrained from doing so in the current implementation. For future applications of the model with a larger geographical range and thus a higher information density, however, this would again be a factor that could be integrated in a useful way.
+
+## Model fitting
+
+The model was fitted using the R package nimble (version 0.11.1, R version 4.1.3). For this purpose, 4 chains were run in parallel. Achieving and ensuring convergence and sufficient effective samples (10000) for a reliable assessment of the highest posterior density interval was carried out in steps.
+
+In a first run, the model was initialised for each chain and run for 100000 iterations (with a thinning of 10). The computer used (Linux, Intel(R) Xeon(R) CPU E3-1240 v5 \@ 3.50GHz, 4 cores, 8 threads) needed approx. 1 min for this.
+
+In a second step, the run was extended until convergence could be determined using Gelman and Rubin's convergence diagnostic, the criterion being that a potential scale reduction factor of less than 1.1 was achieved for all monitored variables. Convergence occurred after about 30 seconds.
+
+Due to the high correlation of the parameters and thus a low sampling efficiency, the collection of at least 10,000 effective samples for all parameters in the third step took about 5 hours.
+
+For the fitting process, a starting value for a population density of the Late Bronze Age (1000 BCE) was taken from the literature, which may represent a general average value for all prehistoric population estimates [@nikulka2016, 258]. For the model, this was set as the mean of a normal distribution with a standard deviation of 0.5, which should give enough leeway for deviations resulting from the data. Nevertheless, especially the late part of the reconstruction is of course clearly influenced by this predefined value.
+
+For the traceplots and the prior-posterior overlap as well as the density functions of the posterior samples of the individual parameters, please refer to the supplementary material.
 
 # Results
+
+Within the model, the parameter p was estimated, which reflects the proportion of the individual proxies used in the estimation of the number of settlements, as well as the number of settlements or transforms the resulting population density under the assumption that per settlement a number of inhabitants lived poisson-distributed around a $\lambda$ of 50 persons. This parameter is variable, but has only a scaling influence on the final estimate of population density.
+
+```{r pdistribution, fig.cap="Distribution of the influence ratio of the different proxies on the final estimation of the number of sites."}
+knitr::include_graphics(file.path(rstudioapi::getActiveProject(), "figures", "p_estimation.pdf"))
+```
+
+By looking at the distribution of posterior samples for the share of each proxy (Figure \@ref(fig:pdistribution)), it is clear that the model weights the openness indicator the highest. The average is slightly above 60%. The next most important indicator is the sum calibration value, which has an average of about 20%. The aoristic sum is slightly above 10%, whereas the importance of the dendrodated settlements is below 10%.
+
+The reason for the latter is certainly that there are no lakeshore settlements over large areas of the time window, and therefore the proxy achieves a low confidence value in comparison with the other estimators. In the case of the aoristic sum, it is certainly the fact that it is flat over large sections and has little structure, making it difficult to relate to the other estimators. The sum calibration shows very strong short-term fluctuations, which are presumably at least partly due to the effects of the calibration curve, and which also make this proxy seem ill-suited to reliably represent a continuous population trend. Nevertheless, its fluctuations do have an impact on the resulting overall estimate of the development of the number of settlements, albeit to a lesser extent.
+
+```{r popdensplot, fig.cap="The estimate of the population density resulting from the model and the three proxies, which are also plotted (scaled) for comparison."}
+knitr::include_graphics(file.path(rstudioapi::getActiveProject(), "figures", "popdens_estimation.pdf"))
+```
+
+The population density estimate (Figure \@ref(fig:popdensplot)) ranges on average between 0.2 p/km² for the beginning of the estimate (6000 BCE) and 4.8 p/km² for the end of the estimate (1000 BCE), reaching a maximum of 6.5 p/km² for the time slice 1250 BCE. Thus, the estimate remains within the values that are also considered plausible by the expert estimates. Clear peaks are reached around 1250 BCE (also the maximum value), as well as around 2750 BCE, which corresponds to the onset of the Corded Ware in the Swiss Plateau. However, we will go into further detail in the discussion on evaluations concerning the connections to cultural phenomena.
+
+```{r varcoeffplot, fig.cap="The variability of the estimate of the population density over time, with the estimate itself for reference."}
+knitr::include_graphics(file.path(rstudioapi::getActiveProject(), "figures", "popvar_plot.pdf"))
+```
+
+Furthermore, it may be relevant to look at the temporal distribution of the variability in the estimate (Figure \@ref(fig:varcoeffplot)). The coefficient of variation is 0.13 for the beginning and 0.1 for the end of the estimate, the greatest variability is reached around 2150 BCE with 0.4679342. The beginning and end of the time series are relatively clearly determined. The end results from the a priori setting of the parameter, but also here as at the beginning of the series the proxies are very uniform, which explains the low variability. Overall, the variability is relatively uniform over the entire course of the estimation and averages over all time slices at 33% of the respective mean.
 
 # Discussion
 

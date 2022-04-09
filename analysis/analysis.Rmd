@@ -229,7 +229,7 @@ res.open_smoothed <- na.omit(res.open_smoothed)
 
 Then we pick every 50th date:
 
-```{r}
+```{r pollenproxy}
 res.open_smoothed <- res.open_smoothed[res.open_smoothed$age %in%
 seq(from=1000,
     to=10000, by=50),]
@@ -926,7 +926,7 @@ PopDens_summary <- this_mcmc_summary[grep("^PopDens", params),]
 
 all_proxies_orig <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
 
-ggplot(all_proxies_orig) +
+popdens_plot <- ggplot(all_proxies_orig) +
   geom_line(aes(x = 1950-age, y = scale(openness), col="Openness Indicator"), alpha = 0.5) +
   geom_line(aes(x = 1950-age, y = scale(sumcal), col="Sum Calibration"), alpha = 0.5) +
   geom_line(aes(x = 1950-age, y = scale(dendro), col="Dendro Dated Settlements"), alpha = 0.5) +
@@ -947,15 +947,82 @@ ggplot(all_proxies_orig) +
   theme(legend.position="bottom") +
   ylab("Scaled values for Proxies,\n P/km² for Estimation") +
   xlab("cal BCE")
+popdens_plot
+```
+
+Save as result image to the figures folder.
+
+```{r}
+ggsave(normalizePath(file.path(here(), "figures","popdens_estimation.pdf"), mustWork = F),
+       plot = popdens_plot, width = 21, height = 29.7/2, units = "cm")
 ```
 
 And finally, the final estimate of the influence of the different proxies on the result:
 
 ```{r}
-all_chains[,grep("^p\\[", params)] %>%
+p_plot <- all_chains[,grep("^p\\[", params)] %>%
   as.data.frame %>%
   rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>%
   pivot_longer(everything()) %>%
   ggplot(aes(x = value, y = name)) +
-  stat_halfeye()
+  stat_halfeye() + xlab("Percentage Influence") + ylab("Proxy")
+p_plot
+```
+
+Also save as result image.
+
+```{r}
+ggsave(normalizePath(file.path(here(), "figures","p_estimation.pdf"), mustWork = F),
+       plot = p_plot, width = 21, height = 29.7/2, units = "cm")
+```
+
+Also interesting is the variation coefficient from the estimation of the Population density:
+
+```{r}
+var_popdens <- data.frame(var_coeff = apply(all_chains[,2:100], 2, function(x) sd(x)/mean(x)),
+                          age = rev(all_proxies_orig$age))
+
+coeff <- 0.1
+
+popvar_plot <- ggplot(var_popdens) +
+  geom_line(aes(x = 1950-age, y = var_coeff/coeff, col="Variation Coefficient"), alpha = 0.5) +
+  geom_line(data = PopDens_summary,
+            aes(x = rev(1950-all_proxies_orig$age), y=mean, col = "Estimation Result")) + 
+  geom_line(data = PopDens_summary,
+            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_l, col = "Estimation Result"), lty=2) + 
+  geom_line(data = PopDens_summary,
+            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_u, col = "Estimation Result"), lty=2) +
+  theme_minimal() + 
+  scale_colour_manual(
+    values = c(
+               "Variation Coefficient" = "red",
+               "Estimation" = "black"), name = "") +
+  theme(legend.position="bottom") +
+  xlab("cal BCE") +
+  
+  scale_y_continuous(
+    
+    # Features of the first axis
+    name = "Scaled values for Proxies,\n P/km² for Estimation",
+    
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~.*coeff, name="Variation Coefficient")
+  ) +
+
+  theme(
+    axis.title.y.right = element_text(color = "red"),
+    axis.text.y.right = element_text(color = "red"),
+     axis.line.y.right = element_line(color = "red"), 
+     axis.ticks.y.right = element_line(color = "red")
+  )
+
+
+popvar_plot
+```
+
+Also save as result image.
+
+```{r}
+ggsave(normalizePath(file.path(here(), "figures","popvar_plot.pdf"), mustWork = F),
+       plot = popvar_plot, width = 21, height = 29.7/2, units = "cm")
 ```
