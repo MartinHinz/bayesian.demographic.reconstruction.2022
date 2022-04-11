@@ -898,9 +898,11 @@ MCMCtrace(collector, params = "PopDens", priors = PopDens, pdf = F, ind = T, Rha
 gc(verbose=F)
 ```
 
-Finally, we can plot the result in comparison to the input data, superimposing them (scaled) on the estimation result in their original form rather than as difference data:
+Finally, we can plot the result in comparison to the input data, superimposing them (scaled) on the estimation result in their original form rather than as difference data. To do this, we first extract mean and HPDI from the posterior samples for all parameters:
 
 ```{r}
+
+all_proxies_orig <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
 
 # MCMCvis methods are rather memory intensive. We implement the summary from scratch
 all_chains <- as.matrix(collector)
@@ -921,9 +923,24 @@ for(this_column in colnames(all_chains)) {
 }
 
 gc(verbose=F)
+```
 
+Then we obtain the population density estimates from these, and save them for further use:
+
+```{r}
 PopDens_summary <- this_mcmc_summary[grep("^PopDens", params),]
+PopDens_summary$age <- rev(all_proxies_orig$age)
+write.csv(PopDens_summary,
+          file = normalizePath(
+            file.path(here(), "data","preprocessed_data", "popdens_summary.csv"
+                      ),
+            mustWork = F)
+          )
+```
 
+Finally, compile the plot:
+
+```{r}
 all_proxies_orig <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
 
 popdens_plot <- ggplot(all_proxies_orig) +
@@ -932,11 +949,11 @@ popdens_plot <- ggplot(all_proxies_orig) +
   geom_line(aes(x = 1950-age, y = scale(dendro), col="Dendro Dated Settlements"), alpha = 0.5) +
   geom_line(aes(x = 1950-age, y = scale(aoristic_sum), col="Aoristic Sum"), alpha = 0.5) +
   geom_line(data = PopDens_summary,
-            aes(x = rev(1950-all_proxies_orig$age), y=mean, col = "Estimation Result")) + 
+            aes(x = 1950-age, y=mean, col = "Estimation Result")) + 
   geom_line(data = PopDens_summary,
-            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_l, col = "Estimation Result"), lty=2) + 
+            aes(x = 1950-age, y=hpdi_l, col = "Estimation Result"), lty=2) + 
   geom_line(data = PopDens_summary,
-            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_u, col = "Estimation Result"), lty=2) +
+            aes(x = 1950-age, y=hpdi_u, col = "Estimation Result"), lty=2) +
   theme_minimal() + 
   scale_colour_manual(
     values = c("Openness" = "darkgreen",
@@ -957,9 +974,11 @@ ggsave(normalizePath(file.path(here(), "figures","popdens_estimation.pdf"), must
        plot = popdens_plot, width = 21, height = 29.7/2, units = "cm")
 ```
 
-And finally, the final estimate of the influence of the different proxies on the result:
+And than, the final estimate of the influence of the different proxies on the result:
 
 ```{r}
+gc(verbose = F)
+
 p_plot <- all_chains[,grep("^p\\[", params)] %>%
   as.data.frame %>%
   rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>%
@@ -975,10 +994,11 @@ Also save as result image.
 ggsave(normalizePath(file.path(here(), "figures","p_estimation.pdf"), mustWork = F),
        plot = p_plot, width = 21, height = 29.7/2, units = "cm")
 ```
-
 Also interesting is the variation coefficient from the estimation of the Population density:
 
 ```{r}
+gc(verbose = F)
+
 var_popdens <- data.frame(var_coeff = apply(all_chains[,2:100], 2, function(x) sd(x)/mean(x)),
                           age = rev(all_proxies_orig$age))
 

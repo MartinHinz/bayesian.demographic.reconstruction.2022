@@ -30,15 +30,15 @@ institute:
   - IAMFAMU: Institute of Archaeology and Museology, Faculty of Arts, Masaryk University
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::word_document2:
-    fig_caption: yes
-    reference_docx: "../templates/template.docx" # Insert path for the DOCX file
+  bookdown::pdf_document2:
+    toc: no
     pandoc_args:
     - --lua-filter=../templates/scholarly-metadata.lua
     - --lua-filter=../templates/author-info-blocks.lua
     - --lua-filter=../templates/pagebreak.lua
-  bookdown::pdf_document2:
-    toc: no
+  bookdown::word_document2:
+    fig_caption: yes
+    reference_docx: "../templates/template.docx" # Insert path for the DOCX file
     pandoc_args:
     - --lua-filter=../templates/scholarly-metadata.lua
     - --lua-filter=../templates/author-info-blocks.lua
@@ -48,11 +48,13 @@ csl: "../templates/journal-of-archaeological-science.csl" # Insert path for the 
 abstract: |
   In order to understand human-environment relationships in the past and the dynamics of socio-ecological systems, it is essential to have a robust estimate of population sizes. Size and density of population are crucial factors for the reconstruction of group sizes, the character and range of political institutions for social organization, the constraints and possibilities of economic practice, the number of people available for collective activities, for economic and social exchange systems, and the creation and maintenance of collective identities. And, of course, the human impact on the environment. Most estimates of population sizes currently work on limited spatial scales or use proxies that hardly allow for absolute numbers (e.g. sum calibration). The figures in the archaeological discourses on population density in general currently come from vague sources and are often decades old.
   In demography in general, the last decade has triggered an upswing in the application of Bayesian methods, so that a Bayesian demography has been announced. Bayesian demography is currently at the forefront of methodological developments in this area, but has reached such maturity that the United Nations has been using it since 2015 for population forecasts and projections. The Bayesian approach offers the possibility of combining heterogeneous data and at the same time qualifying them in terms of uncertainty and credibility. This is precisely where it becomes very interesting for archaeological data, since they are mostly inaccurate, biased, sparse, simplified and often based on simplistic assumptions.
-  In this contribution, issues and possibilities of the application of Bayesian demography in the field of archaeological (prehistoric) population size and density estimation will be discussed and the results of a pilot study will be presented, which should lead to a more comprehensive project for the reconstruction of demographic developments in prehistory on a large scale.
+  In this contribution, a Bayesian hierarchical model, based on a Poisson Regression and a state space approach is applied to the field of archaeological (prehistoric) population size and density estimation. This represents a pilot study for the reconstruction of demographic developments in prehistory based on data assimilation with an underlying process model and a number of different proxies, which are combined and result in a more reliable estimation than a single proxy could deliver.
 keywords: |
-  keyword 1; keyword 2; keyword 3
+  Bayesian demographic modelling; Multiproxy; Reconstruction of past settlement dynamics
 highlights: |
-  These are the highlights. 
+  - We provide a estimation based on the combination of different proxies.
+  - We estimate population development in terms of absolute settlement densities.
+  - We are developing a completely new method for the integration of heterogeneous information.
 ---
 
 <!-- This is the format for text comments that will be ignored during renderings. Do not put R code in these comments because it will not be ignored. -->
@@ -76,6 +78,7 @@ knitr::opts_chunk$set(
   dpi = 300
 )
 
+library(here)
 library(ggplot2)
 library(ggmap)
 library(sp)
@@ -114,8 +117,6 @@ Müller and Diachenko [@muller_tracing_2019] has compiled a list of currently us
 2.  The uncertainty of evidence is not adequately reflected. In most cases, individual curves are presented as estimates, but the size of the error bars for these estimates is almost never apparent.
 3.  Nature of the archaeological data is taken into account only insufficiently. What is meant here is that they take little account of the inherent uncertainties of the proxies themselves, for lack of an evaluative framework, and that transfer functions from the proxy to the actual size to be observed, i.e. population size or density, are hardly ever evaluated more intensively. In the best case, a critical appraisal of the informative value is provided, but a quantification of the relationship between, for example, a doubling of a proxy value and the change in population density does not take place and cannot take place for lack of a suitable framework or external data for calibration.
 
-$$Beispiele bringen? Bring some examples here...$$
-
 Archaeological data used to estimate population trends have the following characteristics:
 
 -   Limited: We have only incomplete data that can be used for these purposes, and they are usually very low in information value.
@@ -128,7 +129,7 @@ Archaeological data used to estimate population trends have the following charac
 
 In recent years, a new method has been established in the field of demographic estimations. Bayesian demographic forecasting has been designed to solve all these problems, which also exist for demographic estimations using recent data. In their book on the subject, Bryant and Zhang [@bryant2018] state that Bayesian data modeling can be used to deal with exactly those problems that also affect archaeological data. Especially for limited, unreliable and noisy data, Bayesian approaches are optimally suited. Various even contradictory data can be brought into a common framework and support each other. Similarly, unlikelihood and uncertainty of a model approach can be quantified. This is well-accepted in archaeological applications through the Bayesian calibration and modelling of stratigraphic conditions and radiometric data. Furthermore, spatially and temporally missing data can be taken into account: Where these data are missing, the uncertainty automatically increases, but this does not prevent general modelling and estimation. Finally, hierarchically structured model suites, in which sub-models are created for the utilisation of individual proxies, can also be used to estimate transfer functions between individual proxies and the value to be modelled, thanks to the interaction of a large number of data sources and evidence.
 
-Bayesian modelling techniques have also been used recently as a tool for hypothesis testing of demographic trends or underlying models based on 14C data.Most notably are the recently published papers by Crema et al. However, the approach taken by Crema et al. is clearly different from the one presented in this paper.In these analyses, deductive models are generated and their plausibility is tested on the basis of 14C data only. This is a clear step in the direction of a model-based, and thus scientific, analysis.However, on the one hand, the use of only one proxy, and its use exclusively for testing hypotheses developed independently, creates problems comparable to those of inductive approaches used so far: due to the lack of a combination with other indicators, one is limited to the problems and conditions of sum calibration as a tool. Furthermore, this approach loses significant potential information that would be gained by a direct evaluation of the time series.Thus, the credibility of a model can only be checked as a whole, without the dynamic developments that can arise in the course of demographic processes being represented. Therefore, we would like to better exploit the capabilities of Bayesian hierarchical models through a combination of inductive data analysis and model-passed data integration of different proxies.
+Bayesian modelling techniques have also been used recently as a tool for hypothesis testing of demographic trends or underlying models based on ^14^C data.Most notably are the recently published papers by Crema and Shoda ([@crema2021a]). However, the approach taken there is clearly different from the one presented in this paper.In these analyses, deductive models are generated and their plausibility is tested on the basis of ^14^C data only. This is a clear step in the direction of a model-based, and thus scientific, analysis. However, on the one hand, the use of only one proxy, and its use exclusively for testing hypotheses developed independently, creates problems comparable to those of inductive approaches used so far: due to the lack of a combination with other indicators, one is limited to the problems and conditions of sum calibration as a tool. Furthermore, this approach loses significant potential information that would be gained by a direct evaluation of the time series.Thus, the credibility of a model can only be checked as a whole, without the dynamic developments that can arise in the course of demographic processes being represented. Therefore, we would like to better exploit the capabilities of Bayesian hierarchical models through a combination of inductive data analysis and model-passed data integration of different proxies.
 
 This contribution now represents an attempt to make these techniques usable for archaeological reconstructions. In addition to a presentation of the basics and possible procedures, we want to show in the following, in a reproducible and practical form using a case study, how Bayesian methods can also make a decisive contribution to a better assessment of population development. These assessments are crucial for the reconstruction of the human past, even in for periods for which we only have very patchy, noisy and unreliable data.
 
@@ -387,9 +388,63 @@ Furthermore, it may be relevant to look at the temporal distribution of the vari
 
 # Discussion
 
-# Conclusion
+The ambition in the development of the model was originally to base it on a state-space representation of the demographic process itself, and then to integrate the existing proxies by means of an observation model to inform this process. In the course of developing the model, however, we had to realise that the existing data or the data used in the modelling process for the Swiss Plateau alone were not sufficient to adequately determine this process or to adequately fix the degrees of freedom resulting from the process and the transfer model. Therefore, in this implementation we have turned to the Poisson regression approach. In this version, the model represents the best possible combination of the indicators used to describe the development of the number of sites based on them.
+
+In its present form, the reconstructed development already shows interesting aspects regarding the underlying proxies. Starting with the result of the sum calibration, which is currently the most frequently used indicator when attempting to reconstruct (relative) population changes. Its strong fluctuations are dampened by the connection of the other proxies, which is especially true for the first fluctuation around or shortly after 4000 BCE. The increase in the archaeological record with the process of Neolithisation is still clearly visible, but the curve of the overall estimate after the initial increase is much flatter than the sum calibration alone would suggest. The period between 3950 and 3700 in particular forms a noticeable plateau in the calibration curve, and this may lead to an overestimation of the ^14^C evidence. However, the effect of the calibration curve on the results of a cumulative calibration cannot yet be considered unambiguous. A second maximum, after 3000 BCE, is supported by the other proxies, and is consequently also much more clearly reflected in the overall estimate. Here, too, there is a smaller, albeit shorter plateau in the calibration curve, which is, however, much less pronounced than, for example, the one shortly before between 3350 and 3100. The rise towards the Middle and Late Bronze Age also receives support above all from the Aorist Sum, and therefore remains preserved in the combination of indicators. In this period, the calibration curve does not show any very clear, suspicious patterns.
+
+Overall, the model trusts the cumulative calibration with an average of about 20% significantly less than the openness indicator with 60%. After the initial increase, which can easily be linked to the spread of agricultural production, the latter tends to fluctuate less and thus has a dampening effect on the overall estimate. Nevertheless, by all appearances, the general trends in the cumulative calibration are quite well reflected in the land opening, even if such eyeballing should be interpreted with caution. We would suggest that the changes within the Neolithic and Bronze Age are rather gradual compared to the much more severe qualitative shifts to a productive economy as well as to the later developments outside our window of observation, which are suggestive of a much more large-scale reshaping of the landscape. The model itself is designed rather conservatively by the limit of maximum growth, which is estimated within the model but influences it by its very presence. Therefore, this proxy corresponds better and more homogeneously to a smooth increase in the number of settlements than do the strong fluctuations in the ^14^C data set.
+
+The aoristic sum remains relatively even over large areas of the observation window. It is not until the Middle and Late Bronze Age that their values rise significantly, which is also noticeable in the overall estimate by a clear increase. Overall, it remains to be seen to what extent a modelling of the taphonomic loss [@surovell2009] could be integrated. We have refrained from doing so in this first model, as this would have introduced further degrees of freedom - but we are aware that with a broader database this would be an interesting possibility, and that it would itself be a variable to be estimated, e.g. in connection with proxies that are not influenced by it (openness indicators, but also data from the demography of burial collectives). This would make it possible to estimate a value from original archaeological material independently of variables that have little to do with archaeological data, such as volcanic eruptions.
+
+The number of simultaneously existing lakeshore settlements is a very limited temporal and spatial estimator, but extremely reliable. Its limitations are reflected in the low overall confidence of the model, since its value is 0 over long stretches, while other indicators suggest clearly different patterns. However, where it has information potential, such as around and shortly after 3800 BCE, 3200 BCE or especially around 2750 BCE, its fluctuations have a noticeable influence on the overall estimate. The peak around 1600 BCE also leaves a noticeable impact. This highlights another potential of our approach: where a proxy has little structure and thus little significance, or where its trends cannot be linked to other indicators, it consequently has little influence. For periods in which it can provide information, however, this will also feed into the overall model, despite a low overall confidence in the estimator.
+
+In order to review the reconstruction against the background of established archaeological knowledge and narratives, we consider it useful to parallelise the archaeological phase boundaries with the changes in the estimate. It should be noted, however, that the estimate is not completely independent of the archaeological phases: due to the aoristic sum, which is itself strongly determined by this phase division, corresponding boundaries also influence the structure of the reconstruction. Nevertheless, it helps to check whether the estimate is in strong contradiction to the generally accepted picture or whether it is able to make a credible prediction within this context.
+
+```{r popestwithphases}
+PopDens_summary <- read.csv(
+  file = normalizePath(
+            file.path(here(), "data","preprocessed_data", "popdens_summary.csv"
+                      )
+            )
+  )
+
+chronology <- read.csv(
+  file = normalizePath(
+            file.path(here(), "data","raw_data", "chrono_rough.csv"
+                      )
+            )
+  )
+chronology <- chronology[order(chronology$dat_begin),]
+chronology$label <- factor(chronology$label, levels = chronology$label)
+
+ggplot(PopDens_summary) +
+  geom_line(aes(x = 1950-age, y = mean)) + 
+  geom_line(aes(x = 1950-age, y = hpdi_l), lty=2) + 
+  geom_line(aes(x = 1950-age, y = hpdi_u), lty=2) + 
+    theme_minimal() + 
+ylab("Scaled values for Proxies,\n P/km² for Estimation") +
+  xlab("cal BCE") +
+  geom_rect(data=chronology[-1,],aes(xmin=dat_begin,ymin=0,xmax=dat_end,ymax=Inf,fill=label),
+                    alpha=0.5,inherit.aes=FALSE) +
+    scale_fill_brewer(palette="Pastel1", guide = "none") +
+  geom_text(data=chronology[-1,],
+            aes(x=dat_end - 100,y = 0.25,label=label),
+            alpha=0.25,inherit.aes=FALSE, angle = 90, hjust = 0)
+```
+
+Figure \@ref(fig:popestwithphases) underlays the estimated development with the rough archaeological phases for the Swiss Plateau. The Older and Middle Neolithic phases are in fact hardly documented with known sites in Switzerland. Here we must assume a basically low level of settlement, probably mainly by hunter-gatherer groups. Isolated Neolithic sites of the LBK and later groups are known in the periphery of Switzerland, but they play a subordinate role. The Neolithic really began here in the so-called Upper Neolithic, connected with the cultural phenomena of Egolszwil and Cortaillod respectively Pfyn, as well as with the first lake shore settlements. In this period, we also see a clear increase in the estimated population in the model. In the transition to the Late Neolithic we know from the lakeshore settlements the so-called Horgen Gap. This is also visible as a slight decrease in the model. In another study [@heitz2021] we could show that this is in fact probably not a decline in population but rather a shift in settlement strategy. In the Late Neolithic, associated with the Horgen pottery, we then see a clear increase in the intensity of settlement, which reaches its peak and its break-off at the transition to the Corded Ware and thus to the Final Neolithic. In the second half of the Early Bronze Age, from which we again know lakeshore settlements, there is again a clear increase in population size according to the model, which continues until the Late Bronze Age. All in all, the estimate of the model corresponds to our expectations, although we must be aware that our expectations are not ground truth. Nevertheless, it can be said that the predictions of the model can be well integrated into the known narratives and make them more precise or provide them with a higher resolution, thus gaining credibility for the model predictions.
+
+# Conclusion and Outlook
+
+With this model and its predictions, we believe we can demonstrate how it is possible to achieve a true multiproxy analysis of prehistoric demographic processes. Previous attempts in this regard have so far only achieved a juxtaposition of different indicators, without the possibility of truly linking them or assessing the confidence in the individual indicators. Also, in previous approaches it was not possible to specify a confidence interval for the estimates. Within a Bayesian framework with an observational model based on Poisson regression, all these demands can be met. We thus believe we can provide a better basis than before for estimating population processes and changes in the number of settlements.
+
+The currently presented model is only the first step towards a more sophisticated approach. So far, we have trusted the individual indicators in their aggregation without modelling them with a measurement error, which they undoubtedly inherit. Moreover, our estimates are based on a limited number of indicators, almost all of which are subject to preservation conditions except for the openness indicator. Consequently, a transformation of the results into the range of absolute numbers for population density can only be achieved by means of predefined parameters for upper limit of population growth, settlement size and the initial value of the reconstruction. In the future application and refinement of the model, this must be overcome. For this purpose, further proxies independent of the immediate temporally changing conditions of the archaeological record have to be integrated. These can be data on settlement sizes, parameters for economic-ecological carrying capacity, demographic data from burial groups as well as palaeogenetic data on population sizes. Other possible indicators can still be identified.
+
+These data are available to varying degrees in different regions. In the Swiss Plateau, for example, there are too few data on human remains over large areas of prehistory to be able to integrate them meaningfully into a model. By means of large-scale modelling, however, it would be possible to supplement gaps in the data of individual regions with regions in which these data are available by means of regionalisation and partial transfer of information (partial pooling). Such an extension would be the next logical step in the improvement of the model, to which we hope to be able to contribute a further study in the near future.
 
 # Acknowledgements
+
+Large parts of the data collection were conducted as part of the project 'Beyond lake settlements' in the doctoral thesis of Julian Laabs, funded by the SNF (project number 152862, PI Albert Hafner). Further data collection was done as part of the XRONOS project, also funded by the SNSF (project number 198153, PI Martin Hinz). The development of the openness index took place within the framework of the project Time and Temporality in Archaeology (project number 194326, PI Caroline Heitz) and was inspired by the cooperation within the project QuantHum (project 169371, PI Marco Conedera), both also funded by the SNSF. We also thank the Institute of Archaeological Sciences of the University of Bern for its support and faith in the outcome of our modelling project. Finally, we thank (already) the unknown reviewers for their helpful comments, which will certainly improve this manuscript significantly.
 
 <!-- The following line inserts a page break  -->
 
