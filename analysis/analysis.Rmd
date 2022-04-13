@@ -16,7 +16,7 @@ library(magick)
 
 ## Preface
 
-Running through the analysis can take a long time, especially the Bayesian model. We point out the long runtimes again at the appropriate place.
+Running through the analysis can take a long time, especially the Bayesian model. We point out the long runtimes again at the appropriate place. Also, you might need at least 64 GB of RAM to avoid crashes due to missing memory.
 
 ## Loading the necessary libraries
 
@@ -944,10 +944,10 @@ Finally, compile the plot:
 all_proxies_orig <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
 
 popdens_plot <- ggplot(all_proxies_orig) +
-  geom_line(aes(x = 1950-age, y = scale(openness), col="Openness Indicator"), alpha = 0.5) +
-  geom_line(aes(x = 1950-age, y = scale(sumcal), col="Sum Calibration"), alpha = 0.5) +
-  geom_line(aes(x = 1950-age, y = scale(dendro), col="Dendro Dated Settlements"), alpha = 0.5) +
-  geom_line(aes(x = 1950-age, y = scale(aoristic_sum), col="Aoristic Sum"), alpha = 0.5) +
+  geom_line(aes(x = 1950-age, y = scale(openness), col="Openness Indicator")) +
+  geom_line(aes(x = 1950-age, y = scale(sumcal), col="Sum Calibration")) +
+  geom_line(aes(x = 1950-age, y = scale(dendro), col="Dendro Dated Settlements")) +
+  geom_line(aes(x = 1950-age, y = scale(aoristic_sum), col="Aoristic Sum")) +
   geom_line(data = PopDens_summary,
             aes(x = 1950-age, y=mean, col = "Estimation Result")) + 
   geom_line(data = PopDens_summary,
@@ -984,7 +984,7 @@ p_plot <- all_chains[,grep("^p\\[", params)] %>%
   rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>%
   pivot_longer(everything()) %>%
   ggplot(aes(x = value, y = name)) +
-  stat_halfeye() + xlab("Percentage Influence") + ylab("Proxy")
+  stat_halfeye() + xlab("Percentage Influence") + ylab("Proxy") + theme_minimal()
 p_plot
 ```
 

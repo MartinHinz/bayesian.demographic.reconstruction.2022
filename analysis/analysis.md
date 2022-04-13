@@ -12,7 +12,7 @@ bibliography: references.bib
 
 ## Preface
 
-Running through the analysis can take a long time, especially the Bayesian model. We point out the long runtimes again at the appropriate place.
+Running through the analysis can take a long time, especially the Bayesian model. We point out the long runtimes again at the appropriate place. Also, you might need at least 64 GB of RAM to avoid crashes due to missing memory.
 
 ## Loading the necessary libraries
 
@@ -1229,7 +1229,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 1.095509 mins
+## Time difference of 58.54885 secs
 ```
 
 At the end of the 1st run, the model is instantiated in the individual cluster partitions, possibly already converged. But we now check the convergence in continued runs.
@@ -1273,7 +1273,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 42.86835 secs
+## Time difference of 34.66532 secs
 ```
 
 Once the model has converged, we can look at the result of estimating the population density based on the number of settlements. For this we extract the mean and 95% highest posterior density interval:
@@ -1390,7 +1390,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 0.01228905 secs
+## Time difference of 0.0131855 secs
 ```
 
 When the model has finished running, we should stop the clusters:
@@ -1472,8 +1472,8 @@ gc(verbose=F)
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5257363  280.8    8872610   473.9    8872610   473.9
-## Vcells 849687514 6482.7 3618455328 27606.7 5653835632 43135.4
+## Ncells   5257372  280.8    8872634   473.9    8872634   473.9
+## Vcells 849687543 6482.7 4523069218 34508.3 5653835661 43135.4
 ```
 
 Finally, we can plot the result in comparison to the input data, superimposing them (scaled) on the estimation result in their original form rather than as difference data. To do this, we first extract mean and HPDI from the posterior samples for all parameters:
@@ -1492,8 +1492,8 @@ gc(verbose=F)
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5106053  272.7    8872610   473.9    8872610   473.9
-## Vcells 844633605 6444.1 2894764263 22085.3 5653835632 43135.4
+## Ncells   5106062  272.7    8872634   473.9    8872634   473.9
+## Vcells 844633634 6444.1 3618455375 27606.7 5653835661 43135.4
 ```
 
 ```r
@@ -1513,8 +1513,8 @@ gc(verbose=F)
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5106124  272.7    8872610   473.9    8872610   473.9
-## Vcells 844634133 6444.1 2315811411 17668.3 5653835632 43135.4
+## Ncells   5106133  272.7    8872634   473.9    8872634   473.9
+## Vcells 844634162 6444.1 2894764300 22085.3 5653835661 43135.4
 ```
 
 Then we obtain the population density estimates from these, and save them for further use:
@@ -1538,10 +1538,10 @@ Finally, compile the plot:
 all_proxies_orig <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
 
 popdens_plot <- ggplot(all_proxies_orig) +
-  geom_line(aes(x = 1950-age, y = scale(openness), col="Openness Indicator"), alpha = 0.5) +
-  geom_line(aes(x = 1950-age, y = scale(sumcal), col="Sum Calibration"), alpha = 0.5) +
-  geom_line(aes(x = 1950-age, y = scale(dendro), col="Dendro Dated Settlements"), alpha = 0.5) +
-  geom_line(aes(x = 1950-age, y = scale(aoristic_sum), col="Aoristic Sum"), alpha = 0.5) +
+  geom_line(aes(x = 1950-age, y = scale(openness), col="Openness Indicator")) +
+  geom_line(aes(x = 1950-age, y = scale(sumcal), col="Sum Calibration")) +
+  geom_line(aes(x = 1950-age, y = scale(dendro), col="Dendro Dated Settlements")) +
+  geom_line(aes(x = 1950-age, y = scale(aoristic_sum), col="Aoristic Sum")) +
   geom_line(data = PopDens_summary,
             aes(x = 1950-age, y=mean, col = "Estimation Result")) + 
   geom_line(data = PopDens_summary,
@@ -1580,8 +1580,8 @@ gc(verbose = F)
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5114545  273.2    8872610   473.9    8872610   473.9
-## Vcells 844652377 6444.2 2315811411 17668.3 5653835632 43135.4
+## Ncells   5114554  273.2    8872634   473.9    8872634   473.9
+## Vcells 844652416 6444.2 2315811440 17668.3 5653835661 43135.4
 ```
 
 ```r
@@ -1590,7 +1590,7 @@ p_plot <- all_chains[,grep("^p\\[", params)] %>%
   rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>%
   pivot_longer(everything()) %>%
   ggplot(aes(x = value, y = name)) +
-  stat_halfeye() + xlab("Percentage Influence") + ylab("Proxy")
+  stat_halfeye() + xlab("Percentage Influence") + ylab("Proxy") + theme_minimal()
 p_plot
 ```
 
@@ -1612,8 +1612,8 @@ gc(verbose = F)
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5115150  273.2    8872610   473.9    8872610   473.9
-## Vcells 902255184 6883.7 2315811411 17668.3 5653835632 43135.4
+## Ncells   5115431  273.2    8872634   473.9    8872634   473.9
+## Vcells 902256279 6883.7 2315811440 17668.3 5653835661 43135.4
 ```
 
 ```r

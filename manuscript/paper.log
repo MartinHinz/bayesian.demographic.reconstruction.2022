@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/Arch Linux) (preloaded format=pdflatex 2022.2.16)  11 APR 2022 16:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/Arch Linux) (preloaded format=pdflatex 2022.2.16)  13 APR 2022 18:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -560,117 +560,117 @@ LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
 (/usr/share/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [2] [3] [4]
-<../figures/gammadist-1.pdf, id=45, 436.63126pt x 283.0575pt>
-File: ../figures/gammadist-1.pdf Graphic file (type pdf)
-<use ../figures/gammadist-1.pdf>
-Package pdftex.def Info: ../figures/gammadist-1.pdf  used on input line 243.
-(pdftex.def)             Requested size: 436.63019pt x 283.0568pt.
-[5] [6 <../figures/gammadist-1.pdf>]
-<../figures/c14map-1.pdf, id=76, 467.7475pt x 318.18875pt>
+<../figures/c14map-1.pdf, id=45, 467.7475pt x 318.18875pt>
 File: ../figures/c14map-1.pdf Graphic file (type pdf)
 <use ../figures/c14map-1.pdf>
-Package pdftex.def Info: ../figures/c14map-1.pdf  used on input line 295.
+Package pdftex.def Info: ../figures/c14map-1.pdf  used on input line 241.
 (pdftex.def)             Requested size: 467.74634pt x 318.18796pt.
-<../figures/compdendroc14-1.pdf, id=77, 460.72125pt x 307.1475pt>
+<../figures/compdendroc14-1.pdf, id=46, 460.72125pt x 307.1475pt>
 File: ../figures/compdendroc14-1.pdf Graphic file (type pdf)
 <use ../figures/compdendroc14-1.pdf>
-Package pdftex.def Info: ../figures/compdendroc14-1.pdf  used on input line 301
+Package pdftex.def Info: ../figures/compdendroc14-1.pdf  used on input line 247
 .
 (pdftex.def)             Requested size: 460.72012pt x 307.14674pt.
-<../figures/aoristmap-1.pdf, id=79, 467.7475pt x 318.18875pt>
+[5] [6 <../figures/c14map-1.pdf>] [7 <../figures/compdendroc14-1.pdf>]
+<../figures/aoristmap-1.pdf, id=89, 467.7475pt x 318.18875pt>
 File: ../figures/aoristmap-1.pdf Graphic file (type pdf)
 <use ../figures/aoristmap-1.pdf>
-Package pdftex.def Info: ../figures/aoristmap-1.pdf  used on input line 309.
+Package pdftex.def Info: ../figures/aoristmap-1.pdf  used on input line 255.
 (pdftex.def)             Requested size: 467.74634pt x 318.18796pt.
-<../figures/aoristcurve-1.pdf, id=81, 460.72125pt x 307.1475pt>
+<../figures/aoristcurve-1.pdf, id=91, 460.72125pt x 307.1475pt>
 File: ../figures/aoristcurve-1.pdf Graphic file (type pdf)
 <use ../figures/aoristcurve-1.pdf>
-Package pdftex.def Info: ../figures/aoristcurve-1.pdf  used on input line 317.
+Package pdftex.def Info: ../figures/aoristcurve-1.pdf  used on input line 263.
 (pdftex.def)             Requested size: 460.72012pt x 307.14674pt.
-[7] [8 <../figures/c14map-1.pdf>] [9 <../figures/compdendroc14-1.pdf>] [10 <../
-figures/aoristmap-1.pdf>]
-<../figures/pollensites-1.pdf, id=138, 467.7475pt x 318.18875pt>
+<../figures/pollensites-1.pdf, id=93, 467.7475pt x 318.18875pt>
 File: ../figures/pollensites-1.pdf Graphic file (type pdf)
 <use ../figures/pollensites-1.pdf>
-Package pdftex.def Info: ../figures/pollensites-1.pdf  used on input line 325.
+Package pdftex.def Info: ../figures/pollensites-1.pdf  used on input line 271.
 (pdftex.def)             Requested size: 467.74634pt x 318.18796pt.
+[8 <../figures/aoristmap-1.pdf>] [9 <../figures/aoristcurve-1.pdf>] [10 <../fig
+ures/pollensites-1.pdf>]
 </home/martin/r_projekte/bayesian.demographic.reconstruction.2022/analysis/anal
-ysis_files/figure-html/pollenproxy-1.png, id=140, 505.89pt x 361.35pt>
+ysis_files/figure-html/pollenproxy-1.png, id=145, 505.89pt x 361.35pt>
 File: /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/analysis
 /analysis_files/figure-html/pollenproxy-1.png Graphic file (type png)
 <use /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/analysis/
 analysis_files/figure-html/pollenproxy-1.png>
 Package pdftex.def Info: /home/martin/r_projekte/bayesian.demographic.reconstru
 ction.2022/analysis/analysis_files/figure-html/pollenproxy-1.png  used on input
- line 332.
+ line 278.
 (pdftex.def)             Requested size: 161.88809pt x 115.63435pt.
-[11 <../figures/aoristcurve-1.pdf>] [12 <../figures/pollensites-1.pdf> </home/m
-artin/r_projekte/bayesian.demographic.reconstruction.2022/analysis/analysis_fil
-es/figure-html/pollenproxy-1.png (PNG copy)>] [13]
+[11 </home/martin/r_projekte/bayesian.demographic.reconstruction.2022/analysis/
+analysis_files/figure-html/pollenproxy-1.png (PNG copy)>] [12]
+<../figures/gammadist-1.pdf, id=166, 436.63126pt x 283.0575pt>
+File: ../figures/gammadist-1.pdf Graphic file (type pdf)
+<use ../figures/gammadist-1.pdf>
+Package pdftex.def Info: ../figures/gammadist-1.pdf  used on input line 333.
+(pdftex.def)             Requested size: 436.63019pt x 283.0568pt.
+[13 <../figures/gammadist-1.pdf>]
 <../figures/expertestimations-1.pdf, id=182, 453.695pt x 313.17pt>
 File: ../figures/expertestimations-1.pdf Graphic file (type pdf)
 <use ../figures/expertestimations-1.pdf>
 Package pdftex.def Info: ../figures/expertestimations-1.pdf  used on input line
- 380.
+ 382.
 (pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
-[14 <../figures/expertestimations-1.pdf>]
-</home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/p_est
-imation.pdf, id=199, 597.23125pt x 421.575pt>
-File: /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/
-p_estimation.pdf Graphic file (type pdf)
-<use /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/p
-_estimation.pdf>
-Package pdftex.def Info: /home/martin/r_projekte/bayesian.demographic.reconstru
-ction.2022/figures/p_estimation.pdf  used on input line 408.
-(pdftex.def)             Requested size: 469.75708pt x 331.59323pt.
+[14] [15 <../figures/expertestimations-1.pdf>]
 </home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/popde
-ns_estimation.pdf, id=201, 597.23125pt x 421.575pt>
+ns_estimation.pdf, id=202, 597.23125pt x 421.575pt>
 File: /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/
 popdens_estimation.pdf Graphic file (type pdf)
 <use /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/p
 opdens_estimation.pdf>
 Package pdftex.def Info: /home/martin/r_projekte/bayesian.demographic.reconstru
-ction.2022/figures/popdens_estimation.pdf  used on input line 418.
+ction.2022/figures/popdens_estimation.pdf  used on input line 408.
 (pdftex.def)             Requested size: 469.75708pt x 331.59323pt.
 </home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/popva
-r_plot.pdf, id=203, 597.23125pt x 421.575pt>
+r_plot.pdf, id=204, 597.23125pt x 421.575pt>
 File: /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/
 popvar_plot.pdf Graphic file (type pdf)
 <use /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/p
 opvar_plot.pdf>
 Package pdftex.def Info: /home/martin/r_projekte/bayesian.demographic.reconstru
-ction.2022/figures/popvar_plot.pdf  used on input line 426.
+ction.2022/figures/popvar_plot.pdf  used on input line 416.
 (pdftex.def)             Requested size: 469.75708pt x 331.59323pt.
-[15] [16 </home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figu
-res/p_estimation.pdf>] [17 </home/martin/r_projekte/bayesian.demographic.recons
-truction.2022/figures/popdens_estimation.pdf>] [18 </home/martin/r_projekte/bay
-esian.demographic.reconstruction.2022/figures/popvar_plot.pdf>] [19]
-<../figures/popestwithphases-1.pdf, id=254, 459.7175pt x 313.17pt>
+</home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/p_est
+imation.pdf, id=206, 597.23125pt x 421.575pt>
+File: /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/
+p_estimation.pdf Graphic file (type pdf)
+<use /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/p
+_estimation.pdf>
+Package pdftex.def Info: /home/martin/r_projekte/bayesian.demographic.reconstru
+ction.2022/figures/p_estimation.pdf  used on input line 426.
+(pdftex.def)             Requested size: 469.75708pt x 331.59323pt.
+[16] [17 </home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figu
+res/popdens_estimation.pdf>] [18 </home/martin/r_projekte/bayesian.demographic.
+reconstruction.2022/figures/popvar_plot.pdf>] [19 </home/martin/r_projekte/baye
+sian.demographic.reconstruction.2022/figures/p_estimation.pdf>] [20]
+<../figures/popestwithphases-1.pdf, id=255, 459.7175pt x 313.17pt>
 File: ../figures/popestwithphases-1.pdf Graphic file (type pdf)
 <use ../figures/popestwithphases-1.pdf>
 Package pdftex.def Info: ../figures/popestwithphases-1.pdf  used on input line 
 447.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 
-LaTeX Warning: Reference `fig:popestwithphases' on page 20 undefined on input l
+LaTeX Warning: Reference `fig:popestwithphases' on page 21 undefined on input l
 ine 449.
 
-[20 <../figures/popestwithphases-1.pdf>] [21] [22]
+[21 <../figures/popestwithphases-1.pdf>] [22] [23]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 5
-41.
+43.
 (/usr/share/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [23] [24] (./paper.aux)
+) [24] [25] (./paper.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 14002 strings out of 478353
- 222815 string characters out of 5854635
- 566489 words of memory out of 5000000
+ 14007 strings out of 478353
+ 222877 string characters out of 5854635
+ 566465 words of memory out of 5000000
  31623 multiletter control sequences out of 15000+600000
- 471569 words of font info for 158 fonts, out of 8000000 for 9000
+ 471699 words of font info for 160 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  74i,10n,77p,1917b,490s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf-dist/fo
@@ -689,10 +689,10 @@ exmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf-dist/fonts/type1/pub
 lic/lm/lmr9.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/s
 hare/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf-dist/fonts/ty
 pe1/public/lm/lmtt10.pfb>
-Output written on paper.pdf (24 pages, 2121060 bytes).
+Output written on paper.pdf (25 pages, 2123335 bytes).
 PDF statistics:
- 470 PDF objects out of 1000 (max. 8388607)
- 371 compressed objects within 4 object streams
- 87 named destinations out of 1000 (max. 500000)
+ 472 PDF objects out of 1000 (max. 8388607)
+ 372 compressed objects within 4 object streams
+ 88 named destinations out of 1000 (max. 500000)
  39077 words of extra memory for PDF output out of 42996 (max. 10000000)
 
