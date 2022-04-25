@@ -48,7 +48,7 @@ csl: "../templates/journal-of-archaeological-science.csl" # Insert path for the 
 abstract: |
   In demography in general, the last decade has triggered an upswing in the application of Bayesian methods, so that a Bayesian demography has been announced. Bayesian demography is currently at the forefront of methodological developments in this area, but has reached such maturity that the United Nations has been using it since 2015 for population forecasts and projections. The Bayesian approach offers the possibility of combining heterogeneous data and at the same time qualifying them in terms of uncertainty and credibility. This is precisely where it becomes very interesting for archaeological data, since they are mostly inaccurate, biased, sparse, simplified and often based on simplistic assumptions.
   In this contribution, a Bayesian hierarchical model, based on a Poisson Regression and a state space approach is applied to the field of archaeological (prehistoric) population size and density estimation. This represents a pilot study for the reconstruction of demographic developments in prehistory based on data assimilation with an underlying process model and a number of different proxies, which are combined and result in a more reliable estimation than a single proxy could deliver.
-  In order to understand human-environment relationships in the past and the dynamics of socio-ecological systems, it is essential to have a robust estimate of population sizes<!-- JR: Could reference Shennan 2000 and/or Kintigh 2014 here?-->. Size and density of population are crucial factors for the reconstruction of group sizes, the character and range of political institutions for social organization, the constraints and possibilities of economic practice, the number of people available for collective activities, for economic and social exchange systems, and the creation and maintenance of collective identities. And, of course, the human impact on the environment. Most estimates of population sizes currently work on limited spatial scales or use proxies that hardly allow for absolute numbers (e.g. sum calibration). The figures in the archaeological discourses on population density in general currently come from vague sources and are often decades old.
+  In order to understand human-environment relationships in the past and the dynamics of socio-ecological systems, it is essential to have a robust estimate of population sizes<!-- JR: Could reference Shennan 2000 and/or Kintigh 2014 here? MH: I would not like to have any citation in the abstract. What do you think?-->. Size and density of population are crucial factors for the reconstruction of group sizes, the character and range of political institutions for social organization, the constraints and possibilities of economic practice, the number of people available for collective activities, for economic and social exchange systems, and the creation and maintenance of collective identities. And, of course, the human impact on the environment. Most estimates of population sizes currently work on limited spatial scales or use proxies that hardly allow for absolute numbers (e.g. sum calibration). The figures in the archaeological discourses on population density in general currently come from vague sources and are often decades old.
 keywords: |
   Bayesian demographic modelling; Multiproxy; Reconstruction of past settlement dynamics
 highlights: |
@@ -57,15 +57,9 @@ highlights: |
   - We are developing a completely new method for the integration of heterogeneous information.
 ---
 
-<!-- This is the format for text comments that will be ignored during renderings. Do not put R code in these comments because it will not be ignored. -->
-
-<!-- With the following code you can access and display values from the yml header above. -->
-
 Keywords: `r rmarkdown::metadata$keywords`
 
 Highlights: `r rmarkdown::metadata$highlights`
-
-<!-- The following code chunk defines some general settings how code chunks should behave. -->
 
 ```{r setup, echo = FALSE, message = FALSE, warning=FALSE}
 knitr::opts_chunk$set(
@@ -114,13 +108,11 @@ europe_overview <- get_stamenmap( bbox = europe, maptype = "toner-background", c
 europe_overview_map <- ggmap(europe_overview, darken = c(0.6, "white"))+ coord_sf(default_crs = st_crs(4326))
 ```
 
-<!-- The actual document text starts here: -->
-
 # Introduction
 
-The study of population size and population density as important demographic factors has a long history in archaeology. Although questions of population extent and distribution have been dominant fields since the beginning of archaeological research, the lack of access to this information, data on it, or methodological tools for the use of proxies has long made the statements made on this topic for prehistoric times vague and superficial [@hassan_demographic_1981], and they were often based on uncritical transfer of ethnographic parallels.
+## Prehistoric demography as object of research
 
-<!-- JR: Might the following four paragraphs fit better in a background section ("Prehistoric demography")? -->
+The study of population size and population density as important demographic factors has a long history in archaeology. Although questions of population extent and distribution have been dominant fields since the beginning of archaeological research, the lack of access to this information, data on it, or methodological tools for the use of proxies has long made the statements made on this topic for prehistoric times vague and superficial [@hassan_demographic_1981], and they were often based on uncritical transfer of ethnographic parallels.
 
 Gordon Childe [-@childe_man_1936] was one of the first to stress the importance of estimating the density and characteristics of prehistoric populations and sought to examine the role of human populations in the course of cultural evolution [@hassan_demographic_1981].
 
@@ -129,6 +121,8 @@ Attempts to estimate the size and density of prehistoric populations from archae
 At the end of the 1960s, however, with the emergence of the processual archaeology, such investigations became increasingly popular. It was the rise of the ecological paradigm that gave even greater weight to population studies, especially those dealing with population ecology [@hassan_demographic_1981].
 
 After research interest turned increasingly to other aspects with the emergence of post-process trends, a strong boom in the study of population sizes can be observed especially since the 2010s [or even earlier, @shennan_population_2000]. This is probably not at least due to the new shift towards the study of human-environment relationships, for which an assessment of the size of human populations is indispensable. This is true especially for an evaluation of the human impact on the natural environment. Another reason is certainly the emergence of the 'dates as data' approach [@rick_dates_1987], which only really took off with the publications around the London UCL group. Moreover, Kintigh et al. [-@kintigh_grand_2014] listed human influence, dominance and population size and growth as one of the key elements where methodological improvements are necessary in the article on the Grand Challenges for archaeology, in the area of 'human-environment interactions'.
+
+## Issues associated with existing approaches
 
 Müller and Diachenko [@muller_tracing_2019] has compiled a list of currently used approaches and proxies for estimating prehistoric population sizes. These can be roughly divided into ethnographic parallels, ecologic-economic deductive estimates, and the counting and spatial interpolation of archaeological features (settlements, houses, individual find types). From this short literature review three basic problems are common to all these approaches and the studies based on them:
 
@@ -146,9 +140,11 @@ Archaeological data used to estimate population trends have the following charac
 -   Indirect: It is actually always proxy data that are collected as substitute values for the information that is actually needed (i.e. population density or size). The transfer functions that link the collected data with the data to be obtained are unknown and are at best established by observing the (also ethnological) presence. However, since living conditions, circumstances and economic parameters differ greatly between the present time and prehistory, these transfer functions can only be evaluated as a first approximation.
 -   Contradicting: Particularly when considering several proxies, differences in transfer functions and data quality and noisiness inevitably lead to contrasts. However, this usually only leads to the rejection of a proxy for a certain time period, without mutually supporting or contradictory information leading to a quantitative evaluation of the proxy and its uncertainties.
 
+## Strengths of a hierarchical Bayesian approach
+
 In recent years, a new method has been established in the field of demographic estimations. Bayesian demographic forecasting has been designed to solve all these problems, which also exist for demographic estimations using recent data. In their book on the subject, Bryant and Zhang [@bryant2018] state that Bayesian data modeling can be used to deal with exactly those problems that also affect archaeological data. Especially for limited, unreliable and noisy data, Bayesian approaches are optimally suited. Various even contradictory data can be brought into a common framework and support each other. Similarly, unlikelihood and uncertainty of a model approach can be quantified. This is well-accepted in archaeological applications through the Bayesian calibration and modelling of stratigraphic conditions and radiometric data. Furthermore, spatially and temporally missing data can be taken into account: Where these data are missing, the uncertainty automatically increases, but this does not prevent general modelling and estimation. Finally, hierarchically structured model suites, in which sub-models are created for the utilisation of individual proxies, can also be used to estimate transfer functions between individual proxies and the value to be modelled, thanks to the interaction of a large number of data sources and evidence.
 
-<!-- JR: This paragraph also sounds like background to me. -->
+This modeling technique can thus be used to combine different lines of evidence horizontally and vertically and in this way combine their results into a common conclusion and estimate, which at the same time includes an estimation of their reliability: if the data contradict each other, the overall reliability will be lower. If they support each other, the confidence interval will be smaller. And if there is no systematic bias that affects all data sources to the same extent, it should be possible to arrive at the most reliable estimate possible through the most heterogeneous set of data sources.
 
 Bayesian modelling techniques have also been used recently as a tool for hypothesis testing of demographic trends or underlying models based on ^14^C data. Most notably are the recently published papers by Crema and Shoda ([@crema2021a]). However, the approach taken there is clearly different from the one presented in this paper.In these analyses, deductive models are generated and their plausibility is tested on the basis of ^14^C data only. This is a clear step in the direction of a model-based, and thus scientific, analysis. However, the use of only one proxy, and its use exclusively for testing hypotheses developed independently, creates problems comparable to those of inductive approaches used so far: due to the lack of a combination with other indicators, one is limited to the problems and conditions of sum calibration as a tool. Furthermore, this approach loses significant potential information that would be gained by a direct evaluation of the time series. Thus, the credibility of a model can only be checked as a whole, without the dynamic developments that can arise in the course of demographic processes being represented. Therefore, we would like to better exploit the capabilities of Bayesian hierarchical models through a combination of inductive data analysis and model-passed data integration of different proxies.
 
@@ -158,23 +154,13 @@ This contribution now represents an attempt to make these techniques usable for 
 
 ## Background
 
-<!-- JR: Begin by defining, broadly, what Bayesian statistics is? -->
+The basis of Bayesian statistics is the premise that there is always some prior assumption about the probability of an event, even if it may be completely vague. This assumption is then adjusted by observing the data. The concept of probability is not derived from theoretical, infinitely repeatable random experiments or distributions, but from the direct confrontation of the pre-assumptions (priors) with the available data. This involves checking how credible these prior assumptions are with regard to the available data [likelihood; see also @bryant2018, 66]. A small amount of data leads to a broad probability distribution that is not strongly localised and restricted. The intuitive procedure is thereby the shifting of credibility through evidence.
 
-At the heart of all Bayesian statistics is the concept of updating a given prior assumption with new data and expressing this in probabilities (refs.). Our assumptions about the demographic development of the past must naturally be very conservative. In the logic of the basic Bayesian equation, these assumptions represent the prior (probability). In conjunction with the data that are included as the likelihood of the prior, a posterior (probability) results, which represents the Bayesian learning from data. It is also in the nature of the approach that in real applications there is no point prediction, but in most cases a probability distribution for the prediction. Thus, we simultaneously obtained a result and an estimate of the confidence intervals, or better, the credibility interval given the data.
+At the heart of all Bayesian statistics is therefore the concept of updating a given prior assumption with new data and expressing this in probabilities [cf. also @kruschke2015, especially 15--25]. Our assumptions about the demographic development of the past must naturally be very conservative. In the logic of the basic Bayesian equation, these assumptions represent the prior (probability). In conjunction with the data that are included as the likelihood of the prior, a posterior (probability) results, which represents the Bayesian learning from data. It is also in the nature of the approach that in real applications there is no point prediction, but in most cases a probability distribution for the prediction. Thus, we simultaneously obtained a result and an estimate of the confidence intervals, or better, the credibility interval given the data.
 
-This Bayesian learning is iterative and sequential, so that the result of one Bayesian inference can form the prior of another, i.e. it is an additive process. Moreover, at the conceptual level, this allows different sources of information to be combined. This enables that they can be mapped to the same set and the same real-world domain, e.g. probabilities. This fact has long been exploited by archaeology in using stratigraphic information to make radiometric dating more accurate. ^14^C dates and stratigraphy are something completely different, but both can be mapped to the probability of older and younger and combined in this way. The same is also feasible when it comes to the probability of population sizes or population densities or their derived dynamics.
+This Bayesian learning is iterative and sequential, so that the result of one Bayesian inference can form the prior of another, i.e. it is an additive process [@kruschke2015, 17]. Moreover, at the conceptual level, this allows different sources of information to be combined [@bryant2018, 219--224]. This enables that they can be mapped to the same set and the same real-world domain, e.g. probabilities. This fact has long been exploited by archaeology in using stratigraphic information to make radiometric dating more accurate [@ramsey1995]. ^14^C dates and stratigraphy are something completely different, but both can be mapped to the probability of older and younger and combined in this way. The same is also feasible when it comes to the probability of population sizes or population densities or their derived dynamics.
 
-A further characteristic of Bayesian modeling is that, due to the fact that results of a Bayesian inference can be regarded as a priority for the next one, a hierarchical formulation of problem domains is possible. Parameters that are necessary for an estimation, such as the relationship of population density to the clearing signal in pollen data, need not be specified explicitly, but can be given by probability distributions and then estimated in the model itself. The more data available, the more degrees of freedom can be estimated with a reasonable loss of confidence or a reasonable width of credibility intervals. For the estimation of these parameters, in turn, submodels have to be created which describe the relationship of the data to the characteristics of the parameter. This can be carried out over several levels, depending on necessity.
-
-This modeling technique can thus be used to combine different lines of evidence horizontally and vertically and in this way combine their results into a common conclusion and estimate, which at the same time includes an estimation of their reliability: if the data contradict each other, the overall reliability will be lower. If they support each other, the confidence interval will be smaller. And if there is no systematic bias that affects all data sources to the same extent, it should be possible to arrive at the most reliable estimate possible through the most heterogeneous set of data sources.
-
-<!-- JR: The above is interesting, but maybe a bit general for this paper? It's also conspicuously lacking in citations for a background section. I'd suggest condensing and moving it to the introduction. -->
-
-A special class of Bayesian hierarchical models are so-called State Space Models (also known as Hidden Markov Models). These are specifically designed for time series and follow two basic principles. First, a hidden or latent process is assumed, which represents the state of the variable of interest $x_t$ at all times. For the course of the states of this variable over time, it is assumed that every state of variable x in the future, as well as in the past, is bound by a Markov process to the state of variable $x$ at time $t$. At the same time, it is assumed that certain observations, represented in variable y, are dependent on the state of variable $x$ at time $t$. This means that there is a relationship between the variable $x$ and the state of variable y over time. This implies that a relationship between the individual states of variable $y$ is generated over time via the hidden variable $x$, which itself is not observable.
-
-This basic structure of the model makes it particularly useful and suitable for the purpose of demographic reconstruction using archaeological, but also other data, which depend on population density in the past. This population density itself is not accessible or measurable by our means. All we have at our disposal are observations derived by unknown transfer functions. These can be of very different natures, such as number of archaeologically observable settlements, or other effects that can be observed through time series, and which are influenced by population in a given area. In our example, these are the openness indicators from pollen data, which we can interpret primarily in terms of human influence and its intensity. On a more abstract level, we could also include expert estimates, as these also happen on (often unspecified) bases that are at least indirectly influenced by past population density. The specifics of the individual data we used in this modelling are discussed in the next section.
-
-<!-- JR: Ditto: maybe move the above to method and/or introduction? -->
+A further characteristic of Bayesian modeling is that, due to the fact that results of a Bayesian inference can be regarded as a prior for the next one, a hierarchical formulation of problem domains is possible. Parameters that are necessary for an estimation, such as the relationship of population density to the clearing signal in pollen data, need not be specified explicitly, but can be given by probability distributions and then estimated in the model itself [@bryant2018, 186]. The more data available, the more degrees of freedom can be estimated with a reasonable loss of confidence or a reasonable width of credibility intervals [@kruschke2015, 112]. For the estimation of these parameters, in turn, submodels have to be created which describe the relationship of the data to the characteristics of the parameter. This can be carried out over several levels, depending on necessity [@kruschke2015, 221--222].
 
 ## Data/Proxies
 
@@ -264,9 +250,7 @@ aorist_latlng_coords <- st_as_sf(aorist,coords = c("LV03_Rechtswert_fuzzy", "LV0
 ) %>% st_coordinates() %>% as.data.frame()
 ```
 
-<!-- JR: At the resolution the figure is rendered at, I don't think the 1 km jitter is perceptible. -->
-
-<!-- But in the data table that accompanies the repository, they would be available -->
+<!-- JR: At the resolution the figure is rendered at, I don't think the 1 km jitter is perceptible. MH: But in the data table that accompanies the repository, they would be available -->
 
 ```{r aoristmap, fig.cap="The location of the sites from the find reports of the cantonal archaeology (heritage management). The locations are fuzzified by ~1km."}
 my_basemap + geom_point(data = aorist_latlng_coords, aes(x = X, y = Y), color = "black", alpha = 0.75) + blank() + my_scalebar
@@ -308,6 +292,10 @@ The values of the sum calibration, the openness index and the dendrodated settle
 In our following modelling (see also \@ref(observational-model)) we now consider all these proxies as determinants for the change in the number of settlements. In the model, we therefore change the causality and shift the measurement error, which is certainly inherent in each of these indicators, to the process model, in which a Poisson process describes the number of simultaneous settlements. In doing so, we establish a likelihood that indicates how credible the data are, given the model.
 
 ## Process Model
+
+A special class of Bayesian hierarchical models are so-called State Space Models (also known as Hidden Markov Models). These are specifically designed for time series and follow two basic principles. First, a hidden or latent process is assumed, which represents the state of the variable of interest $x_t$ at all times. For the course of the states of this variable over time, it is assumed that every state of variable x in the future, as well as in the past, is bound by a Markov process to the state of variable $x$ at time $t$. At the same time, it is assumed that certain observations, represented in variable y, are dependent on the state of variable $x$ at time $t$. This means that there is a relationship between the variable $x$ and the state of variable y over time. This implies that a relationship between the individual states of variable $y$ is generated over time via the hidden variable $x$, which itself is not observable.
+
+This basic structure of the model makes it particularly useful and suitable for the purpose of demographic reconstruction using archaeological, but also other data, which depend on population density in the past. This population density itself is not accessible or measurable by our means. All we have at our disposal are observations derived by unknown transfer functions. These can be of very different natures, such as number of archaeologically observable settlements, or other effects that can be observed through time series, and which are influenced by population in a given area. In our example, these are the openness indicators from pollen data, which we can interpret primarily in terms of human influence and its intensity. On a more abstract level, we could also include expert estimates, as these also happen on (often unspecified) bases that are at least indirectly influenced by past population density.
 
 The overall model for the estimation of demographic developments is broken down into several hierarchically interconnected individual elements in accordance with the basic structure of a state space model. The basis is a process model that represents the demographic development itself in terms of a structure model, without this model already being explicitly configured with data.
 
@@ -416,6 +404,67 @@ For the traceplots and the prior-posterior overlap as well as the density functi
 
 <!-- JR: I don't know where it would fit best, but I'd find it very helpful to see a table of all the priors and fixed parameters with their initial values. -->
 
+```{r}
+x <- 1:100
+```
+
+```{r dpois50, dev='png', fig.show='hide', fig.height = 3, fig.width = 3}
+plot(x,dpois(x,50), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+```
+
+```{r dgammamaxgrowthrate, dev='png', fig.show='hide', fig.height = 3, fig.width = 3}
+plot(x/50+1,dgamma(x/50,shape = 5, scale = 0.05), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+```
+
+```{r mualpha, dev='png', fig.show='hide', fig.height = 3, fig.width = 3}
+plot(x/20,dlnorm(x/20,1,0.1), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+```
+
+```{r aalpha, dev='png', fig.show='hide', fig.height = 3, fig.width = 3}
+plot(x/10,dexp(x/10,1), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+```
+
+```{r alpha, dev='png', fig.show='hide', fig.height = 3, fig.width = 3}
+n_sample <- 1000000
+mu_a <- rlnorm(n_sample,1,0.1)
+a_a <- rexp(n_sample,1)
+alpha <- rlnorm(n_sample,mu_a,a_a)
+plot(density(alpha, from=0,to=100), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+```
+
+```{r p, dev='png', fig.show='hide', fig.height = 3, fig.width = 3, cache=TRUE}
+p <- matrix(nrow = 10000, ncol = 4)
+for (i in 1:nrow(p)) {
+ p[i,] <- nimble::rdirch(1, sample(alpha,4))
+}
+par(mfrow=c(2,2))
+oldmar <- par(mar = c(2, 2, 2, 2))
+plot(density(p[,1]), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+plot(density(p[,2]), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+plot(density(p[,3]), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+plot(density(p[,4]), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+par(mfrow=c(1,1))
+par(oldmar)
+```
+
+| **Priors**           | **Value**                            | **Plot/Comment**                                                               |
+|-----------------------------|--------------------------|-----------------|
+| MeanSiteSize         | dpois(50)                            | ![MeanSiteSize](`r knitr::fig_chunk('dpois50', 'png')`)                |
+| max_growth_rate      | dgamma(shape = 5, scale=0.05) + 1    | ![max_growth_rate](`r knitr::fig_chunk('dgammamaxgrowthrate','png')`) |
+| mu_alpha             | dlnorm(1,sdlog=0.1)                  | ![mu_alpha](`r knitr::fig_chunk('mualpha','png')`)                    |
+| a_alpha              | dexp(1)                              | ![a_alpha](`r knitr::fig_chunk('aalpha','png')`)                      |
+| alpha                | dlnorm(mu_alpha[j],sdlog=a_alpha[j]) | ![alpha](`r knitr::fig_chunk('alpha','png')`)                         |
+| p                    | ddirch(alpha[1:4])                   | ![p](`r knitr::fig_chunk('p','png')`)                                 |
+| **Parameters**       |                                      |                                                                                |
+| nEnd                 | 5                                    |                                                                                |
+| AreaSwissPlateau     | 12649 km²                            |                                                                                |
+| **Initial Values**   |                                      |                                                                                |
+| lambda$_{1:nYears}$  | $log(1-10^{\frac{1}{nYears-1}})$     | exponential increase of the factor 10                                          |
+| PopDens$_{1:nYears}$ | nEnd (=5)                            |                                                                                |
+| nSites$_{1:nYears}$  | 50                                   |                                                                                |
+
+: (#tab:priorsandparameters) Priors and fixed parameters used in the model.
+
 # Results
 
 <!-- JR: I really think we need a section evaluating and validating the model fit before we discuss its output. -->
@@ -504,13 +553,9 @@ These data are available to varying degrees in different regions. In the Swiss P
 
 Large parts of the data collection were conducted as part of the project 'Beyond lake settlements' in the doctoral thesis of Julian Laabs, funded by the SNF (project number 152862, PI Albert Hafner). Further data collection was done as part of the XRONOS project, also funded by the SNSF (project number 198153, PI Martin Hinz). The development of the openness index took place within the framework of the project Time and Temporality in Archaeology (project number 194326, PI Caroline Heitz) and was inspired by the cooperation within the project QuantHum (project 169371, PI Marco Conedera), both also funded by the SNSF. We also thank the Institute of Archaeological Sciences of the University of Bern for its support and faith in the outcome of our modelling project. Finally, we thank (already) the unknown reviewers for their helpful comments, which will certainly improve this manuscript significantly.
 
-<!-- The following line inserts a page break  -->
-
 \newpage
 
 # References
-
-<!-- The following line ensures the references appear here for the MS Word or HTML output files, rather than right at the end of the document (this will not work for PDF files):  -->
 
 ::: {#refs}
 :::
