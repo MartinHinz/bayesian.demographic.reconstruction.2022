@@ -30,6 +30,12 @@ institute:
   - IAMFAMU: Institute of Archaeology and Museology, Faculty of Arts, Masaryk University
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  bookdown::pdf_document2:
+    toc: no
+    pandoc_args:
+    - --lua-filter=../templates/scholarly-metadata.lua
+    - --lua-filter=../templates/author-info-blocks.lua
+    - --lua-filter=../templates/pagebreak.lua
   bookdown::word_document2:
     fig_caption: yes
     reference_docx: "../templates/template.docx" # Insert path for the DOCX file
@@ -37,18 +43,12 @@ output:
     - --lua-filter=../templates/scholarly-metadata.lua
     - --lua-filter=../templates/author-info-blocks.lua
     - --lua-filter=../templates/pagebreak.lua
-  bookdown::pdf_document2:
-    toc: no
-    pandoc_args:
-    - --lua-filter=../templates/scholarly-metadata.lua
-    - --lua-filter=../templates/author-info-blocks.lua
-    - --lua-filter=../templates/pagebreak.lua
 bibliography: references.bib
 csl: "../templates/journal-of-archaeological-science.csl" # Insert path for the bib-style
 abstract: |
-  In order to understand human-environment relationships in the past and the dynamics of socio-ecological systems, it is essential to have a robust estimate of population sizes<!-- JR: Could reference Shennan 2000 and/or Kintigh 2014 here?-->. Size and density of population are crucial factors for the reconstruction of group sizes, the character and range of political institutions for social organization, the constraints and possibilities of economic practice, the number of people available for collective activities, for economic and social exchange systems, and the creation and maintenance of collective identities. And, of course, the human impact on the environment. Most estimates of population sizes currently work on limited spatial scales or use proxies that hardly allow for absolute numbers (e.g. sum calibration). The figures in the archaeological discourses on population density in general currently come from vague sources and are often decades old.
   In demography in general, the last decade has triggered an upswing in the application of Bayesian methods, so that a Bayesian demography has been announced. Bayesian demography is currently at the forefront of methodological developments in this area, but has reached such maturity that the United Nations has been using it since 2015 for population forecasts and projections. The Bayesian approach offers the possibility of combining heterogeneous data and at the same time qualifying them in terms of uncertainty and credibility. This is precisely where it becomes very interesting for archaeological data, since they are mostly inaccurate, biased, sparse, simplified and often based on simplistic assumptions.
   In this contribution, a Bayesian hierarchical model, based on a Poisson Regression and a state space approach is applied to the field of archaeological (prehistoric) population size and density estimation. This represents a pilot study for the reconstruction of demographic developments in prehistory based on data assimilation with an underlying process model and a number of different proxies, which are combined and result in a more reliable estimation than a single proxy could deliver.
+  In order to understand human-environment relationships in the past and the dynamics of socio-ecological systems, it is essential to have a robust estimate of population sizes<!-- JR: Could reference Shennan 2000 and/or Kintigh 2014 here?-->. Size and density of population are crucial factors for the reconstruction of group sizes, the character and range of political institutions for social organization, the constraints and possibilities of economic practice, the number of people available for collective activities, for economic and social exchange systems, and the creation and maintenance of collective identities. And, of course, the human impact on the environment. Most estimates of population sizes currently work on limited spatial scales or use proxies that hardly allow for absolute numbers (e.g. sum calibration). The figures in the archaeological discourses on population density in general currently come from vague sources and are often decades old.
 keywords: |
   Bayesian demographic modelling; Multiproxy; Reconstruction of past settlement dynamics
 highlights: |
@@ -67,7 +67,7 @@ Highlights: `r rmarkdown::metadata$highlights`
 
 <!-- The following code chunk defines some general settings how code chunks should behave. -->
 
-```{r setup, echo = FALSE, message = FALSE}
+```{r setup, echo = FALSE, message = FALSE, warning=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
@@ -81,6 +81,7 @@ knitr::opts_chunk$set(
 library(here)
 library(ggplot2)
 library(ggmap)
+library(cowplot)
 library(sp)
 library(sf)
 library(ggsn)
@@ -90,11 +91,27 @@ library(ggrepel)
 switzerland <- ne_countries(country = "Switzerland")
 bbox_ch <- bbox(switzerland) %>% as.vector()
 
+switzerland_bb <- st_as_sfc(st_bbox(switzerland))
+
 swiss_background <- get_stamenmap( bbox = bbox_ch, maptype = "terrain-background", color="bw", zoom = 8)
 
-my_basemap <- ggmap(swiss_background, darken = c(0.6, "white"))
+rivers10 <- ne_download(scale = "large", type = 'rivers_lake_centerlines', category = 'physical') %>% st_as_sf()
+
+rivers10eu <- ne_download(scale = "large", type = 'rivers_europe', category = 'physical') %>% st_as_sf()
+
+lakes10 <- ne_download(scale = "large", type = 'lakes', category = 'physical') %>% st_as_sf()
+
+lakes10eu <- ne_download(scale = "large", type = 'lakes_europe', category = 'physical') %>% st_as_sf()
+
+my_basemap <- ggmap(swiss_background, darken = c(0.6, "white")) + coord_sf(default_crs = st_crs(4326)) + geom_sf(data = rivers10, color="lightblue4", inherit.aes = F)  + geom_sf(data = rivers10eu, color="lightblue4", inherit.aes = F)  + geom_sf(data = lakes10, fill="lightblue4", color=NA, inherit.aes = F)  + geom_sf(data = lakes10eu, fill="lightblue4", inherit.aes = F, color=NA)
 
 my_scalebar <- scalebar(transform = T, dist_unit = "km", dist=50, model = "WGS84", st.dist = 0.025, st.size = 3, x.min = bbox_ch[1], x.max = bbox_ch[3]-0.2, y.min = bbox_ch[2]+0.15, y.max = bbox_ch[4], border.size = 0.5)
+
+europe <- c(left = -12, bottom = 35, right = 30, top = 63) %>% as.vector() %>% +0.01
+
+europe_overview <- get_stamenmap( bbox = europe, maptype = "toner-background", color="bw", zoom = 3)
+
+europe_overview_map <- ggmap(europe_overview, darken = c(0.6, "white"))+ coord_sf(default_crs = st_crs(4326))
 ```
 
 <!-- The actual document text starts here: -->
@@ -104,6 +121,7 @@ my_scalebar <- scalebar(transform = T, dist_unit = "km", dist=50, model = "WGS84
 The study of population size and population density as important demographic factors has a long history in archaeology. Although questions of population extent and distribution have been dominant fields since the beginning of archaeological research, the lack of access to this information, data on it, or methodological tools for the use of proxies has long made the statements made on this topic for prehistoric times vague and superficial [@hassan_demographic_1981], and they were often based on uncritical transfer of ethnographic parallels.
 
 <!-- JR: Might the following four paragraphs fit better in a background section ("Prehistoric demography")? -->
+
 Gordon Childe [-@childe_man_1936] was one of the first to stress the importance of estimating the density and characteristics of prehistoric populations and sought to examine the role of human populations in the course of cultural evolution [@hassan_demographic_1981].
 
 Attempts to estimate the size and density of prehistoric populations from archaeological remains were made by Hack [-@hack_changing_1942], Colton [-@colton_prehistoric_1949], Frankfort [-@frankfort_town_1950] and Cook [-@cook_reconsideration_1946]. Cook and Heizer (1965, 1968) and Naroll (1962) provided rules derived from ethnographic contexts for estimating the size of prehistoric populations. Cook and Heizer (1966) made the first attempt to estimate the population growth rate during the Neolithic [@hassan_demographic_1981].
@@ -131,6 +149,7 @@ Archaeological data used to estimate population trends have the following charac
 In recent years, a new method has been established in the field of demographic estimations. Bayesian demographic forecasting has been designed to solve all these problems, which also exist for demographic estimations using recent data. In their book on the subject, Bryant and Zhang [@bryant2018] state that Bayesian data modeling can be used to deal with exactly those problems that also affect archaeological data. Especially for limited, unreliable and noisy data, Bayesian approaches are optimally suited. Various even contradictory data can be brought into a common framework and support each other. Similarly, unlikelihood and uncertainty of a model approach can be quantified. This is well-accepted in archaeological applications through the Bayesian calibration and modelling of stratigraphic conditions and radiometric data. Furthermore, spatially and temporally missing data can be taken into account: Where these data are missing, the uncertainty automatically increases, but this does not prevent general modelling and estimation. Finally, hierarchically structured model suites, in which sub-models are created for the utilisation of individual proxies, can also be used to estimate transfer functions between individual proxies and the value to be modelled, thanks to the interaction of a large number of data sources and evidence.
 
 <!-- JR: This paragraph also sounds like background to me. -->
+
 Bayesian modelling techniques have also been used recently as a tool for hypothesis testing of demographic trends or underlying models based on ^14^C data. Most notably are the recently published papers by Crema and Shoda ([@crema2021a]). However, the approach taken there is clearly different from the one presented in this paper.In these analyses, deductive models are generated and their plausibility is tested on the basis of ^14^C data only. This is a clear step in the direction of a model-based, and thus scientific, analysis. However, the use of only one proxy, and its use exclusively for testing hypotheses developed independently, creates problems comparable to those of inductive approaches used so far: due to the lack of a combination with other indicators, one is limited to the problems and conditions of sum calibration as a tool. Furthermore, this approach loses significant potential information that would be gained by a direct evaluation of the time series. Thus, the credibility of a model can only be checked as a whole, without the dynamic developments that can arise in the course of demographic processes being represented. Therefore, we would like to better exploit the capabilities of Bayesian hierarchical models through a combination of inductive data analysis and model-passed data integration of different proxies.
 
 This contribution now represents an attempt to make these techniques usable for archaeological reconstructions. In addition to a presentation of the basics and possible procedures, we want to show in the following, in a reproducible and practical form using a case study, how Bayesian methods can also make a decisive contribution to a better assessment of population development. These assessments are crucial for the reconstruction of the human past, even in for periods for which we only have very patchy, noisy and unreliable data.
@@ -140,6 +159,7 @@ This contribution now represents an attempt to make these techniques usable for 
 ## Background
 
 <!-- JR: Begin by defining, broadly, what Bayesian statistics is? -->
+
 At the heart of all Bayesian statistics is the concept of updating a given prior assumption with new data and expressing this in probabilities (refs.). Our assumptions about the demographic development of the past must naturally be very conservative. In the logic of the basic Bayesian equation, these assumptions represent the prior (probability). In conjunction with the data that are included as the likelihood of the prior, a posterior (probability) results, which represents the Bayesian learning from data. It is also in the nature of the approach that in real applications there is no point prediction, but in most cases a probability distribution for the prediction. Thus, we simultaneously obtained a result and an estimate of the confidence intervals, or better, the credibility interval given the data.
 
 This Bayesian learning is iterative and sequential, so that the result of one Bayesian inference can form the prior of another, i.e. it is an additive process. Moreover, at the conceptual level, this allows different sources of information to be combined. This enables that they can be mapped to the same set and the same real-world domain, e.g. probabilities. This fact has long been exploited by archaeology in using stratigraphic information to make radiometric dating more accurate. ^14^C dates and stratigraphy are something completely different, but both can be mapped to the probability of older and younger and combined in this way. The same is also feasible when it comes to the probability of population sizes or population densities or their derived dynamics.
@@ -181,9 +201,28 @@ In principle, a large number of different data sources can be integrated into th
 
 : (#tab:tableproxies) A incomplete list of possible observation that can be linked to population developments in the past. Proxies used in this study are highlighted.
 
-<!-- JR: Non-Europeanists (like me!) might appreciate a brief summary of the geography and prehistory of the Swiss plateau here. -->
+```{r mapswissplateau, fig.cap="Location and extent of the Swiss Plateau."}
+fc <- sf::st_read("../data/fixed_online_data/BiogeographischeRegionen.gdb", layer = "N2020_Revision_BiogeoRegion")
+fc <- st_transform(fc, 4326)
+fc <- fc[fc$RegionNummer==2,] %>% st_union()
 
-Our working region consists of the Swiss Plateau, which on the one hand offers excellent data for demographic estimation, but on the other hand poses very specific problems for such an undertaking. If we have high-resolution information on the temporal sequence of individual settlements at the lakeside settlements by means of dendro data, this also might cause a research problem with regard to the ^14^C data often used as a proxy.
+main_map <- my_basemap +
+  geom_sf(data = fc, inherit.aes = FALSE, alpha = 0.33, fill="darkred", color=NA) +
+  blank() +
+  my_scalebar
+
+inset_map <- europe_overview_map +
+  geom_sf(data = switzerland_bb, fill = NA, color = "darkred", inherit.aes = FALSE) +
+  blank()
+
+ggdraw() +
+  draw_plot(main_map) +
+  draw_plot(inset_map, x = 0, y = 0.7, width = 0.3, height = 0.3)
+```
+
+The Swiss Plateau (Figure \@ref(fig:mapswissplateau)) covers about one third of Switzerland's territory and comprises the partly flat but largely hilly area between the Jura Mountains and the Alps. Its average altitude above sea level is between 400 and 600 m. Due to its situation as a basin, it represents a favourable area and is by far the most densely populated region of the Switzerland today. Although the Swiss Plateau is a basin, depending on the region it has a very diverse natural landscape. The Swiss Plateau was shaped by glaciers during the Ice Age, which led to the many lakes that characterise the landscape today, and which provide excellent preservation conditions for the numerous Neolithic and Bronze Age lakeside settlements.
+
+With a mild climate compared to the Jura and the Alps and a dense network of water bodies, the Swiss Plateau is a favourable area for human settlement in Switzerland. From the Neolithic onwards, settlement areas were concentrated along its rivers and lakes [@christianlüthi2009]. Thus, our working region offers on the one hand excellent data for demographic estimation, but on the other hand poses very specific problems for such an undertaking. If we have high-resolution information on the temporal sequence of individual settlements at the lakeside settlements by means of dendro data, this also might cause a research problem with regard to the ^14^C data often used as a proxy.
 
 ```{r echo=FALSE}
 dendro <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "dendro_years.csv"))
@@ -203,13 +242,11 @@ The dataset for the ^14^C sum calibration primarily consists of data from the XR
 
 We binned the data at site levels to obtain a temporally dispersed count and thus an expected value of contemporaneous ^14^C dated sites. For the creation of the cumulative calibration, the corresponding functions of the R package rcarbon [@crema2021] were used in the standard settings.
 
-<!-- JR: Would be nice to add rivers and lakes to the base map. -->
-
 ```{r c14map, fig.cap="The location of the ^14^C dated sites in the dataset."}
 my_basemap + geom_point(data = c14, aes(x = lng, y = lat), color = "darkred", alpha = 0.75) + blank() + my_scalebar
 ```
 
-```{r compdendroc14, fig.cap="Comparison of the scaled number of ^14^C and dendrodated sites over time in the dataset used."}
+```{r compdendroc14, fig.cap="Comparison of the scaled (non-centered z-transformed) number of ^14^C and dendrodated sites over time in the dataset used."}
 joined_data <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "preprocessed_data", "all_proxies.csv"))
 
 ggplot(joined_data) + geom_line(aes(x=1950-age, y=scale(sumcal, center = F), color = "darkred"), alpha = 0.75)  + geom_line(aes(x=1950-age, y=scale(dendro, center = F), color = "darkblue"), alpha = 0.75) + theme_minimal()  +
@@ -219,8 +256,6 @@ ggplot(joined_data) + geom_line(aes(x=1950-age, y=scale(sumcal, center = F), col
     scale_color_manual(values = c("darkblue", "darkred"), labels = c("dendro dated", "14C dated"))+
   theme(legend.position="bottom")
 ```
-
-<!-- JR: I don't understand what "scaled values" means here. -->
 
 We can now compare these two data sets (Figure \@ref(fig:compdendroc14)). In fact, there is a not uninteresting fit between the two data series. However, it must be assumed that the two dating methods, even if they would contradict each other, actually complement each other, and thus allow a better overall unified picture of the actual settlement density than each of the individual proxies would allow on their own.
 
@@ -232,6 +267,8 @@ aorist_latlng_coords <- st_as_sf(aorist,coords = c("LV03_Rechtswert_fuzzy", "LV0
 ```
 
 <!-- JR: At the resolution the figure is rendered at, I don't think the 1 km jitter is perceptible. -->
+
+<!-- But in the data table that accompanies the repository, they would be available -->
 
 ```{r aoristmap, fig.cap="The location of the sites from the find reports of the cantonal archaeology (heritage management). The locations are fuzzified by ~1km."}
 my_basemap + geom_point(data = aorist_latlng_coords, aes(x = X, y = Y), color = "black", alpha = 0.75) + blank() + my_scalebar
@@ -266,9 +303,7 @@ The utilisation of this proxy is based on the assumption that the higher the pop
 knitr::include_graphics(file.path(rstudioapi::getActiveProject(), "analysis", "analysis_files", "figure-html", "pollenproxy-1.png"))
 ```
 
-Unfortunately, in the Swiss Plateau there is no data from burials that could be usefully incorporated into such this model. Preservation conditions again simply prevent their use in this study. Nevertheless, we see a very high potential for other regions in the integration of demographic indicators from burial data in order to enlarge the canon of methods and the range of proxies.
-
-<!-- JR: What preservation conditions? There are prehistoric burials and cemeteries in Switzerland, no? -->
+Unfortunately, in the Swiss Plateau there is no data from burials that could be usefully incorporated into such this model due to the absence of regular burials for larger parts of prehistory. Formation conditions, in this case most likely C-transformation [@schiffer1987], prevent their use in this study. Nevertheless, we see a very high potential for other regions in the integration of demographic indicators from burial data in order to enlarge the canon of methods and the range of proxies.
 
 The values of the sum calibration, the openness index and the dendrodated settlements were smoothed by means of a moving average with a window of 50 years. Since the aoristic sum already had a very coarse temporal resolution, this was not applied for this measure. The range of the smoothing window corresponded to the sample interval, with which a unified resolution of 50 years was obtained for all proxies as time slices for the model. In addition, all data were restricted to a window of observation of 7000-1000 BCE. The upper limit is set by the post-glacial changes in the pollen spectra, which are hardly associated with human influence before 7000 in the working area, and which would consequently distort the openness indicator. The lower limit is defined by the Hallstatt Plateau (with buffer), which would have direct and indirect research influences on the ^14^C proxy.
 
@@ -280,7 +315,7 @@ In our following modelling (see also \@ref(observational-model)) we now consider
 
 The overall model for the estimation of demographic developments is broken down into several hierarchically interconnected individual elements in accordance with the basic structure of a state space model. The basis is a process model that represents the demographic development itself in terms of a structure model, without this model already being explicitly configured with data.
 
-In this process model we assume that the latent variable number of sites is strongly autocorrelated across different time periods <!-- JR: Can we gloss what autocorrelated means in plain language here, to make it clear that this is a trivial assumption? something like ", i.e. the number of sites in 3000 BCE is strongly conditioned by the number of sites in 3050 BCE, and so on." -->. In principle, one can represent a population development in such a way that the population at time $t$ results from the population at time $t-1$ times a parameter $\lambda$, which represents the population change at this time. This results in the following very simple formula:
+In this process model we assume that the latent variable number of sites is strongly autocorrelated across different time periods, i.e. the number of sites in 3000 BCE is strongly conditioned by the number of sites in 3050 BCE, and so on. In principle, one can represent a population development in such a way that the population at time $t$ results from the population at time $t-1$ times a parameter $\lambda$, which represents the population change at this time. This results in the following very simple formula:
 
 $$
 N_t = N_{t-1} * \lambda_t
@@ -307,7 +342,7 @@ $$
 
 Since $\lambda$ and $N$ are essentially in the same range (e.g. if $lambda=1$, the expected value for $N$ would also be 1), $N_{t-1}$ must also be logarithmised in the above formula to obtain the congruence of both values. The values for population size $N_t$ as well as for population change $\lambda_t$ are time-dependent. At each individual point in time in the time series, these variables can or will also take on different values. However, we can narrow down the structure of population change even further. We can assume that, considered overall over time, the population change the population change will not exceed certain limits over the entire time span, without it being possible here to specify this already.
 
-Thus, we can define the limits, the $max\_change\_rate$<!-- JR: no Greek letter? :( --> as an time independent variable, again without already specifying them with fixed values at this stage. The estimation of these parameters for the entire model, as well as the estimation of the respective population change per time section, results from the modelling and the interaction with the data, respectively. Overall, this represents a hierarchical model that can be noted as follows:
+Thus, we can define the limits, the $max\_change\_rate$<!-- JR: no Greek letter? :( MH: I could invent one, if you like? ;-) --> as an time independent variable, again without already specifying them with fixed values at this stage. The estimation of these parameters for the entire model, as well as the estimation of the respective population change per time section, results from the modelling and the interaction with the data, respectively. Overall, this represents a hierarchical model that can be noted as follows:
 
 $$
 \begin{aligned}
@@ -317,15 +352,7 @@ N_{t-1}/N_t &< (max\_growth\_rate + 1)
 \end{aligned}
 $$
 
-The gamma distribution used centres the probability in a range $[0,1[$, adding 1 makes this range $[1-2[$ (See also Figure \@ref(fig:gammadist)).
-
-<!-- JR: A whole figure just to illustrate the gamma distribution seems like overkill. Could we add the prior distributions of other parameters? Or just get rid of it: you can always look up the shapes on Wikipedia :) --> 
-
-```{r gammadist, fig.cap="The gamma-distributed maximum growth rate prior of the model."}
-plot(density(rgamma(100000,shape=5,scale = 0.05)+1), xlim=c(0,5), main ="gamma(shape = 5, scale=0.05) + 1" )
-```
-
-This prevents the number of sites from explosively increasing between two time periods, which would lead to problems for the convergence of the model. The interaction of these parameters results in the following prior probability distribution for $\lambda$ and thus the growth (or change) rate of the population:
+The gamma distribution used centres the probability in a range $[0,1[$, adding 1 makes this range $[1-2[$. This prevents the number of sites from explosively increasing between two time periods, which would lead to problems for the convergence of the model. The interaction of these parameters results in the following prior probability distribution for $\lambda$ and thus the growth (or change) rate of the population:
 
 ## Observational Model
 
