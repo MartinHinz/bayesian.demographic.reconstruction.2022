@@ -30,15 +30,15 @@ institute:
   - IAMFAMU: Institute of Archaeology and Museology, Faculty of Arts, Masaryk University
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::pdf_document2:
-    toc: no
+  bookdown::word_document2:
+    fig_caption: yes
+    reference_docx: "../templates/template.docx" # Insert path for the DOCX file
     pandoc_args:
     - --lua-filter=../templates/scholarly-metadata.lua
     - --lua-filter=../templates/author-info-blocks.lua
     - --lua-filter=../templates/pagebreak.lua
-  bookdown::word_document2:
-    fig_caption: yes
-    reference_docx: "../templates/template.docx" # Insert path for the DOCX file
+  bookdown::pdf_document2:
+    toc: no
     pandoc_args:
     - --lua-filter=../templates/scholarly-metadata.lua
     - --lua-filter=../templates/author-info-blocks.lua
@@ -61,7 +61,7 @@ Keywords: `r rmarkdown::metadata$keywords`
 
 Highlights: `r rmarkdown::metadata$highlights`
 
-```{r setup, echo = FALSE, message = FALSE, warning=FALSE}
+```{r setup, echo = FALSE, message = FALSE, warning=FALSE, results='hide'}
 knitr::opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
@@ -106,6 +106,16 @@ europe <- c(left = -12, bottom = 35, right = 30, top = 63) %>% as.vector() %>% +
 europe_overview <- get_stamenmap( bbox = europe, maptype = "toner-background", color="bw", zoom = 3)
 
 europe_overview_map <- ggmap(europe_overview, darken = c(0.6, "white"))+ coord_sf(default_crs = st_crs(4326))
+
+fc <- sf::st_read("../data/fixed_online_data/BiogeographischeRegionen.gdb", layer = "N2020_Revision_BiogeoRegion")
+fc <- st_transform(fc, 4326)
+fc <- fc[fc$RegionNummer==2,] %>% st_union()
+
+plot_path <- normalizePath(
+  file.path(
+    here(), "figures"
+    )
+  )
 ```
 
 # Introduction
@@ -164,11 +174,13 @@ A further characteristic of Bayesian modeling is that, due to the fact that resu
 
 ## Data/Proxies
 
-In principle, a large number of different data sources can be integrated into the overall model as observations, provided that these observations a) can be understood as dependent on the population density in the past, and b) a model-like description of this dependence can be created. A non-exhaustive list can be found in the following table \@ref(tab:tableproxies):
+The Swiss Plateau (Figure \@ref(fig:mapswissplateau)) covers about one third of Switzerland's territory and comprises the partly flat but largely hilly area between the Jura Mountains and the Alps. Its average altitude above sea level is between 400 and 600 m. Due to its situation as a basin, it represents a favourable area and is by far the most densely populated region of the Switzerland today. Although the Swiss Plateau is a basin, depending on the region it has a very diverse natural landscape. The Swiss Plateau was shaped by glaciers during the Ice Age, which led to the many lakes that characterise the landscape today, and which provide excellent preservation conditions for the numerous Neolithic and Bronze Age lakeside settlements, as well as a rich pool of sources for vegetation reconstructions by means of pollen analyses. A very active and efficient archaeological research and heritage management also offers a rich repository of archaeological data, known sites and ^14^C data.
+
+In principle, a large number of different data sources can be integrated into the overall model as observations, provided that these observations a) can be understood as dependent on the population density in the past, and b) a model-like description of this dependence can be created. A non-exhaustive list can be found in the following table \@ref(tab:tableproxies). For our analysis of the Swiss Plateau we used an open land indicator, an aoristic sum of sites based on typological dating, a sum calibration and the number of dendro dated lakeshore settlements in the Three Lakes area. The individual proxies will be discussed in more detail below.
 
 | Proxies                                        |
 |------------------------------------------------|
-| **Expert estimates**                           |
+| Expert estimates                           |
 | Ethnographic Analogies                         |
 | Carrying Capacity                              |
 | Economic modelling                             |
@@ -188,10 +200,6 @@ In principle, a large number of different data sources can be integrated into th
 : (#tab:tableproxies) A incomplete list of possible observation that can be linked to population developments in the past. Proxies used in this study are highlighted.
 
 ```{r mapswissplateau, fig.cap="Location and extent of the Swiss Plateau."}
-fc <- sf::st_read("../data/fixed_online_data/BiogeographischeRegionen.gdb", layer = "N2020_Revision_BiogeoRegion")
-fc <- st_transform(fc, 4326)
-fc <- fc[fc$RegionNummer==2,] %>% st_union()
-
 main_map <- my_basemap +
   geom_sf(data = fc, inherit.aes = FALSE, alpha = 0.33, fill="darkred", color=NA) +
   blank() +
@@ -206,7 +214,7 @@ ggdraw() +
   draw_plot(inset_map, x = 0, y = 0.7, width = 0.3, height = 0.3)
 ```
 
-The Swiss Plateau (Figure \@ref(fig:mapswissplateau)) covers about one third of Switzerland's territory and comprises the partly flat but largely hilly area between the Jura Mountains and the Alps. Its average altitude above sea level is between 400 and 600 m. Due to its situation as a basin, it represents a favourable area and is by far the most densely populated region of the Switzerland today. Although the Swiss Plateau is a basin, depending on the region it has a very diverse natural landscape. The Swiss Plateau was shaped by glaciers during the Ice Age, which led to the many lakes that characterise the landscape today, and which provide excellent preservation conditions for the numerous Neolithic and Bronze Age lakeside settlements.
+### Dendro Dated Lakeshore Settlements
 
 With a mild climate compared to the Jura and the Alps and a dense network of water bodies, the Swiss Plateau is a favourable area for human settlement in Switzerland. From the Neolithic onwards, settlement areas were concentrated along its rivers and lakes [@christianlüthi2009]. Thus, our working region offers on the one hand excellent data for demographic estimation, but on the other hand poses very specific problems for such an undertaking. If we have high-resolution information on the temporal sequence of individual settlements at the lakeside settlements by means of dendro data, this also might cause a research problem with regard to the ^14^C data often used as a proxy.
 
@@ -214,9 +222,9 @@ With a mild climate compared to the Jura and the Alps and a dense network of wat
 dendro <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "dendro_years.csv"))
 ```
 
-<!-- JR: The rest of this section is a bit and I lost the thread a bit. Could we first have a brief summary of which proxies we will use, and why (helping to explain why the Swiss Plateau was selected), then further details on each proxy in labelled sub-sections? -->
-
 The dataset we use for the number of dendrodated wetland settlements in the Three Lakes region was collected by Julian Laabs for his PhD thesis [@laabs2019]. Details on the creation of this data series will be published at the referenced location. The time series used here runs from `r abs(min(dendro$date))` to `r abs(max(dendro$date))` BCE, and contains the number of chronologically registered fell phases at individual settlements. This results in a time series that reflects the settlement of the lakeshores in the Neolithic and Bronze Age periods.
+
+### ^14^C sum calibration
 
 ```{r echo=FALSE}
 c14 <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "14c_swiss_plateau.csv"))
@@ -243,6 +251,8 @@ ggplot(joined_data) + geom_line(aes(x=1950-age, y=scale(sumcal, center = F), col
 
 We can now compare these two data sets (Figure \@ref(fig:compdendroc14)). In fact, there is a not uninteresting fit between the two data series. However, it must be assumed that the two dating methods, even if they would contradict each other, actually complement each other, and thus allow a better overall unified picture of the actual settlement density than each of the individual proxies would allow on their own.
 
+### Aoristic Sum
+
 ```{r echo=FALSE}
 aorist <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "site_data_fuzzy.csv"))
 aorist_latlng_coords <- st_as_sf(aorist,coords = c("LV03_Rechtswert_fuzzy", "LV03_Hochwert_fuzzy"),crs = 21781) %>% sf::st_transform(
@@ -268,6 +278,8 @@ ggplot(joined_data) + geom_line(aes(x=1950-age, y=aoristic_sum, color = "darkgra
   theme(legend.position="bottom")
 ```
 
+### Openness Indicator
+
 The natural conditions provided by the many lakes enable not only highly precise dating of archaeological sites, but also a very dense network of pollen analysis. We make use of this fact by generating a supra-regional openness indicator for the vegetation from the pollen data (Figure \@ref(fig:pollensites)). This indicator has the specific advantage that it is not dependent on preservation conditions, as archaeological indicators are. This makes it particularly valuable for indicating or compensating for systematic distortions that result from temporally specific settlement patterns and archaeological preservation conditions.
 
 ```{r pollensites, fig.cap="Location of the pollen profiles used for the openness indicator."}
@@ -282,7 +294,7 @@ my_basemap +
 The utilisation of this proxy is based on the assumption that the higher the population density in an area, the greater the human influence on the natural environment [@lechterbeck2014], and that the agricultural space of an area is closely related to the population density [@zimmermann2004]. Evidence of land clearing in pollen diagrams can therefore give further indications regarding population dynamics. The exact methodological procedure for obtaining this proxy from several, in our case 5, different pollen diagrams of sites mainly in the hinterland of the large Alpine lakes can be found in a previous publication [@heitz2021]. The technical procedure is also documented in the accompanying R-script. The percentage pollen data based on a pollen sum of all terrestrial taxa of the individual sites were combined into one data set by means of a principal component analysis (Figure \@ref(fig:pollenproxy)). Only terrestrial pollen taxa with a frequency of more than 1/3 and, if present, with an average frequency of at least more than 0.1% were selected to reduce potential disturbance by rare species. Cereal pollen was explicitly retained as an important anthropogenic indicator. As each sample is absolutely dated, the data on the x-axis can be plotted against the openness value on the y-axis to obtain a time series time series for land clearing.
 
 ```{r pollenproxy, fig.cap="Value on the first dimension of the PCA against dating of the samples for the individual pollen profiles and their combined average value as the openness indicator."}
-knitr::include_graphics(file.path(rstudioapi::getActiveProject(), "analysis", "analysis_files", "figure-html", "pollenproxy-1.png"))
+knitr::include_graphics(file.path(rstudioapi::getActiveProject(), "figures", "pollenproxy.pdf"))
 ```
 
 Unfortunately, in the Swiss Plateau there is no data from burials that could be usefully incorporated into such this model due to the absence of regular burials for larger parts of prehistory. Formation conditions, in this case most likely C-transformation [@schiffer1987], prevent their use in this study. Nevertheless, we see a very high potential for other regions in the integration of demographic indicators from burial data in order to enlarge the canon of methods and the range of proxies.
@@ -384,7 +396,7 @@ expert_estimations <- read.csv(file.path(rstudioapi::getActiveProject(), "data",
 ggplot(expert_estimations) + geom_segment(aes(x=from, xend = to, y = estimate, yend = estimate, color = source)) + xlab("cal BCE") + ylab("Density p/km²") + theme_minimal()
 ```
 
-<!-- JR: I really like the idea of discussing "dead ends" in the model design process – very modern and reflexive! Maybe hightlight these in a section of their own? -->
+<!-- JR: I really like the idea of discussing "dead ends" in the model design process – very modern and reflexive! Maybe hightlight these in a section of their own? MH: I do not feel that this part would provide enough material to justify an own section. -->
 
 In earlier implementations, expert estimates were also integrated into the model. However, since these are highly contradictory for the working area (Figure \@ref(fig:expertestimations), therefore have little influence on the model, and also lead to a significantly longer runtime, we have refrained from doing so in the current implementation. For future applications of the model with a larger geographical range and thus a higher information density, however, this would again be a factor that could be integrated in a useful way.
 
@@ -402,59 +414,79 @@ For the fitting process, a starting value of 5 p/km² for a population density o
 
 For the traceplots and the prior-posterior overlap as well as the density functions of the posterior samples of the individual parameters, please refer to the supplementary material.
 
-<!-- JR: I don't know where it would fit best, but I'd find it very helpful to see a table of all the priors and fixed parameters with their initial values. -->
-
-```{r}
+```{r, results='hide'}
 x <- 1:100
 ```
 
-```{r dpois50, dev='png', fig.show='hide', fig.height = 3, fig.width = 3}
+```{r dpois50, results='hide'}
+pdf(file = file.path(plot_path, "dpois50.pdf"), width = 2, height = 2)
+oldmar <- par(mar = c(2, 2, 2, 2))
 plot(x,dpois(x,50), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+par(oldmar)
+dev.off()
 ```
 
-```{r dgammamaxgrowthrate, dev='png', fig.show='hide', fig.height = 3, fig.width = 3}
+```{r dgammamaxgrowthrate, results='hide'}
+pdf(file = file.path(plot_path, "dgammamaxgrowthrate.pdf"), width = 2, height = 2)
+oldmar <- par(mar = c(2, 2, 2, 2))
 plot(x/50+1,dgamma(x/50,shape = 5, scale = 0.05), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+par(oldmar)
+dev.off()
 ```
 
-```{r mualpha, dev='png', fig.show='hide', fig.height = 3, fig.width = 3}
+```{r mualpha, results='hide'}
+pdf(file = file.path(plot_path, "mualpha.pdf"), width = 2, height = 2)
+oldmar <- par(mar = c(2, 2, 2, 2))
 plot(x/20,dlnorm(x/20,1,0.1), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+par(oldmar)
+dev.off()
 ```
 
-```{r aalpha, dev='png', fig.show='hide', fig.height = 3, fig.width = 3}
+```{r aalpha, results='hide'}
+pdf(file = file.path(plot_path, "aalpha.pdf"), width = 2, height = 2)
+oldmar <- par(mar = c(2, 2, 2, 2))
 plot(x/10,dexp(x/10,1), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+par(oldmar)
+dev.off()
 ```
 
-```{r alpha, dev='png', fig.show='hide', fig.height = 3, fig.width = 3}
+```{r alpha, cache=TRUE, results='hide'}
 n_sample <- 1000000
 mu_a <- rlnorm(n_sample,1,0.1)
 a_a <- rexp(n_sample,1)
 alpha <- rlnorm(n_sample,mu_a,a_a)
+pdf(file = file.path(plot_path, "alpha.pdf"), width = 2, height = 2)
+oldmar <- par(mar = c(2, 2, 2, 2))
 plot(density(alpha, from=0,to=100), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
+par(oldmar)
+dev.off()
 ```
 
-```{r p, dev='png', fig.show='hide', fig.height = 3, fig.width = 3, cache=TRUE}
+```{r p, cache=TRUE, results='hide'}
 p <- matrix(nrow = 10000, ncol = 4)
 for (i in 1:nrow(p)) {
  p[i,] <- nimble::rdirch(1, sample(alpha,4))
 }
-par(mfrow=c(2,2))
+pdf(file = file.path(plot_path, "p.pdf"), width = 2.5, height = 2.5)
 oldmar <- par(mar = c(2, 2, 2, 2))
+par(mfrow=c(2,2))
 plot(density(p[,1]), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
 plot(density(p[,2]), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
 plot(density(p[,3]), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
 plot(density(p[,4]), type="l", ann = FALSE, axes = FALSE, lwd=4, col = "skyblue");axis(1)
-par(mfrow=c(1,1))
 par(oldmar)
+par(mfrow=c(1,1))
+dev.off()
 ```
 
 | **Priors**           | **Value**                            | **Plot/Comment**                                                               |
 |-----------------------------|--------------------------|-----------------|
-| MeanSiteSize         | dpois(50)                            | ![MeanSiteSize](`r knitr::fig_chunk('dpois50', 'png')`)                |
-| max_growth_rate      | dgamma(shape = 5, scale=0.05) + 1    | ![max_growth_rate](`r knitr::fig_chunk('dgammamaxgrowthrate','png')`) |
-| mu_alpha             | dlnorm(1,sdlog=0.1)                  | ![mu_alpha](`r knitr::fig_chunk('mualpha','png')`)                    |
-| a_alpha              | dexp(1)                              | ![a_alpha](`r knitr::fig_chunk('aalpha','png')`)                      |
-| alpha                | dlnorm(mu_alpha[j],sdlog=a_alpha[j]) | ![alpha](`r knitr::fig_chunk('alpha','png')`)                         |
-| p                    | ddirch(alpha[1:4])                   | ![p](`r knitr::fig_chunk('p','png')`)                                 |
+| MeanSiteSize         | dpois(50)                            | ![MeanSiteSize](../figures/dpois50.pdf)                |
+| max_growth_rate      | dgamma(shape = 5, scale=0.05) + 1    | ![max_growth_rate](../figures/dgammamaxgrowthrate.pdf) |
+| mu_alpha             | dlnorm(1,sdlog=0.1)                  | ![mu_alpha](../figures/mualpha.pdf)                    |
+| a_alpha              | dexp(1)                              | ![a_alpha](../figures/aalpha.pdf)                      |
+| alpha                | dlnorm(mu_alpha[j],sdlog=a_alpha[j]) | ![alpha](../figures/alpha.pdf)                         |
+| p                    | ddirch(alpha[1:4])                   | ![p](../figures/p.pdf)                                 |
 | **Parameters**       |                                      |                                                                                |
 | nEnd                 | 5                                    |                                                                                |
 | AreaSwissPlateau     | 12649 km²                            |                                                                                |
@@ -467,7 +499,7 @@ par(oldmar)
 
 # Results
 
-<!-- JR: I really think we need a section evaluating and validating the model fit before we discuss its output. -->
+<!-- JR: I really think we need a section evaluating and validating the model fit before we discuss its output. MH: that was the intention of the Model fitting section before, but I think this rather belongs to methods than to results!?-->
 
 ```{r popdensplot, fig.cap="The estimate of the population density resulting from the model and the three proxies, which are also plotted (scaled) for comparison."}
 knitr::include_graphics(file.path(rstudioapi::getActiveProject(), "figures", "popdens_estimation.pdf"))
@@ -491,7 +523,7 @@ By looking at the distribution of posterior samples for the share of each proxy 
 
 # Discussion
 
-<!-- JR: I would split this into subsections evaluation a) the merits of the approach and b) the specific results for Switzerland. -->
+<!-- JR: I would split this into subsections evaluation a) the merits of the approach and b) the specific results for Switzerland. MH: I thought I already have done this, discussion more the results for switzerland, conclusion more the generel merrits!? -->
 
 The ambition in the development of the model was originally to base it on a state-space representation of the demographic process itself, and then to integrate the existing proxies by means of an observation model to inform this process. In the course of developing the model, however, we had to realise that the existing data or the data used in the modelling process for the Swiss Plateau alone were not sufficient to adequately determine this process or to adequately fix the degrees of freedom resulting from the process and the transfer model. Therefore, in this implementation we have turned to the Poisson regression approach. In this version, the model represents the best possible combination of the indicators used to describe the development of the number of sites based on them.
 

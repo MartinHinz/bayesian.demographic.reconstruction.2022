@@ -233,13 +233,20 @@ Then we pick every 50th date:
 res.open_smoothed <- res.open_smoothed[res.open_smoothed$age %in%
 seq(from=1000,
     to=10000, by=50),]
-ggplot(res.open_smoothed,aes(x=1950-age,y=moving_mean)) +
+pollenproxy_plot <- ggplot(res.open_smoothed,aes(x=1950-age,y=moving_mean)) +
   geom_point(aes(color=site), alpha =.5) +
   geom_smooth(span = 0.05, color = "black") +
   scale_x_continuous(breaks=seq(timeframe[1],timeframe[2],200), limits = timeframe) +
   labs(y = "Openness score [PCA]",x = "Date",colour = "Sites") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+pollenproxy_plot
+```
+We save this plot for later use:
+
+```{r}
+ggsave(normalizePath(file.path(here(), "figures","pollenproxy.pdf"), mustWork = F),
+       plot = pollenproxy_plot, width = 21, height = 29.7/2, units = "cm")
 ```
 
 Finally, we calculate the average of all profiles as the final supra-regional openness index.
