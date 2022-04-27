@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/Arch Linux) (preloaded format=pdflatex 2022.4.21)  27 APR 2022 09:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/Arch Linux) (preloaded format=pdflatex 2022.4.21)  27 APR 2022 09:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -558,42 +558,42 @@ LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
 (/usr/share/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [2] [3] [4]
-<../figures/mapswissplateau-1.pdf, id=49, 467.7475pt x 320.19624pt>
+<../figures/mapswissplateau-1.pdf, id=50, 467.7475pt x 320.19624pt>
 File: ../figures/mapswissplateau-1.pdf Graphic file (type pdf)
 <use ../figures/mapswissplateau-1.pdf>
 Package pdftex.def Info: ../figures/mapswissplateau-1.pdf  used on input line 2
-40.
+42.
 (pdftex.def)             Requested size: 467.75346pt x 320.20033pt.
 [5] [6 <../figures/mapswissplateau-1.pdf>]
-<../figures/c14map-1.pdf, id=80, 467.7475pt x 318.18875pt>
+<../figures/c14map-1.pdf, id=79, 467.7475pt x 318.18875pt>
 File: ../figures/c14map-1.pdf Graphic file (type pdf)
 <use ../figures/c14map-1.pdf>
 Package pdftex.def Info: ../figures/c14map-1.pdf  used on input line 262.
 (pdftex.def)             Requested size: 467.74634pt x 318.18796pt.
-<../figures/compdendroc14-1.pdf, id=81, 460.72125pt x 307.1475pt>
+<../figures/compdendroc14-1.pdf, id=80, 460.72125pt x 307.1475pt>
 File: ../figures/compdendroc14-1.pdf Graphic file (type pdf)
 <use ../figures/compdendroc14-1.pdf>
 Package pdftex.def Info: ../figures/compdendroc14-1.pdf  used on input line 268
 .
 (pdftex.def)             Requested size: 460.72012pt x 307.14674pt.
-<../figures/aoristmap-1.pdf, id=83, 467.7475pt x 318.18875pt>
+<../figures/aoristmap-1.pdf, id=82, 467.7475pt x 318.18875pt>
 File: ../figures/aoristmap-1.pdf Graphic file (type pdf)
 <use ../figures/aoristmap-1.pdf>
 Package pdftex.def Info: ../figures/aoristmap-1.pdf  used on input line 279.
 (pdftex.def)             Requested size: 467.74634pt x 318.18796pt.
-[7 <../figures/c14map-1.pdf>] [8 <../figures/compdendroc14-1.pdf>] [9 <../figur
-es/aoristmap-1.pdf>]
-<../figures/aoristcurve-1.pdf, id=139, 460.72125pt x 307.1475pt>
+[7 <../figures/c14map-1.pdf>] [8 <../figures/compdendroc14-1.pdf>]
+<../figures/aoristcurve-1.pdf, id=121, 460.72125pt x 307.1475pt>
 File: ../figures/aoristcurve-1.pdf Graphic file (type pdf)
 <use ../figures/aoristcurve-1.pdf>
 Package pdftex.def Info: ../figures/aoristcurve-1.pdf  used on input line 287.
 (pdftex.def)             Requested size: 460.72012pt x 307.14674pt.
-<../figures/pollensites-1.pdf, id=141, 467.7475pt x 318.18875pt>
+<../figures/pollensites-1.pdf, id=123, 467.7475pt x 318.18875pt>
 File: ../figures/pollensites-1.pdf Graphic file (type pdf)
 <use ../figures/pollensites-1.pdf>
 Package pdftex.def Info: ../figures/pollensites-1.pdf  used on input line 298.
 (pdftex.def)             Requested size: 467.74634pt x 318.18796pt.
-[10 <../figures/aoristcurve-1.pdf>] [11 <../figures/pollensites-1.pdf>]
+[9 <../figures/aoristmap-1.pdf>] [10 <../figures/aoristcurve-1.pdf>] [11 <../fi
+gures/pollensites-1.pdf>]
 </home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/polle
 nproxy.pdf, id=179, 597.23125pt x 421.575pt>
 File: /home/martin/r_projekte/bayesian.demographic.reconstruction.2022/figures/
@@ -612,23 +612,23 @@ Package pdftex.def Info: ../figures/expertestimations-1.pdf  used on input line
  407.
 (pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
 [15] [16 <../figures/expertestimations-1.pdf>]
-<../figures/dpois50.pdf, id=236, 144.54pt x 144.54pt>
+<../figures/dpois50.pdf, id=235, 144.54pt x 144.54pt>
 File: ../figures/dpois50.pdf Graphic file (type pdf)
 <use ../figures/dpois50.pdf>
 Package pdftex.def Info: ../figures/dpois50.pdf  used on input line 453.
 (pdftex.def)             Requested size: 105.24202pt x 105.24202pt.
-<../figures/dgammamaxgrowthrate.pdf, id=237, 144.54pt x 144.54pt>
+<../figures/dgammamaxgrowthrate.pdf, id=236, 144.54pt x 144.54pt>
 File: ../figures/dgammamaxgrowthrate.pdf Graphic file (type pdf)
 <use ../figures/dgammamaxgrowthrate.pdf>
 Package pdftex.def Info: ../figures/dgammamaxgrowthrate.pdf  used on input line
  454.
 (pdftex.def)             Requested size: 105.24202pt x 105.24202pt.
-<../figures/mualpha.pdf, id=238, 144.54pt x 144.54pt>
+<../figures/mualpha.pdf, id=237, 144.54pt x 144.54pt>
 File: ../figures/mualpha.pdf Graphic file (type pdf)
 <use ../figures/mualpha.pdf>
 Package pdftex.def Info: ../figures/mualpha.pdf  used on input line 455.
 (pdftex.def)             Requested size: 105.24202pt x 105.24202pt.
-<../figures/aalpha.pdf, id=239, 144.54pt x 144.54pt>
+<../figures/aalpha.pdf, id=238, 144.54pt x 144.54pt>
 File: ../figures/aalpha.pdf Graphic file (type pdf)
 <use ../figures/aalpha.pdf>
 Package pdftex.def Info: ../figures/aalpha.pdf  used on input line 456.
@@ -638,12 +638,12 @@ Overfull \hbox (5.98549pt too wide) in paragraph at lines 457--457
 []|\T1/lmr/m/n/10 (-20) dlnorm(mu_alpha[j],sdlog=a_alpha[j])|  
  []
 
-<../figures/alpha.pdf, id=240, 144.54pt x 144.54pt>
+<../figures/alpha.pdf, id=239, 144.54pt x 144.54pt>
 File: ../figures/alpha.pdf Graphic file (type pdf)
 <use ../figures/alpha.pdf>
 Package pdftex.def Info: ../figures/alpha.pdf  used on input line 457.
 (pdftex.def)             Requested size: 105.24202pt x 105.24202pt.
-<../figures/p.pdf, id=241, 180.675pt x 180.675pt>
+<../figures/p.pdf, id=240, 180.675pt x 180.675pt>
 File: ../figures/p.pdf Graphic file (type pdf)
 <use ../figures/p.pdf>
 Package pdftex.def Info: ../figures/p.pdf  used on input line 458.
@@ -705,7 +705,7 @@ LaTeX Warning: There were undefined references.
 Here is how much of TeX's memory you used:
  14051 strings out of 478276
  223669 string characters out of 5853013
- 562487 words of memory out of 5000000
+ 562485 words of memory out of 5000000
  31722 multiletter control sequences out of 15000+600000
  540623 words of font info for 163 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -728,7 +728,7 @@ are/texmf-dist/fonts/type1/public/lm/lmr9.pfb></usr/share/texmf-dist/fonts/type
 1/public/lm/lmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy5.pfb><
 /usr/share/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf-dist/fo
 nts/type1/public/lm/lmtt10.pfb>
-Output written on paper.pdf (28 pages, 8115688 bytes).
+Output written on paper.pdf (28 pages, 8116023 bytes).
 PDF statistics:
  600 PDF objects out of 1000 (max. 8388607)
  475 compressed objects within 5 object streams
