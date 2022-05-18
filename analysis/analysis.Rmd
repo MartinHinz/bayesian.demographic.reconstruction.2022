@@ -951,17 +951,17 @@ Finally, compile the plot:
 all_proxies_orig <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
 
 popdens_plot <- ggplot(all_proxies_orig) +
-  geom_line(aes(x = 1950-age, y = scale(openness), col="Openness Indicator")) +
-  geom_line(aes(x = 1950-age, y = scale(sumcal), col="Sum Calibration")) +
-  geom_line(aes(x = 1950-age, y = scale(dendro), col="Dendro Dated Settlements")) +
-  geom_line(aes(x = 1950-age, y = scale(aoristic_sum), col="Aoristic Sum")) +
+  geom_line(aes(x = (1950-age) * -1, y = scale(openness), col="Openness Indicator")) +
+  geom_line(aes(x = (1950-age) * -1, y = scale(sumcal), col="Sum Calibration")) +
+  geom_line(aes(x = (1950-age) * -1, y = scale(dendro), col="Dendro Dated Settlements")) +
+  geom_line(aes(x = (1950-age) * -1, y = scale(aoristic_sum), col="Aoristic Sum")) +
   geom_line(data = PopDens_summary,
-            aes(x = 1950-age, y=mean, col = "Estimation Result")) + 
+            aes(x = (1950-age) * -1, y=mean, col = "Estimation Result")) + 
   geom_line(data = PopDens_summary,
-            aes(x = 1950-age, y=hpdi_l, col = "Estimation Result"), lty=2) + 
+            aes(x = (1950-age) * -1, y=hpdi_l, col = "Estimation Result"), lty=2) + 
   geom_line(data = PopDens_summary,
-            aes(x = 1950-age, y=hpdi_u, col = "Estimation Result"), lty=2) +
-  theme_minimal() + 
+            aes(x = (1950-age) * -1, y=hpdi_u, col = "Estimation Result"), lty=2) +
+  theme_minimal() + scale_x_reverse() + 
   scale_colour_manual(
     values = c("Openness" = "darkgreen",
                "Sum Calibration" = "red",
@@ -1012,14 +1012,14 @@ var_popdens <- data.frame(var_coeff = apply(all_chains[,2:100], 2, function(x) s
 coeff <- 0.1
 
 popvar_plot <- ggplot(var_popdens) +
-  geom_line(aes(x = 1950-age, y = var_coeff/coeff, col="Variation Coefficient"), alpha = 0.5) +
+  geom_line(aes(x = (1950-age) * -1, y = var_coeff/coeff, col="Variation Coefficient"), alpha = 0.5) +
   geom_line(data = PopDens_summary,
-            aes(x = rev(1950-all_proxies_orig$age), y=mean, col = "Estimation Result")) + 
+            aes(x = rev((1950-all_proxies_orig$age)*-1), y=mean, col = "Estimation Result")) + 
   geom_line(data = PopDens_summary,
-            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_l, col = "Estimation Result"), lty=2) + 
+            aes(x = rev((1950-all_proxies_orig$age)*-1), y=hpdi_l, col = "Estimation Result"), lty=2) + 
   geom_line(data = PopDens_summary,
-            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_u, col = "Estimation Result"), lty=2) +
-  theme_minimal() + 
+            aes(x = rev((1950-all_proxies_orig$age)*-1), y=hpdi_u, col = "Estimation Result"), lty=2) +
+  theme_minimal() + scale_x_reverse() + 
   scale_colour_manual(
     values = c(
                "Variation Coefficient" = "red",

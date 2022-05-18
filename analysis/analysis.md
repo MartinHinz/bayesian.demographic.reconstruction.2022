@@ -586,13 +586,14 @@ Then we pick every 50th date:
 res.open_smoothed <- res.open_smoothed[res.open_smoothed$age %in%
 seq(from=1000,
     to=10000, by=50),]
-ggplot(res.open_smoothed,aes(x=1950-age,y=moving_mean)) +
+pollenproxy_plot <- ggplot(res.open_smoothed,aes(x=1950-age,y=moving_mean)) +
   geom_point(aes(color=site), alpha =.5) +
   geom_smooth(span = 0.05, color = "black") +
   scale_x_continuous(breaks=seq(timeframe[1],timeframe[2],200), limits = timeframe) +
   labs(y = "Openness score [PCA]",x = "Date",colour = "Sites") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+pollenproxy_plot
 ```
 
 ```
@@ -600,6 +601,17 @@ ggplot(res.open_smoothed,aes(x=1950-age,y=moving_mean)) +
 ```
 
 ![](analysis_files/figure-html/pollenproxy-1.png)<!-- -->
+We save this plot for later use:
+
+
+```r
+ggsave(normalizePath(file.path(here(), "figures","pollenproxy.pdf"), mustWork = F),
+       plot = pollenproxy_plot, width = 21, height = 29.7/2, units = "cm")
+```
+
+```
+## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+```
 
 Finally, we calculate the average of all profiles as the final supra-regional openness index.
 
@@ -617,7 +629,7 @@ ggplot(res.open_final,aes(x=1950-age)) +
   geom_segment(aes(y=mean-sd, yend =mean+sd, xend=1950-age), alpha = .25)
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
 
 ### ^14^C Summenkalibration
 
@@ -646,7 +658,7 @@ old.par <- par(mar = c(0, 0, 0, 0))
 plot(img)
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
 
 ```r
 par(old.par)
@@ -673,7 +685,7 @@ Below is the visualisation of the sum calibration:
 plot(1950-sumcal$grid$calBP, sumcal$grid$PrDens,type="l", main = paste0("n=", length(c14.calibrated)))
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
 
 Finally, we extract the values every 50 years:
 
@@ -711,7 +723,7 @@ old.par <- par(mar = c(0, 0, 0, 0))
 plot(img)
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
 
 ```r
 par(old.par)
@@ -792,7 +804,7 @@ Again, the curve of the proxy is plotted here also:
 plot(res.aorist$date, res.aorist$sum,type="l", main = paste0("n=", nrow(sites)))
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
 
 Once more, we extract the values every 50 years:
 
@@ -838,7 +850,7 @@ Here is yet another plot of the resulting curve:
 plot(res.lss$date, res.lss$moving_mean,type="l")
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
 
 Picking the data points every 50 years again:
 
@@ -866,7 +878,7 @@ ggplot() +
                       )
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 We merge the dataset and restrict it to our observation window:
 
@@ -1229,7 +1241,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 58.54885 secs
+## Time difference of 1.389245 mins
 ```
 
 At the end of the 1st run, the model is instantiated in the individual cluster partitions, possibly already converged. But we now check the convergence in continued runs.
@@ -1273,7 +1285,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 34.66532 secs
+## Time difference of 2.711749 mins
 ```
 
 Once the model has converged, we can look at the result of estimating the population density based on the number of settlements. For this we extract the mean and 95% highest posterior density interval:
@@ -1289,7 +1301,7 @@ lines(1950-model_data$age, result$`95%_HPDL`, lty=2)
 lines(1950-model_data$age, result$`95%_HPDU`, lty=2)
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-59-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-60-1.png)<!-- -->
 
 This converged run is sufficient to check some initial parameter values. For example, we can see how the proportional importance of the proxies is distributed:
 
@@ -1302,7 +1314,7 @@ MCMCchains(mcmcSamples, params = "p") %>%
   ggplot(aes(x = value, y = name)) + stat_halfeye()
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-60-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-61-1.png)<!-- -->
 
 The model trusts mainly the openness index, the aoristic sum and the dendro data play a subordinate role. The sum calibration has a higher weight. However, the shape of the distributions also indicates that we may have too few effective samples to make a reliable statement about the highest posterior density intervals. Let's take a look at the effective samples:
 
@@ -1314,7 +1326,7 @@ MCMCsummary(mcmcSamples) %>%
   ggplot() + geom_bar(aes(y=n.eff, x=rowname), stat = "identity") + coord_flip()
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-61-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-62-1.png)<!-- -->
 
 Very few parameters have already reached the effective sample size of 10000 suggested for a reliable estimate. Therefore, we extend the run until this number is reached.
 
@@ -1390,7 +1402,7 @@ end_time - start_time
 ```
 
 ```
-## Time difference of 0.0131855 secs
+## Time difference of 0.01416039 secs
 ```
 
 When the model has finished running, we should stop the clusters:
@@ -1435,7 +1447,7 @@ MCMCtrace(collector, params = "p", priors = p_mat, pdf = F, ind = T, Rhat = T)
 ## will be used.
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-68-1.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-68-2.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-69-1.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-2.png)<!-- -->
 
 And then for lambda and nSites (respectively derived for PopDens):
 
@@ -1464,7 +1476,7 @@ MCMCtrace(collector, params = "PopDens", priors = PopDens, pdf = F, ind = T, Rha
 ## will be used.
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-69-1.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-2.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-3.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-4.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-5.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-6.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-7.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-8.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-9.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-10.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-11.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-12.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-13.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-14.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-15.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-16.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-17.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-18.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-19.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-20.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-21.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-22.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-23.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-24.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-25.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-26.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-27.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-28.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-29.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-30.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-31.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-32.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-69-33.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-70-1.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-2.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-3.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-4.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-5.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-6.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-7.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-8.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-9.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-10.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-11.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-12.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-13.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-14.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-15.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-16.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-17.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-18.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-19.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-20.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-21.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-22.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-23.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-24.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-25.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-26.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-27.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-28.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-29.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-30.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-31.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-32.png)<!-- -->![](analysis_files/figure-html/unnamed-chunk-70-33.png)<!-- -->
 
 ```r
 gc(verbose=F)
@@ -1472,8 +1484,8 @@ gc(verbose=F)
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5257372  280.8    8872634   473.9    8872634   473.9
-## Vcells 849687543 6482.7 4523069218 34508.3 5653835661 43135.4
+## Ncells   6355700  339.5   11421981   610.0   11421981   610.0
+## Vcells 850919602 6492.1 4525506259 34526.9 5656865688 43158.5
 ```
 
 Finally, we can plot the result in comparison to the input data, superimposing them (scaled) on the estimation result in their original form rather than as difference data. To do this, we first extract mean and HPDI from the posterior samples for all parameters:
@@ -1492,8 +1504,8 @@ gc(verbose=F)
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5106062  272.7    8872634   473.9    8872634   473.9
-## Vcells 844633634 6444.1 3618455375 27606.7 5653835661 43135.4
+## Ncells   6198155  331.1   11421981   610.0   11421981   610.0
+## Vcells 845857874 6453.4 3620405008 27621.5 5656865688 43158.5
 ```
 
 ```r
@@ -1513,8 +1525,8 @@ gc(verbose=F)
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5106133  272.7    8872634   473.9    8872634   473.9
-## Vcells 844634162 6444.1 2894764300 22085.3 5653835661 43135.4
+## Ncells   6198226  331.1   11421981   610.0   11421981   610.0
+## Vcells 845858402 6453.4 2896324007 22097.2 5656865688 43158.5
 ```
 
 Then we obtain the population density estimates from these, and save them for further use:
@@ -1538,17 +1550,17 @@ Finally, compile the plot:
 all_proxies_orig <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
 
 popdens_plot <- ggplot(all_proxies_orig) +
-  geom_line(aes(x = 1950-age, y = scale(openness), col="Openness Indicator")) +
-  geom_line(aes(x = 1950-age, y = scale(sumcal), col="Sum Calibration")) +
-  geom_line(aes(x = 1950-age, y = scale(dendro), col="Dendro Dated Settlements")) +
-  geom_line(aes(x = 1950-age, y = scale(aoristic_sum), col="Aoristic Sum")) +
+  geom_line(aes(x = (1950-age) * -1, y = scale(openness), col="Openness Indicator")) +
+  geom_line(aes(x = (1950-age) * -1, y = scale(sumcal), col="Sum Calibration")) +
+  geom_line(aes(x = (1950-age) * -1, y = scale(dendro), col="Dendro Dated Settlements")) +
+  geom_line(aes(x = (1950-age) * -1, y = scale(aoristic_sum), col="Aoristic Sum")) +
   geom_line(data = PopDens_summary,
-            aes(x = 1950-age, y=mean, col = "Estimation Result")) + 
+            aes(x = (1950-age) * -1, y=mean, col = "Estimation Result")) + 
   geom_line(data = PopDens_summary,
-            aes(x = 1950-age, y=hpdi_l, col = "Estimation Result"), lty=2) + 
+            aes(x = (1950-age) * -1, y=hpdi_l, col = "Estimation Result"), lty=2) + 
   geom_line(data = PopDens_summary,
-            aes(x = 1950-age, y=hpdi_u, col = "Estimation Result"), lty=2) +
-  theme_minimal() + 
+            aes(x = (1950-age) * -1, y=hpdi_u, col = "Estimation Result"), lty=2) +
+  theme_minimal() + scale_x_reverse() + 
   scale_colour_manual(
     values = c("Openness" = "darkgreen",
                "Sum Calibration" = "red",
@@ -1561,7 +1573,7 @@ popdens_plot <- ggplot(all_proxies_orig) +
 popdens_plot
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-72-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-73-1.png)<!-- -->
 
 Save as result image to the figures folder.
 
@@ -1580,8 +1592,8 @@ gc(verbose = F)
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5114554  273.2    8872634   473.9    8872634   473.9
-## Vcells 844652416 6444.2 2315811440 17668.3 5653835661 43135.4
+## Ncells   6200828  331.2   11421981   610.0   11421981   610.0
+## Vcells 845861891 6453.5 2317059206 17677.8 5656865688 43158.5
 ```
 
 ```r
@@ -1594,7 +1606,7 @@ p_plot <- all_chains[,grep("^p\\[", params)] %>%
 p_plot
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-74-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-75-1.png)<!-- -->
 
 Also save as result image.
 
@@ -1612,8 +1624,8 @@ gc(verbose = F)
 
 ```
 ##             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-## Ncells   5115431  273.2    8872634   473.9    8872634   473.9
-## Vcells 902256279 6883.7 2315811440 17668.3 5653835661 43135.4
+## Ncells   6201741  331.3   11421981   610.0   11421981   610.0
+## Vcells 903466022 6892.9 2317059206 17677.8 5656865688 43158.5
 ```
 
 ```r
@@ -1623,14 +1635,14 @@ var_popdens <- data.frame(var_coeff = apply(all_chains[,2:100], 2, function(x) s
 coeff <- 0.1
 
 popvar_plot <- ggplot(var_popdens) +
-  geom_line(aes(x = 1950-age, y = var_coeff/coeff, col="Variation Coefficient"), alpha = 0.5) +
+  geom_line(aes(x = (1950-age) * -1, y = var_coeff/coeff, col="Variation Coefficient"), alpha = 0.5) +
   geom_line(data = PopDens_summary,
-            aes(x = rev(1950-all_proxies_orig$age), y=mean, col = "Estimation Result")) + 
+            aes(x = rev((1950-all_proxies_orig$age)*-1), y=mean, col = "Estimation Result")) + 
   geom_line(data = PopDens_summary,
-            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_l, col = "Estimation Result"), lty=2) + 
+            aes(x = rev((1950-all_proxies_orig$age)*-1), y=hpdi_l, col = "Estimation Result"), lty=2) + 
   geom_line(data = PopDens_summary,
-            aes(x = rev(1950-all_proxies_orig$age), y=hpdi_u, col = "Estimation Result"), lty=2) +
-  theme_minimal() + 
+            aes(x = rev((1950-all_proxies_orig$age)*-1), y=hpdi_u, col = "Estimation Result"), lty=2) +
+  theme_minimal() + scale_x_reverse() + 
   scale_colour_manual(
     values = c(
                "Variation Coefficient" = "red",
@@ -1658,7 +1670,7 @@ popvar_plot <- ggplot(var_popdens) +
 popvar_plot
 ```
 
-![](analysis_files/figure-html/unnamed-chunk-76-1.png)<!-- -->
+![](analysis_files/figure-html/unnamed-chunk-77-1.png)<!-- -->
 
 Also save as result image.
 
