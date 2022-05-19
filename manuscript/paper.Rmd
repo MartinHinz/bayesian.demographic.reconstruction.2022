@@ -1,5 +1,5 @@
 ---
-title: "Bayesian Hierarchical Model for estimating holocene prehistoric population development on the Swiss Plateau"
+title: "Bayesian inference of prehistoric demography from multiple proxies: a case study from the Swiss plateau"
 author:
   - Martin Hinz:
       email: martin.hinz@iaw.unibe.ch
@@ -117,6 +117,16 @@ plot_path <- normalizePath(
     )
   )
 ```
+
+<!--
+[JR] suggested alternative titles:
+* A Bayesian hierarchical model of prehistoric population dynamics on the Swiss Plateau
+* Multi-proxy estimation of prehistoric population dynamics on the Swiss Plateau using Bayesian hierarchical modelling
+* Combining multiple proxies to estimate prehistoric population dynamics on the Swiss Plateau using Bayesian hierarchical modelling
+* A high-resolution estimate of prehistoric population dynamics on the Swiss Plateau using multi-proxy Bayesian hierarchical modelling
+* Prepend "Beyond summed radiocarbon:" to any of the above
+* Bayesian inference of prehistoric demography from multiple proxies: a case study from the Swiss plateau
+-->
 
 # Introduction
 
