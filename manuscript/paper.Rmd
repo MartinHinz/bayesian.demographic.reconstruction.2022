@@ -141,7 +141,9 @@ But methodological advances have certainly also played a role. In the last decad
 
 The 'dates as data' or summed radiocarbon approach has contributed greatly to our understanding of prehistoric demography, but it is not without its critics [@attenbrow_hiscock_2015, @carleton_groucutt_2020]. While the methodology continues to evolve and address these critiques [@crema_review_2022], it remains subject to certain fundamental problems common to all approaches that rely on a single proxy [@french_manifesto_2021, @schmidt_approaching_2021]. We believe that these problems cannot be overcome by methodological refinements in this area alone. Instead, the Bayesian approach we develop in this paper offers a robust, quantitative methodology for inferring prehistoric population dynamics from multiple proxies, including summed radiocarbon.
 
-## Evaluation of existing approaches
+# Background
+
+## Existing approaches to population estimation
 
 Müller and Diachenko [@muller_tracing_2019] have compiled a list of currently used approaches and proxies for estimating prehistoric population sizes. These can be roughly divided into ethnographic parallels, ecologic-economic deductive estimates, and the counting and spatial interpolation of archaeological features (settlements, houses, individual find types). From this short literature review three basic problems are common to all these approaches and the studies based on them:
 
@@ -159,7 +161,7 @@ Archaeological data used to estimate population trends have the following charac
 -   Indirect: It is actually always proxy data that are collected as substitute values for the information that is actually needed (i.e. population density or size). The transfer functions that link the collected data with the data to be obtained are unknown and are at best established by observing the (also ethnological) presence. However, since living conditions, circumstances and economic parameters differ greatly between the present time and prehistory, these transfer functions can only be evaluated as a first approximation.
 -   Contradicting: Particularly when considering several proxies, differences in transfer functions and data quality and noisiness inevitably lead to contrasts. However, this usually only leads to the rejection of a proxy for a certain time period, without mutually supporting or contradictory information leading to a quantitative evaluation of the proxy and its uncertainties.
 
-## Strengths of a hierarchical Bayesian approach
+## Hierarchical Bayesian demographic models
 
 In recent years, a new method has been established in the field of demographic estimations. The Bayesian population forecast was developed to provide a solution to these problems, which also exist in demographic estimates with current data. In their book on the subject, Bryant and Zhang [@bryant2018] state that Bayesian data modeling can be used to deal with exactly those problems that also affect archaeological data. Especially for limited, unreliable and noisy data, Bayesian approaches are optimally suited. Various even contradictory data can be brought into a common framework and support each other. Similarly, unlikelihood and uncertainty of a model approach can be quantified. This is well-accepted in archaeological applications through the Bayesian calibration and modelling of stratigraphic conditions and radiometric data. Furthermore, spatially and temporally incomplete data can be taken into account: Where these data are missing, the uncertainty automatically increases, but this does not prevent general modelling and estimation. Finally, hierarchically structured model suites, in which sub-models are created for the utilisation of individual proxies, can also be used to estimate transfer functions between individual proxies and the value to be modelled, thanks to the interaction of a large number of data sources and evidence.
 
@@ -169,9 +171,7 @@ Bayesian modelling techniques have also been used recently as a tool for hypothe
 
 This contribution now represents an attempt to make these techniques usable for archaeological reconstructions. In addition to a presentation of the basics and possible procedures, we want to show in the following, in a reproducible and practical form using a case study, how Bayesian methods can also make a decisive contribution to a better assessment of population development. These assessments are crucial for the reconstruction of the human past, even in for periods for which we only have very patchy, noisy and unreliable data.
 
-# Materials and Methods
-
-## Background
+## Assumptions of a Bayesian approach
 
 The basis of Bayesian statistics is the premise that there is always some prior assumption about the probability of an event, even if it may be completely vague. This assumption is then adjusted by observing the data. The concept of probability is not derived from theoretical, infinitely repeatable random experiments or distributions, but from the direct confrontation of the pre-assumptions (priors) with the available data. This involves checking how credible these prior assumptions are with regard to the available data [likelihood; see also @bryant2018, 66]. A small amount of data leads to a broad probability distribution that is not strongly localised and restricted. The intuitive procedure is thereby the shifting of credibility through evidence.
 
@@ -181,9 +181,24 @@ This Bayesian learning is iterative and sequential, so that the result of one Ba
 
 A further characteristic of Bayesian modeling is that, due to the fact that results of a Bayesian inference can be regarded as a prior for the next one, a hierarchical formulation of problem domains is possible. Parameters that are necessary for an estimation, such as the relationship of population density to the clearing signal in pollen data, need not be specified explicitly, but can be given by probability distributions and then estimated in the model itself [@bryant2018, 186]. The more data available, the more degrees of freedom can be estimated with a reasonable loss of confidence or a reasonable width of credibility intervals [@kruschke2015, 112]. For the estimation of these parameters, in turn, submodels have to be created which describe the relationship of the data to the characteristics of the parameter. This can be carried out over several levels, depending on necessity [@kruschke2015, 221--222].
 
-## Data/Proxies
+# <!-- Materials -->Population proxy data
 
 The Swiss Plateau (Figure \@ref(fig:mapswissplateau)) covers about one third of Switzerland's territory and comprises the partly flat but largely hilly area between the Jura Mountains and the Alps. Its average altitude above sea level is between 400 and 600 m. Due to its situation as a basin, it represents a favourable area and is by far the most densely populated region of the Switzerland today. Although the Swiss Plateau is a basin, depending on the region it has a very diverse natural landscape. The Swiss Plateau was shaped by glaciers during the Ice Age, which led to the many lakes that characterise the landscape today, and which provide excellent preservation conditions for the numerous Neolithic and Bronze Age lakeside settlements, as well as a rich pool of sources for vegetation reconstructions by means of pollen analyses. A very active and efficient archaeological research and heritage management also offers a rich repository of archaeological data, known sites and ^14^C data.
+
+```{r mapswissplateau, fig.cap="Location and extent of the Swiss Plateau."}
+main_map <- my_basemap +
+  geom_sf(data = fc, inherit.aes = FALSE, alpha = 0.33, fill="darkred", color=NA) +
+  blank() +
+  my_scalebar
+
+inset_map <- europe_overview_map +
+  geom_sf(data = switzerland_bb, fill = NA, color = "darkred", inherit.aes = FALSE) +
+  blank()
+
+ggdraw() +
+  draw_plot(main_map) +
+  draw_plot(inset_map, x = 0, y = 0.7, width = 0.3, height = 0.3)
+```
 
 In principle, a large number of different data sources can be integrated into the overall model as observations, provided that these observations a) can be understood as dependent on the population density in the past, and b) a model-like description of this dependence can be created. A non-exhaustive list can be found in the following table \@ref(tab:tableproxies). For our analysis of the Swiss Plateau we used an open land indicator, an aoristic sum of sites based on typological dating, a sum calibration and the number of dendro dated lakeshore settlements in the Three Lakes area. The individual proxies will be discussed in more detail below.
 
@@ -208,22 +223,8 @@ In principle, a large number of different data sources can be integrated into th
 
 : (#tab:tableproxies) A incomplete list of possible observation that can be linked to population developments in the past. Proxies used in this study are highlighted.
 
-```{r mapswissplateau, fig.cap="Location and extent of the Swiss Plateau."}
-main_map <- my_basemap +
-  geom_sf(data = fc, inherit.aes = FALSE, alpha = 0.33, fill="darkred", color=NA) +
-  blank() +
-  my_scalebar
 
-inset_map <- europe_overview_map +
-  geom_sf(data = switzerland_bb, fill = NA, color = "darkred", inherit.aes = FALSE) +
-  blank()
-
-ggdraw() +
-  draw_plot(main_map) +
-  draw_plot(inset_map, x = 0, y = 0.7, width = 0.3, height = 0.3)
-```
-
-### Dendro Dated Lakeshore Settlements
+## Dendro-dated lakeshore settlements
 
 With a mild climate compared to the Jura and the Alps and a dense network of water bodies, the Swiss Plateau is a favourable area for human settlement in Switzerland. From the Neolithic onwards, settlement areas were concentrated along its rivers and lakes [@christianlüthi2009]. Thus, our working region offers on the one hand excellent data for demographic estimation, but on the other hand poses very specific problems for such an undertaking. If we have high-resolution information on the temporal sequence of individual settlements at the lakeside settlements by means of dendro data, this also might cause a research problem with regard to the ^14^C data often used as a proxy.
 
@@ -233,7 +234,7 @@ dendro <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data",
 
 The dataset we use for the number of dendrodated wetland settlements in the Three Lakes region was collected by Julian Laabs for his PhD thesis [@laabs2019]. Details on the creation of this data series will be published at the referenced location. The time series used here runs from `r abs(min(dendro$date))` to `r abs(max(dendro$date))` BCE, and contains the number of chronologically registered fell phases at individual settlements. This results in a time series that reflects the settlement of the lakeshores in the Neolithic and Bronze Age periods.
 
-### ^14^C sum calibration
+## Summed radiocarbon
 
 ```{r echo=FALSE}
 c14 <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "14c_swiss_plateau.csv"))
@@ -261,7 +262,7 @@ ggplot(joined_data) + geom_line(aes(x=(1950-age)*-1, y=scale(sumcal, center = F)
 
 We can now compare these two data sets (Figure \@ref(fig:compdendroc14)). In fact, there is a not uninteresting fit between the two data series. However, it must be assumed that the two dating methods, even if they would contradict each other, actually complement each other, and thus allow a better overall unified picture of the actual settlement density than each of the individual proxies would allow on their own.
 
-### Aoristic Sum
+## Aoristic sum
 
 ```{r echo=FALSE}
 aorist <- read.csv(file.path(rstudioapi::getActiveProject(), "data", "raw_data", "site_data_fuzzy.csv"))
@@ -288,7 +289,7 @@ ggplot(joined_data) + geom_line(aes(x=(1950-age)*-1, y=aoristic_sum, color = "da
   theme(legend.position="bottom")
 ```
 
-### Openness Indicator
+## Landscape openness 
 
 The natural conditions provided by the many lakes enable not only highly precise dating of archaeological sites, but also a very dense network of pollen analysis. We make use of this fact by generating a supra-regional openness indicator for the vegetation from the pollen data (Figure \@ref(fig:pollensites)). This indicator has the specific advantage that it is not dependent on preservation conditions, as archaeological indicators are. This makes it particularly valuable for indicating or compensating for systematic distortions that result from temporally specific settlement patterns and archaeological preservation conditions.
 
@@ -313,7 +314,9 @@ The values of the sum calibration, the openness index and the dendrodated settle
 
 In our following modelling (see also \@ref(observational-model)) we now consider all these proxies as determinants for the change in the number of settlements. In the model, we therefore change the causality and shift the measurement error, which is certainly inherent in each of these indicators, to the process model, in which a Poisson process describes the number of simultaneous settlements. In doing so, we establish a likelihood that indicates how credible the data are, given the model.
 
-## Process Model
+# <!-- Methods -->Bayesian model
+
+## Process model
 
 A special class of Bayesian hierarchical models are so-called State Space Models (also known as Hidden Markov Models). These are specifically designed for time series and follow two basic principles. First, a hidden or latent process is assumed, which represents the state of the variable of interest $x_t$ at all times. For the course of the states of this variable over time, it is assumed that every state of variable x in the future, as well as in the past, is bound by a Markov process to the state of variable $x$ at time $t$. At the same time, it is assumed that certain observations, represented in variable y, are dependent on the state of variable $x$ at time $t$. This means that there is a relationship between the variable $x$ and the state of variable y over time. This implies that a relationship between the individual states of variable $y$ is generated over time via the hidden variable $x$, which itself is not observable.
 
@@ -360,7 +363,7 @@ $$
 
 The gamma distribution used centres the probability in a range $[0,1[$, adding 1 makes this range $[1-2[$. This prevents the number of sites from explosively increasing between two time periods, which would lead to problems for the convergence of the model. The interaction of these parameters results in the following prior probability distribution for $\lambda$ and thus the growth (or change) rate of the population:
 
-## Observational Model
+## Observational model
 
 During the development of the overall model, we abandoned the implementation of dedicated observation models adapted to the conditions of the individual proxies and their generating processes. In previous implementations, the underdetermination by the currently usable data of the model with many degrees of freedom led to equifinality of the solutions and, thus, to a high path dependency of the individual model runs. Therefore, it was almost impossible to achieve convergence of the overall model. Nevertheless, we believe that for a future application of the model with more data, a larger geographical coverage and especially a regionalised approach with information transfer by means of partial pooling, this more specific approach will be feasible and a very useful approach.
 
@@ -509,7 +512,7 @@ dev.off()
 
 # Results
 
-<!-- JR: I really think we need a section evaluating and validating the model fit before we discuss its output. MH: that was the intention of the Model fitting section before, but I think this rather belongs to methods than to results!?-->
+<!-- JR: I really think we need a section evaluating and validating the model fit before we discuss its output. MH: that was the intention of the Model fitting section before, but I think this rather belongs to methods than to results!? -->
 
 ```{r popdensplot, fig.cap="The estimate of the population density resulting from the model and the four proxies, which are also plotted (scaled) for comparison."}
 knitr::include_graphics(file.path(rstudioapi::getActiveProject(), "figures", "popdens_estimation.pdf"))
@@ -581,7 +584,7 @@ ylab("Scaled values for Proxies,\n P/km² for Estimation") +
 
 Figure \@ref(fig:popestwithphases) underlays the estimated development with the rough archaeological phases for the Swiss Plateau. The Older and Middle Neolithic phases are in fact hardly documented with known sites in Switzerland. Here we must assume a basically low level of settlement, probably mainly by hunter-gatherer groups. Isolated Neolithic sites of the LBK and later groups are known in the periphery of Switzerland, but they play a subordinate role. The Neolithic really began here in the so-called Upper Neolithic, connected with the cultural phenomena of Egolszwil and Cortaillod respectively Pfyn, as well as with the first lake shore settlements. In this period, we also see a clear increase in the estimated population in the model. In the transition to the Late Neolithic we know from the lakeshore settlements the so-called Horgen Gap. This is also visible as a slight decrease in the model. In another study [@heitz2021] we could show that this is in fact probably not a decline in population but rather a shift in settlement strategy. In the Late Neolithic, associated with the Horgen pottery, we then see a clear increase in the intensity of settlement, which reaches its peak and its break-off at the transition to the Corded Ware and thus to the Final Neolithic. In the second half of the Early Bronze Age, from which we again know lakeshore settlements, there is again a clear increase in population size according to the model, which continues until the Late Bronze Age. The general trends fit very well with the previous reconstructions of population development for Switzerland [see eg. @lechterbeck2014]. All in all, the estimate of the model corresponds to our expectations, although we must be aware that our expectations are not ground truth. Nevertheless, it can be said that the predictions of the model can be well integrated into the known narratives and make them more precise or provide them with a higher resolution, thus gaining credibility for the model predictions.
 
-# Conclusion and Outlook
+# Conclusions
 
 An important result of the current model is the estimation of absolute population numbers with uncertainty over time. This estimate can be used as a basis for further studies where relative measures of population development are not helpful, such as long-term land use studies where modelling of large-scale socio-ecological systems based on archaeological data becomes possible and does have to rely on using deductive, asynchronous population models (eg. carrying capacity or ethnographic analogues).
 
