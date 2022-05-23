@@ -271,9 +271,8 @@ aorist_latlng_coords <- st_as_sf(aorist,coords = c("LV03_Rechtswert_fuzzy", "LV0
 ) %>% st_coordinates() %>% as.data.frame()
 ```
 
-<!-- JR: At the resolution the figure is rendered at, I don't think the 1 km jitter is perceptible. MH: But in the data table that accompanies the repository, they would be available -->
 
-```{r aoristmap, fig.cap="The location of the sites from the find reports of the cantonal archaeology (heritage management). The locations are fuzzified by ~1km."}
+```{r aoristmap, fig.cap="The location of the sites from the find reports of the cantonal archaeology (heritage management). The locations are 'fuzzed' by ~1km."}
 my_basemap + geom_point(data = aorist_latlng_coords, aes(x = X, y = Y), color = "black", alpha = 0.75) + blank() + my_scalebar
 ```
 
@@ -351,7 +350,7 @@ $$
 
 Since $\lambda$ and $N$ are essentially in the same range (e.g. if $lambda=1$, the expected value for $N$ would also be 1), $N_{t-1}$ must also be logarithmised in the above formula to obtain the congruence of both values. The values for population size $N_t$ as well as for population change $\lambda_t$ are time-dependent. At each individual point in time in the time series, these variables can or will also take on different values. However, we can narrow down the structure of population change even further. We can assume that, considered overall over time, the population change the population change will not exceed certain limits over the entire time span, without it being possible here to specify this already.
 
-Thus, we can define the limits, the $max\_change\_rate$<!-- JR: no Greek letter? :( MH: I could invent one, if you like? ;-) --> as an time independent variable, again without already specifying them with fixed values at this stage. The estimation of these parameters for the entire model, as well as the estimation of the respective population change per time section, results from the modelling and the interaction with the data, respectively. Overall, this represents a hierarchical model that can be noted as follows:
+Thus, we can define the limits, the $max\_change\_rate$ as an time independent variable, again without already specifying them with fixed values at this stage. The estimation of these parameters for the entire model, as well as the estimation of the respective population change per time section, results from the modelling and the interaction with the data, respectively. Overall, this represents a hierarchical model that can be noted as follows:
 
 $$
 \begin{aligned}
@@ -408,8 +407,6 @@ expert_estimations <- read.csv(file.path(rstudioapi::getActiveProject(), "data",
 
 ggplot(expert_estimations) + geom_segment(aes(x=from * -1, xend = to * -1, y = estimate, yend = estimate, color = source)) + xlab("cal BCE") + ylab("Density p/km²") + theme_minimal() + scale_x_reverse()
 ```
-
-<!-- JR: I really like the idea of discussing "dead ends" in the model design process – very modern and reflexive! Maybe hightlight these in a section of their own? MH: I do not feel that this part would provide enough material to justify an own section. -->
 
 In earlier implementations, expert estimates were also integrated into the model. However, since these are highly contradictory for the working area (Figure \@ref(fig:expertestimations), therefore have little influence on the model, and also lead to a significantly longer runtime, we have refrained from doing so in the current implementation. For future applications of the model with a larger geographical range and thus a higher information density, however, this would again be a factor that could be integrated in a useful way.
 
@@ -511,8 +508,6 @@ dev.off()
 : (#tab:priorsandparameters) Priors and fixed parameters used in the model.
 
 # Results
-
-<!-- JR: I really think we need a section evaluating and validating the model fit before we discuss its output. MH: that was the intention of the Model fitting section before, but I think this rather belongs to methods than to results!? -->
 
 ```{r popdensplot, fig.cap="The estimate of the population density resulting from the model and the four proxies, which are also plotted (scaled) for comparison."}
 knitr::include_graphics(file.path(rstudioapi::getActiveProject(), "figures", "popdens_estimation.pdf"))
