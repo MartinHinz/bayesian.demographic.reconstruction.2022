@@ -1,5 +1,5 @@
 ---
-title: "Bayesian inference of prehistoric demography from multiple proxies: a case study from the Swiss plateau"
+title: "Bayesian inference of prehistoric population dynamics from multiple proxies: a case study from the Swiss plateau"
 author:
   - Martin Hinz:
       email: martin.hinz@iaw.unibe.ch
@@ -7,7 +7,7 @@ author:
       correspondence: true
   - Joe Roe:
       email: joe@joeroe.io
-      institute: [IAW, OCCR]
+      institute: [IAW]
       correspondence: false
   - Julian Laabs:
       email: julian.laabs@ufg.uni-kiel.de
@@ -46,15 +46,15 @@ output:
 bibliography: references.bib
 csl: "../templates/journal-of-archaeological-science.csl" # Insert path for the bib-style
 abstract: |
-  In demography in general, the last decade has triggered an upswing in the application of Bayesian methods, so that a Bayesian demography has been announced. Bayesian demography is currently at the forefront of methodological developments in this area, but has reached such maturity that the United Nations has been using it since 2015 for population forecasts and projections. The Bayesian approach offers the possibility of combining heterogeneous data and at the same time qualifying them in terms of uncertainty and credibility. This is precisely where it becomes very interesting for archaeological data, since they are mostly inaccurate, biased, sparse, simplified and often based on simplistic assumptions.
-  In this contribution, a Bayesian hierarchical model, based on a Poisson Regression and a state space approach is applied to the field of archaeological (prehistoric) population size and density estimation. This represents a pilot study for the reconstruction of demographic developments in prehistory based on data assimilation with an underlying process model and a number of different proxies, which are combined and result in a more reliable estimation than a single proxy could deliver.
-  In order to understand human-environment relationships in the past and the dynamics of socio-ecological systems, it is essential to have a robust estimate of population sizes<!-- JR: Could reference Shennan 2000 and/or Kintigh 2014 here? MH: I would not like to have any citation in the abstract. What do you think?-->. Size and density of population are crucial factors for the reconstruction of group sizes, the character and range of political institutions for social organization, the constraints and possibilities of economic practice, the number of people available for collective activities, for economic and social exchange systems, and the creation and maintenance of collective identities. And, of course, the human influcence on the environment. Most estimates of population sizes currently work on limited spatial scales or use proxies that hardly allow for absolute numbers (e.g. sum calibration). The figures in the archaeological discourses on population density in general currently come from vague sources and are often decades old.
+  The archaeological record provides several potential proxies of human population, but individually they are inaccurate, biased, and sparse in their spatial and temporal coverage. Similarly, current methods for estimating past population dynamics are often simplistic: they work on limited spatial scales, tend to rely ona single proxy, and are rarely able to infer population size or density in absolute terms. In contemporary demography, it is becoming increasingly common to use Bayesian statistics to estimate population trends and project them into the future. The Bayesian approach is popular because offers the possibility of combining heterogenous data, and at the same time qualifying the uncertainty and credibility attached to forecasts. These same characteristics make it well-suited to applications to archaeological data in paleodemographic studies.
+  Here, we present a Bayesian hierarchical model that uses Poisson regression and state-space representation to produce absolute estimates of past population size and density. Using the prehistoric Swiss plateau (7000–1000 BCE) as a case study, we show that combining multiple proxies (site counts, radiocarbon dates, dendrochronological dates, and landscape openness) produces a more robust reconstruction of population dynamics than any single proxy alone. The model's estimates of the credibility of its prediction, and the relative weight it affords to individual proxies through time, give further insights into the relative reliability of the evidence currently available for paleodemographic research. Our prediction of population development on the Swiss plateau accords well with the current understanding in the wider literature, but provides a more precise and higher-resolution estimate that is less sensitive to spurious fluctuations in the proxy data than existing approaches, especially the popular summed radiocarbon method.
+  Robust estimates of population are essential to the study of human–environment relations and socio-ecological dynamics in the past. Population size and density can directly inform reconstructions of prehistoric group size, social organisation, economic constraints, exchange, and political and social institutions. In this pilot study, we present an approach that we believe can be usefully transferred to other regions, as well as refined and extended to greatly advance our understanding of prehistoric demography.
 keywords: |
-  Bayesian demographic modelling; Multiproxy; Reconstruction of past settlement dynamics
+  Prehistoric demography; Bayesian modelling; Multi-proxy; Settlement dynamics
 highlights: |
-  - We provide a estimation based on the combination of different proxies.
-  - We estimate population development in terms of absolute settlement densities.
-  - We are developing a completely new method for the integration of heterogeneous information.
+  - Bayesian modelling can integrate multiple, heterogeneous population proxies from the archaeological record
+  - Our initial model produces more robust, high-resolution estimates of past population dynamics than previous, single-proxy approaches
+  - We provide absolute estimates of population size and density on the prehistoric Swiss plateau (7000–1000 BCE)
 ---
 
 Keywords: `r rmarkdown::metadata$keywords`
@@ -516,8 +516,6 @@ dev.off()
 | nSites$_{1:nYears}$  | 50                                   |                                                                                |
 
 : (#tab:priorsandparameters) Priors and fixed parameters used in the model.
-
-__<!-- Clear syntax highlighting. Remove Joe! -->
 
 # Results
 
