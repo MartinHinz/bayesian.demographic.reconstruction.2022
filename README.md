@@ -3,29 +3,30 @@
 
 # bayesian.demographic.reconstruction.2022
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinHinz/bayesian.demographic.reconstruction.2021/master?urlpath=rstudio)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinHinz/bayesian.demographic.reconstruction.2022/master?urlpath=rstudio)
 
 This repository contains the data and code for our paper:
 
-> Authors, (YYYY). *Estimation of Population Density for the prehistoric
-> Swiss Plateau using a Hierarchical Bayesian Poisson Regression Model*.
-> Name of journal/book <https://doi.org/xxx/xxx>
+> Hinz, M., Roe, J., Laabs, J., Heitz, C., Kolar, J. (2022). *Bayesian
+> inference of prehistoric population dynamics from multiple proxies: a
+> case study from the Swiss plateau*. Name of journal/book
+> <https://doi.org/xxx/xxx>
 
 Our pre-print is online here:
 
-> Authors, (YYYY). *Estimation of Population Density for the prehistoric
-> Swiss Plateau using a Hierarchical Bayesian Poisson Regression Model*.
-> Name of journal/book, Accessed 07 Apr 2022. Online at
-> <https://doi.org/xxx/xxx>
+> Hinz, M., Roe, J., Laabs, J., Heitz, C., Kolar, J. (2022). *Bayesian
+> inference of prehistoric population dynamics from multiple proxies: a
+> case study from the Swiss plateau*. Name of journal/book, Accessed 26
+> Mai 2022. Online at <https://doi.org/xxx/xxx>
 
 ### How to cite
 
 Please cite this compendium as:
 
-> Authors, (2022). *Compendium of R code and data for Estimation of
-> Population Density for the prehistoric Swiss Plateau using a
-> Hierarchical Bayesian Poisson Regression Model*. Accessed 07 Apr 2022.
-> Online at <https://doi.org/xxx/xxx>
+> Hinz, M., Roe, J., Laabs, J., Heitz, C., Kolar, J., (2022).
+> *Compendium of R code and data for Bayesian inference of prehistoric
+> population dynamics from multiple proxies: a case study from the Swiss
+> plateau*. Accessed 26 Mai 2022. Online at <https://doi.org/xxx/xxx>
 
 ## Contents
 
@@ -53,12 +54,15 @@ installed on your computer the [R
 software](https://cloud.r-project.org/) itself and optionally [RStudio
 Desktop](https://rstudio.com/products/rstudio/download/).
 
+To perform the actual analysis, we recommend a powerful computer with a
+multi-core processor, ideally with the Linux operating system, which has
+at least 64GB RAM memory. In addition, a hard disk space of at least 5GB
+should be reserved for the process.
+
 ### Licenses
 
-**Text and figures :**
+**Text, code and figures :**
 [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/)
-
-**Code :** See the [DESCRIPTION](DESCRIPTION) file
 
 **Data :** [CC-0](http://creativecommons.org/publicdomain/zero/1.0/)
 attribution requested in reuse

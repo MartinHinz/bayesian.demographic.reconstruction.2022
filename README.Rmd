@@ -11,27 +11,27 @@ knitr::opts_chunk$set(
   fig.path = "README-"
 )
 # Please put your title here to include it in the file below.
-Title <- "Estimation of Population Density for the prehistoric Swiss Plateau using a Hierarchical Bayesian Poisson Regression Model"
+Title <- "Bayesian inference of prehistoric population dynamics from multiple proxies: a case study from the Swiss plateau"
 ```
 
 # bayesian.demographic.reconstruction.2022
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinHinz/bayesian.demographic.reconstruction.2021/master?urlpath=rstudio)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinHinz/bayesian.demographic.reconstruction.2022/master?urlpath=rstudio)
 
 This repository contains the data and code for our paper:
 
-> Authors, (YYYY). _`r Title`_. Name of journal/book <https://doi.org/xxx/xxx>
+> Hinz, M., Roe, J., Laabs, J., Heitz, C., Kolar, J. (2022). _`r Title`_. Name of journal/book <https://doi.org/xxx/xxx>
 
 Our pre-print is online here:
 
-> Authors, (YYYY). _`r Title`_. Name of journal/book, Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
+> Hinz, M., Roe, J., Laabs, J., Heitz, C., Kolar, J. (2022). _`r Title`_. Name of journal/book, Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
 
 
 ### How to cite
 
 Please cite this compendium as:
 
-> Authors, (`r format(Sys.Date(), "%Y")`). _Compendium of R code and data for `r Title`_. Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
+> Hinz, M., Roe, J., Laabs, J., Heitz, C., Kolar, J., (`r format(Sys.Date(), "%Y")`). _Compendium of R code and data for `r Title`_. Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
 
 ## Contents
 
@@ -57,11 +57,14 @@ language R. To work with the compendium, you will need
 installed on your computer the [R software](https://cloud.r-project.org/)
 itself and optionally [RStudio Desktop](https://rstudio.com/products/rstudio/download/).
 
+To perform the actual analysis, we recommend a powerful computer with a
+multi-core processor, ideally with the Linux operating system, which has
+at least 64GB RAM memory. In addition, a hard disk space of at least 5GB
+should be reserved for the process.
+
 ### Licenses
 
-**Text and figures :**  [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/)
-
-**Code :** See the [DESCRIPTION](DESCRIPTION) file
+**Text, code and figures :**  [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/)
 
 **Data :** [CC-0](http://creativecommons.org/publicdomain/zero/1.0/) attribution requested in reuse
 
