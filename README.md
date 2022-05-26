@@ -35,7 +35,8 @@ The **repository** consists of:
 -   [:file_folder: manuscript](/manuscript): R Markdown source document
     for manuscript.
 -   [:file_folder: paper](/paper): A rendered version, of the manuscript
-    `paper.docx` and `paper.pdf`, suitable for reading (the code is
+    as [`paper.docx`](/paper/paper.docx) and
+    [`paper.pdf`](/paper/paper.pdf), suitable for reading (the code is
     replaced by figures and tables in this file)
 -   [:file_folder: analysis](/analysis): R Markdown source document for
     the actual analysis. Includes code to reproduce the figures and
