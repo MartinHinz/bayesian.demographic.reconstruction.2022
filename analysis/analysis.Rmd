@@ -950,35 +950,64 @@ Finally, compile the plot:
 ```{r}
 all_proxies_orig <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
 
-popdens_plot <- ggplot(all_proxies_orig) +
-  geom_line(aes(x = (1950-age) * -1, y = scale(openness), col="Openness Indicator")) +
-  geom_line(aes(x = (1950-age) * -1, y = scale(sumcal), col="Sum Calibration")) +
-  geom_line(aes(x = (1950-age) * -1, y = scale(dendro), col="Dendro Dated Settlements")) +
-  geom_line(aes(x = (1950-age) * -1, y = scale(aoristic_sum), col="Aoristic Sum")) +
-  geom_line(data = PopDens_summary,
-            aes(x = (1950-age) * -1, y=mean, col = "Estimation Result")) + 
-  geom_line(data = PopDens_summary,
-            aes(x = (1950-age) * -1, y=hpdi_l, col = "Estimation Result"), lty=2) + 
-  geom_line(data = PopDens_summary,
-            aes(x = (1950-age) * -1, y=hpdi_u, col = "Estimation Result"), lty=2) +
-  theme_minimal() + scale_x_reverse() + 
-  scale_colour_manual(
-    values = c("Openness" = "darkgreen",
-               "Sum Calibration" = "red",
-               "Aoristic Sum" = "gray",
-               "Dendro Dated Settlements" = "brown",
-               "Estimation" = "black"), name = "") +
-  theme(legend.position="bottom") +
+proxies_and_result <- rbind(melt(all_proxies_orig, id.vars = "age"),
+                            melt(PopDens_summary[,2:5], id.vars = "age")
+)
+
+variable_full_name = c(
+      sumcal = "Sum Calibration",
+      openness = "Openness",
+      aoristic_sum = "Aoristic Sum",
+      dendro = "Dendro Dated Settlements",
+      mean = "Estimation"
+      )
+
+popdens_plot <- ggplot() +
+  geom_line(data = subset(
+    proxies_and_result,
+    variable %in% c("mean",
+                    "openness",
+                    "sumcal",
+                    "dendro",
+                    "aoristic_sum")
+    ),
+    aes(x = (1950-age) * -1, y = value, color = variable)) +
+    geom_ribbon(data = subset(
+      proxies_and_result,
+      variable %in% c("mean")
+      ),
+      aes(x = (1950-PopDens_summary$age) * -1,
+          ymin = PopDens_summary$hpdi_l,
+          ymax = PopDens_summary$hpdi_u),
+      fill = "grey70", alpha = 0.5) +
+  facet_wrap(. ~ variable,
+             scales="free_y",
+             ncol = 1,
+             labeller = labeller(variable = variable_full_name)) +
+  theme_minimal() + scale_x_reverse() + theme(legend.position="false") +
   ylab("Scaled values for Proxies,\n P/km² for Estimation") +
-  xlab("cal BCE")
-popdens_plot
+  xlab("cal BCE") + 
+  scale_colour_manual(
+    values = c("sumcal" = "red",
+      "openness" = "darkgreen",
+               "Aoristic Sum" = "gray",
+               "dendro" = "brown",
+               "mean" = "black")
+    )
+
+popdens_plot_adjusted <- ggplotGrob(popdens_plot)
+
+popdens_plot_adjusted$heights[[28]] <- unit(4, 'null')
+
+grid.newpage()
+grid.draw(popdens_plot_adjusted)
 ```
 
 Save as result image to the figures folder.
 
 ```{r}
 ggsave(normalizePath(file.path(here(), "figures","popdens_estimation.pdf"), mustWork = F),
-       plot = popdens_plot, width = 21, height = 29.7/2, units = "cm")
+       plot = popdens_plot_adjusted, width = 21, height = 29.7/2, units = "cm")
 ```
 
 And than, the final estimate of the influence of the different proxies on the result:
