@@ -29,17 +29,17 @@ institute:
   - IAMFAMU: Institute of Archaeology and Museology, Faculty of Arts, Masaryk University
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  bookdown::word_document2:
-    fig_caption: yes
-    reference_docx: "../templates/template.docx" # Insert path for the DOCX file
-    pandoc_args:
-    - --lua-filter=../templates/scholarly-metadata.lua
-    - --lua-filter=../templates/author-info-blocks.lua
-    - --lua-filter=../templates/pagebreak.lua
   bookdown::pdf_document2:
     includes:
         in_header: preamble.tex
     toc: no
+    pandoc_args:
+    - --lua-filter=../templates/scholarly-metadata.lua
+    - --lua-filter=../templates/author-info-blocks.lua
+    - --lua-filter=../templates/pagebreak.lua
+  bookdown::word_document2:
+    fig_caption: yes
+    reference_docx: "../templates/template.docx" # Insert path for the DOCX file
     pandoc_args:
     - --lua-filter=../templates/scholarly-metadata.lua
     - --lua-filter=../templates/author-info-blocks.lua
@@ -558,6 +558,9 @@ To apply this approach to other regions, the proxies we use here would have to b
 # Acknowledgements
 
 Data collection were conducted as part of the project 'Beyond lake settlements' in the doctoral thesis of Julian Laabs, funded by the SNF (project number 152862, PI Albert Hafner) and as part of the XRONOS project, also funded by the SNSF (project number 198153, PI Martin Hinz). The development of the openness index took place within the framework of the project Time and Temporality in Archaeology (project number 194326, PI Caroline Heitz), inspired by the cooperation within the project QuantHum (project 169371, PI Marco Conedera), both also funded by the SNSF. Jan Kolář was supported by a long-term research development project (RV67985939) and by a grant from the Czech Science Foundation (19-20970Y). We also thank the Institute of Archaeological Sciences of the University of Bern for its support and faith in the outcome of our modelling project. Finally, we thank (already) the unknown reviewers for their helpful comments, which will certainly improve this manuscript significantly.
+
+# Code availability
+The computer code used to generate the Bayesian Population model is provided in full in the Supplementary Information, together with information about the program and version used. The R code and Data are available online at https://github.com/MartinHinz/bayesian.demographic.reconstruction.2022 and is archived at https://doi.org/10.5281/zenodo.6594498.
 
 \newpage
 
