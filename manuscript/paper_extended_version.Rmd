@@ -37,7 +37,6 @@ output:
     - --lua-filter=../templates/author-info-blocks.lua
     - --lua-filter=../templates/pagebreak.lua
   bookdown::pdf_document2:
-    keep_md: yes
     includes:
         in_header: preamble.tex
     toc: no
