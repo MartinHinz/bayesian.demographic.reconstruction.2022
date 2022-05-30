@@ -4,6 +4,7 @@
 # bayesian.demographic.reconstruction.2022
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinHinz/bayesian.demographic.reconstruction.2022/master?urlpath=rstudio)
+[![DOI](https://zenodo.org/badge/477622472.svg)](https://zenodo.org/badge/latestdoi/477622472)
 
 This repository contains the data and code for our paper:
 
