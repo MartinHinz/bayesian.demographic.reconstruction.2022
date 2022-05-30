@@ -28,7 +28,7 @@ Please cite this compendium as:
 > *Compendium of R code and data for Bayesian inference of prehistoric
 > population dynamics from multiple proxies: a case study from the North
 > of the Swiss Alps*. Accessed 30 May 2022. Online at
-> <https://doi.org/xxx/xxx>
+> <https://doi.org/10.5281/zenodo.6594498>
 
 ## Authors
 

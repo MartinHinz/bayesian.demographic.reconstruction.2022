@@ -31,7 +31,7 @@ Our pre-print is online here:
 
 Please cite this compendium as:
 
-> Hinz, M., Roe, J., Laabs, J., Heitz, C., Kolar, J., (`r format(Sys.Date(), "%Y")`). _Compendium of R code and data for `r Title`_. Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
+> Hinz, M., Roe, J., Laabs, J., Heitz, C., Kolar, J., (`r format(Sys.Date(), "%Y")`). _Compendium of R code and data for `r Title`_. Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/10.5281/zenodo.6594498>
 
 ## Authors
 - Martin Hinz (<martin.hinz@iaw.unibe.ch>), Institute of Archaeological Sciences & Oeschger Centre for Climate Change Research, University of Bern [![ORCiD](https://img.shields.io/badge/ORCiD-0000--0002--9904--6548-green.svg)](http://orcid.org/0000-0002-9904-6548)
