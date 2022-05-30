@@ -17,7 +17,7 @@ Our pre-print is online here:
 > Hinz, M., Roe, J., Laabs, J., Heitz, C., Kolar, J. (2022). *Bayesian
 > inference of prehistoric population dynamics from multiple proxies: a
 > case study from the North of the Swiss Alps*. Name of journal/book,
-> Accessed 30 Mai 2022. Online at <https://doi.org/xxx/xxx>
+> Accessed 30 May 2022. Online at <https://doi.org/xxx/xxx>
 
 ### How to cite
 
@@ -26,7 +26,7 @@ Please cite this compendium as:
 > Hinz, M., Roe, J., Laabs, J., Heitz, C., Kolar, J., (2022).
 > *Compendium of R code and data for Bayesian inference of prehistoric
 > population dynamics from multiple proxies: a case study from the North
-> of the Swiss Alps*. Accessed 30 Mai 2022. Online at
+> of the Swiss Alps*. Accessed 30 May 2022. Online at
 > <https://doi.org/xxx/xxx>
 
 ## Authors
