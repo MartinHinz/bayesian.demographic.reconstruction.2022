@@ -1,16 +1,17 @@
 ---
 title: "Sensitivity Analysis"
 author: "Martin Hinz"
-date: '2022-11-20'
+date: "2022-11-20"
 output:
   html_document:
-    keep_md: true
+    keep_md: yes
+  pdf_document: default
 bibliography: references.bib
 ---
 
 # Setup
 
-Das Model hat 3 vorgegebene Parameter, deren Auswirkung wir in einer Sensititätsanalyse überprüfen wollen. Zuerst laden wir die notwendigen Bibliotheken.
+The model has 2 predefined parameters whose effect we want to check in a sensitivity analysis. First we load the necessary libraries.
 
 
 ```r
@@ -92,7 +93,7 @@ library(coda)
 library(MCMCvis)
 ```
 
-Dann erstellen wir die Grundbedingungen für den Modelldurchlauf. Dazu laden wir die Eingangsdaten und bereiten sie entsprechend des Modells auf (für Details zu diesen Schritten bitte konsultieren Sie die eigentliche Analyse):
+Then we set up the basic framework for the model run. To do this, we load the input data and prepare it according to the model (for details on these steps please consult the actual analysis):
 
 
 ```r
@@ -105,7 +106,7 @@ all_proxies[,2:5] <- all_proxies[,2:5] %>% scale() %>% diff() %>% rbind(0,.)
 model_data <- all_proxies
 ```
 
-Als nächstes übernehmen wir das Modell, wobei wir alle potentiell sensitiven Parameter von Aussen zugänglich machen:
+Next, we incorporate the model, making all potentially sensitive parameters accessible from the outside:
 
 
 ```r
@@ -170,19 +171,18 @@ model_code <- nimbleCode( {
 
 # Parameter Sweep
 
-Wir werden jeweils 10 Parameterisierungen um unseren vorgeschlagenen Wert vornehmen. Dazu werden wir das Modell bis zur Konvergenz laufen lassen, und dann eine weitere Iteration mit der vorgesehenen Batch-Grösse durchführen. Anschliessend werden wir die Ergebnisse der einzelnen Durchläufe miteinander vergleichen.
+We will run 20 parameterisations with a range whose centre is our proposed value. To do this, we will run the model until convergence. Afterwards, we will compare the results of each run.
 
-Wir haben die Funktion zum Durchlauf des Modells ausgelagert, wir laden sie zuerst ein:
+We have externalised the function to run the model, we load it first:
 
 
 ```r
 source(file = normalizePath(file.path(here(), "code", "sensitivity_helpers.R")))
 ```
 
-
 ## Mean Site Size
 
-Als erstes variieren wir die mean site size:
+First, we vary the mean site size:
 
 
 ```r
@@ -198,7 +198,7 @@ model_constants_df <- data.frame(
 model_constants_list <- purrr::transpose(model_constants_df)
 ```
 
-Als nächstes können wir die eigentliche Analyse durchlaufen lassen und die Ergebnisse abspeichen. In der aktuellen Version ist dies deaktiviert, sie können es aber gerne anstellen, um es selbst durchlaufen zu lassen.
+Next, we can run the actual analysis and save the results. In the current version this is deactivated to speed up the rendering of the representation of the analysis. The data is loaded from a previous run. However, you are welcome to turn it on to run it yourself.
 
 
 ```r
@@ -213,7 +213,7 @@ saveRDS(sweep_results, file = normalizePath(
   )    
 ```
 
-Und laden es wieder zurück (später ist das der Einsprungpunkt, um nicht die ganze Berechnung erneut durchführen zu müssen):
+Then we reload the results (this is the entry point to avoid having to do the whole calculation all over again):
 
 
 ```r
@@ -223,7 +223,7 @@ sweep_results <- readRDS(file = normalizePath(
   )
 ```
 
-Jetzt können wir die Ergebnisse visualisieren. Wir werden die einzelnen Mittelwerte übereinander plotten:
+Now we can visualise the results. We will plot the individual mean values on top of each other:
 
 
 ```r
@@ -238,11 +238,11 @@ ggplot(res_for_plot) + geom_line(aes(x = age, y = value, color = name))
 
 ![](sensitivity_analysis_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
-Die Vorgabe einer mittleren Siedlungsgrösse hat keinen starken erkennbaren Effekt auf das Ergebnis der Schätzung.
+The specification of a medium settlement size does not have a strong discernible effect on the result of the estimation.
 
 ## Mean Site Size
 
-Als nächstes überprüfen wir die Abhängigkeit von der vorgeschlagenen End-Populationsdichte.
+Next, we check the dependence on the proposed final population density.
 
 
 ```r
@@ -258,7 +258,7 @@ model_constants_df <- data.frame(
 model_constants_list <- purrr::transpose(model_constants_df)
 ```
 
-Auch hier ist der eigentliche Durchlauf aktuell deaktiviert, um das Rendering zu beschleunigen. Sie können es aber gern selbst durchführen.
+Here, too, the actual run is currently deactivated in order to speed up the rendering. However, you are welcome to perform it yourself.
 
 
 ```r
@@ -273,7 +273,7 @@ saveRDS(sweep_results, file = normalizePath(
   )    
 ```
 
-Und nun (vor allem, falls die Analyse nicht durchgelaufen ist), werden die Ergebnisse wieder einladen:
+And now (especially if the analysis has not gone through), the results will load in again:
 
 
 ```r
@@ -283,7 +283,7 @@ sweep_results <- readRDS(file = normalizePath(
   )
 ```
 
-Jetzt können wir die Ergebnisse visualisieren. Wir werden die einzelnen Mittelwerte übereinander plotten:
+Now we can visualise the results. We will plot the individual mean values on top of each other:
 
 
 ```r
@@ -298,4 +298,4 @@ ggplot(res_for_plot) + geom_line(aes(x = age, y = value, color = name))
 
 ![](sensitivity_analysis_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
-Wie erwartet, hat dieser Parameter einen entscheidenden Einfluss auf das Ergebnis.
+As expected, this parameter has a decisive influence on the result.

@@ -3,9 +3,9 @@ title: "Sensitivity Analysis"
 author: "Martin Hinz"
 date: "2022-11-20"
 output:
-  pdf_document: default
   html_document:
     keep_md: yes
+  pdf_document: default
 bibliography: references.bib
 ---
 
