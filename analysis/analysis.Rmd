@@ -266,7 +266,7 @@ ggplot(res.open_final,aes(x=1950-age)) +
 
 ### ^14^C Summenkalibration
 
-The data set for the 14C sum calibration is composed of the above-mentioned sources.
+The data set for the 14C sum calibration is composed of the above-mentioned sources. This data consists of 1135 dates from 246 sites.
 
 ```{r}
 c14 <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "14c_swiss_plateau.csv")))
@@ -290,7 +290,7 @@ plot(img)
 par(old.par)
 ```
 
-Next, we calibrate the 14C data using rcarbon: <!--# uncal vs cal? -->
+Next, we calibrate the 14C data using rcarbon: 
 
 ```{r}
 c14.calibrated <- calibrate(x = c14$bp, errors = c14$std, verbose = F)
@@ -305,8 +305,7 @@ sumcal <- spd(c14.calibrated, timeRange = 1950-timeframe, bins = c14$site, runm 
 Below is the visualisation of the sum calibration:
 
 ```{r}
-plot(1950-sumcal$grid$calBP, sumcal$grid$PrDens,type="l", main = paste0("n=", length(c14.calibrated)))
-
+plot(1950-sumcal$grid$calBP, sumcal$grid$PrDens,type="l")
 ```
 
 Finally, we extract the values every 50 years:
@@ -512,17 +511,25 @@ all_proxies <- all_proxies %>% arrange(desc(age))
 Since the data influence the model in their respective change from the state t -\> t-1, we first normalise them by a z-transformation, and then calculate the individual difference to the predecessor. The first row is set to 0.
 
 ```{r}
-all_proxies[,2:5] <- all_proxies[,2:5] %>% scale() %>% diff() %>% rbind(0,.)
+all_proxies_diff <- all_proxies
+all_proxies_diff[,2:5] <- all_proxies_diff[,2:5] %>% scale() %>% diff() %>% rbind(0,.)
 ```
+
+We can also visualise these deltas of the proxies:
+
+```{r}
+all_proxies_diff %>% pivot_longer(2:5) %>% ggplot(aes(x = age, y = value)) + geom_line() + facet_wrap(. ~ name)
+```
+
 
 Furthermore, it has proven practical, at least in the development phase of the model, to be able to restrict the data set in order to quickly try out responses of the model. Each data point is included in the model as a separate parameter, and it therefore does not scale linearly with the number of data points. It can also be helpful for reproducing the analysis. To do this, we define a reduction factor that determines what proportion of the data is passed to the model and reduce the data set accordingly.
 
 ```{r}
 redux_factor <- 1
-redux_nrow <- round(nrow(all_proxies) * redux_factor)
-redux_seq <- round(seq(from=1,to=nrow(all_proxies), length.out = redux_nrow))
+redux_nrow <- round(nrow(all_proxies_diff) * redux_factor)
+redux_seq <- round(seq(from=1,to=nrow(all_proxies_diff), length.out = redux_nrow))
 
-model_data <- all_proxies[redux_seq,]
+model_data <- all_proxies_diff[redux_seq,]
 ```
 
 Furthermore, the model contains two constraints for the maximum growth rate. These help to speed up convergence. They are given as data and must be set to 1 for the constraint to be processed.
