@@ -10,6 +10,7 @@ bibliography: references.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+Sys.setenv(OPENSSL_CONF="/etc/ssl/")
 if (!webshot::is_phantomjs_installed()) webshot::install_phantomjs()
 library(magick)
 ```
@@ -39,6 +40,7 @@ library(nimble)
 library(coda)
 library(MCMCvis)
 library(fmcmc)
+library(grid)
 ```
 
 If you have not yet installed these libraries (and receive a corresponding error message), please install them!
@@ -51,6 +53,14 @@ library(devtools)
 install_github('ISAAKiel/aoristAAR')
 require(aoristAAR)
 ```
+Also, neotoma is not longer available on cran, and it has been replaced by neotoma2, so we had to replace it. That is why we have to load it again:
+
+```{r}
+if(!require('neotoma2')) devtools::install_github('NeotomaDB/neotoma2')
+require(neotoma2)
+```
+
+
 
 ## Data collection
 
@@ -96,7 +106,7 @@ par(old.par)
 We download the data from neotoma:
 
 ```{r message=FALSE, warning=FALSE}
-pollen_data <- get_download(pollen_locations$neotoma_id)
+pollen_data <- get_downloads(pollen_locations$neotoma_id, all_data=T)
 ```
 
 Then we load a few help scripts which can be found under "code/neotoma_helpers.R".
@@ -108,14 +118,15 @@ source(file = normalizePath(file.path(here(), "code", "neotoma_helpers.R")))
 Now we filter the data sets so that we only retain the pollen data that record "NISP".
 
 ```{r}
-pollen_data_filtered <- filter_by_unit(filter_by_element(pollen_data, "pollen"), "NISP")
-class(pollen_data_filtered) <- append(class(pollen_data_filtered), "download_list")
+pollen_data.samples <- samples(pollen_data)
+
+pollen_data.samples.filtered <- pollen_data.samples %>% subset(element == "pollen" & units == "NISP")
 ```
 
 Then we convert the NISP into percentages:
 
 ```{r}
-pollen_data_comp <- transform_to_percent(pollen_data_filtered)
+pollen_data_comp <- transform_to_percent(pollen_data.samples.filtered)
 ```
 
 Furthermore, we need a (handwritten) concordance list for the taxa names:
@@ -134,7 +145,7 @@ pollen_data_comp <- aggregate_by_joint_name(pollen_data_comp, common_names = com
 Now we can combine the individual pollen profiles into an overall table, where each row represents a sample:
 
 ```{r}
-all_output <- suppressWarnings(neotoma::compile_downloads(pollen_data_comp))
+all_output <- pollen_data_comp
 ```
 
 We restrict the data set to the Holocene so that we no longer have the pre-Holocene developments in the principal component analysis:
@@ -142,13 +153,13 @@ We restrict the data set to the Holocene so that we no longer have the pre-Holoc
 ```{r}
 timeframe <- c(-7000,-1000)
 all_output <- subset(all_output, 1950-age > timeframe[1] & 1950-age < timeframe[2])
+all_output[is.na(all_output)] <- 0
 ```
 
 Then we extract the actual data:
 
 ```{r}
-all_data <- all_output[,11:ncol(all_output)]
-all_data[is.na(all_data)] <- 0
+all_data <- all_output[, !(colnames(all_output) %in%  c("age", "sampleid", "sitename"))]
 ```
 
 We then filter the data. Only those taxa are considered which are present in at least 1/3 of all data series:
@@ -194,7 +205,7 @@ orientation <- sign(scores(res.pca)$species["Cerealia",1])
 res.open <- data.frame(scores(res.pca, choices = 1, display = "si")*orientation)
 colnames(res.open) <- "score"
 res.open$age <- all_output$age
-res.open$site <- all_output$site.name
+res.open$site <- all_output$sitename
 ggplot(res.open) + geom_line(aes(x = 1950-age, y = score, color = site))
 ```
 
@@ -477,7 +488,7 @@ all_proxies <- merge(res.sumcal, res.open_final, by.x = "calBP", by.y = "age") %
   merge(res.lss, by.x = "calBP", by.y = "age") %>%
   select(calBP, PrDens, mean, sum, moving_mean) %>%
   rename(age = calBP, sumcal = PrDens, openness = mean, aoristic_sum = sum, dendro = moving_mean) %>%
-  filter(age < 8000 & age > 3000)
+  dplyr::filter(age < 8000 & age > 3000)
 
 all_proxies
 ```
