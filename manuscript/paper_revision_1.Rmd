@@ -127,7 +127,7 @@ Prehistoric demography has experienced a resurgence in interest in recent years 
 
 In particular, the 'dates as data' technique [@rick_dates_1987], using the frequency of radiocarbon dates as a proxy for population dynamics, has been significantly developed in the last decade [e.g. @shennan_regional_2013] and widely applied to archaeological contexts worldwide [@crema_review_2022]. This approach has contributed greatly to our understanding of prehistoric demography, but is not without its critics [@attenbrow_hiscock_2015; @carleton_groucutt_2020; @price_end__end_2021]. While the methodology continues to evolve and address these critiques [@crema_review_2022], it remains subject to fundamental problems common to all approaches relying on a single proxy [@french_manifesto_2021; @schmidt_approaching_2021]. We believe that these problems cannot be overcome by methodological refinements in this area alone. Instead, a Bayesian approach offers a robust, quantitative methodology for inferring prehistoric population dynamics from multiple proxies, including summed radiocarbon dates.
 
-In the following article we present our methodology and demonstrate its application with a case study in the area north of the Swiss Alps. We use a type of Bayesian Generalised Linear Model [@kruschke2015] to combine the different proxies. Their assessment (weight and credibility intervals) results from the modelling and the combination of the data itself and is not defined a priori. Furthermore, we pursue the concept of a state space model [@auger-methe_guide_2021], a time series model in which a time series is interpreted as the result of a noisy observation of a stochastic process. In this sense, it is not a deductive model for testing a hypothesis, but a reconstructive (abductive) one, such it is also used in environmental reconstructions [@inkpen_explaining_2009]. In this respect, we hope to convince the readers that such an approach is far better suited to realising reliable reconstructions of past population developments than any of the previous approaches.
+In the following article we present our methodology and demonstrate its application with a case study in the area north of the Swiss Alps. We use a type of Bayesian Generalised Linear Model [@kruschke2015] to combine the different proxies. Their assessment (weight and credibility intervals) results from the modelling and the combination of the data itself and is not defined a priori. Furthermore, we pursue the concept of a state space model [@auger-methe_guide_2021], a time series model in which a time series is interpreted as the result of a noisy observation of a stochastic process. We evaluate the number of settlements at time t as a function of the number of settlements at time t-1, modified according to the changes in the proxies. For this purpose, we also use these as the difference between these points in time and transform them accordingly. In this sense, it is not a deductive model for testing a hypothesis, but a reconstructive (abductive) one, such it is also used in environmental reconstructions [@inkpen_explaining_2009]. In this respect, we hope to convince the readers that such an approach is far better suited to realising reliable reconstructions of past population developments than any of the previous approaches.
 
 # Background
 
@@ -293,48 +293,73 @@ Sum calibration, openness and the dendro-dated settlement data was smoothed by a
 
 ## Process model
 
-A special class of Bayesian hierarchical models are so-called 'state space models', specifically designed for time series. They follow two principles. First, a hidden or latent process is assumed, representing the state of the variable of interest $x_t$ through the entire time series. Every state of variable x in the future, as well as in the past, is bound by a Markov process to the state of variable $x$ at time $t$. Second, it is assumed that certain observations, represented in variable y, are dependent on the state of variable $x$ at time $t$. This implies that a relationship between the individual states of variable $y$ is generated over time via the hidden variable $x$, which is not directly observable.
+A special class of Bayesian hierarchical models are so-called 'state space models', specifically designed for time series. They follow two principles. First, a hidden or latent process is assumed, representing the state of the variable of interest $z$ through the entire time series. Every state of variable z as $z_t$ at a specific time is bound by a Markov process to the state of variable $z$ at time before, at $t-1$. Second, it is assumed that certain observations, represented in variable y, are dependent on the state of variable $z$ at time $t$. This implies that a relationship between the individual manifestation of variable $y$ is generated over time via the hidden variable $z$, which is not directly observable.
+
+In the following I reproduce the mathematical representation according to @auger-methe_guide_2021:
+
+$$
+z_t = \beta z_{t-1} + \epsilon_t
+\tag{1}
+$$
+
+$$
+y_t = \alpha z_t + \eta_t
+\tag{2}
+$$
+
+"The autocorrelation in the states is captured by the parameter $\beta$. The observations are a function of the states only and the parameter $\alpha$ allows the observation at time t to be a biased estimate of the state at time t." [@auger-methe_guide_2021, 4-5]. Dabei sind $\epsilon$ die process variation, und $\eta$ der observation error, welche mit einer passenden Verteilung modelliert werden können.
+
+Um die Struktur der Abhängigkeiten zu verdeutlichen, kann man das Modell auch in terms of probability distributions darstellen:
+
+$$
+f(z_t | z_{t-1}, \theta_p), \quad t = 1, ... , T
+\tag{3}
+$$
+
+$$
+f(y_t | z_{t}, \theta_o), \quad t = 1, ... , T
+\tag{4}
+$$
+
+Dabei sind f and g are two normal probability density functions, and $\theta_p$ and $\theta_o$ are vectors of parameters associated with each equation. Eq. 3 describes the autocorrelation in state values as a first-order Markov process, and Eq. 4 describes how observations depend simply on the states. This definition also demonstrates that states are random variables and thus that SSMs are a type of hierarchical mode [@auger-methe_guide_2021, 5].
 
 This structure makes these models particularly suitable for demographic reconstruction using archaeological and other data. Population density itself is not directly measurable: all we have at our disposal are observations derived by unknown transfer functions.
 
-Our overall model is broken down into several hierarchically-connected individual elements. The process model represents the demographic development itself, without already being explicitly parameterised with data. Here we assume that the latent variable 'number of sites' is strongly autocorrelated across different time periods. The number of sites in 3000 BCE is strongly conditioned by the number of sites in 3050 BCE, and so on. The population at time $t$ results from the population at time $t-1$ times a parameter $\lambda$, which represents the population change at this time.
-
-$$
-N_t = N_{t-1} * \lambda_t
-$$
+Our overall model is broken down into several hierarchically-connected individual elements. The process model represents the demographic development itself, without already being explicitly parameterised with data. Here we assume that the latent variable 'number of sites' ($z$) is strongly autocorrelated across different time periods ($z_t$). The number of sites in 3000 BCE is strongly conditioned by the number of sites in 3050 BCE, and so on. The population at time $t$ results from the population at time $t-1$ times a parameter $\beta$, which represents the population change at this time (see Equation 1).
 
 A univariate discrete Poisson distribution is particularly suitable for modelling frequencies, numbers of events that occur independently of each other at a constant mean rate in a fixed time interval or spatial area. It is determined by a real parameter $\lambda$ \>0, describing the expected value and the variance. Thus, the relationship shown above can be rearranged as follows:
 
 $$
+z_t \sim Poisson(\lambda_t)
+\tag{5}
+$$
+where
+
+$$
+log(\lambda_t) = log(z_{t-1}) + \sum_{i=1}^n \beta_i x_{t,i}
+\tag{6}
+$$
+which can be rearranged to
+
+$$
+\lambda_t = z_{t-1} e^{\mathbf{\beta^T \delta \mathbf{y}_t}}
+\tag{7}
+$$
+
+$\mathbf{\beta}$ is a parameter vector of weightings that sums to $1$, a vector transpose is indicated by $^T$, and $y_t$ is a vector of proxy difference values.
+
+Using the logarithm as a link function ensures that $\lambda$, which must always be positive, can also be described by variables that may also be negative. $\beta$ serves as slope factor, as in a normal linear regression. Here, it functions as a scaling factor for the individual proxies. $z_t$ is to be understood as an intercept, representing a baseline when there were no change due to the variables. This is the desired behaviour: $\lambda$ is equal to the value of the population in the previous time period, plus or minus the changes resulting from the variables.
+
+Since $\lambda$ and $z$ are essentially in the same range (e.g. if $lambda=1$, the expected value for $z$ would also be 1), $z_{t-1}$ must also be log-transformed for the congruence of both values. Population size $z_t$ as well as population change $\lambda_t$ are time-dependent. At each individual point in time, these variables will take on different values. But we can assume that the population change will not exceed certain limits ($max\_change\_rate$), though it is not possible to specify this at this point.
+
+$$
 \begin{aligned}
-N_t &\sim dpois(\lambda_t) \\
-\lambda_t &= N_t
+max\_growth\_rate &\sim Gamma(shape = 5, scale=0.05) \\
+z_t/z_{t-1} &< (max\_growth\_rate + 1) \\
+z_{t-1}/z_t &< (max\_growth\_rate + 1)
 \end{aligned}
-$$ 
-
-If we now have information about the change in population development (the proxies), this can enter into the model via a change in $\lambda$ in form of a regression: for all proxy values — represented as a vector of independent variables $x \in R^n$, with $R^n$ as an n-dimensional Euclidean space defined by the n variables — the model takes the form:
-
-
+\tag{8}
 $$
-log({E} (Y\mid x))=\alpha + \beta' x
-$$
-
-Using the logarithm as a link function ensures that $\lambda$, which must always be positive, can also be described by variables that may also be negative. $\beta$ serves as slope factor, as in a normal linear regression. Here, it functions as a scaling factor for the individual proxies. $\alpha$ is to be understood as an intercept, representing a baseline when there were no change due to the variables. This is the desired behaviour: $\lambda$ is equal to the value of the population in the previous time period, plus or minus the changes resulting from the variables.
-
-$$
-log(\lambda_t) = log(N_{t-1}) + \sum_{i=1}^n \beta_i x_{t,i}
-$$
-
-Since $\lambda$ and $N$ are essentially in the same range (e.g. if $lambda=1$, the expected value for $N$ would also be 1), $N_{t-1}$ must also be log-transformed for the congruence of both values. Population size $N_t$ as well as population change $\lambda_t$ are time-dependent. At each individual point in time, these variables will take on different values. But we can assume that the population change will not exceed certain limits ($max\_change\_rate$), though it is not possible to specify this at this point.
-
-$$
-\begin{aligned}
-max\_growth\_rate &\sim dgamma(shape = 5, scale=0.05) \\
-N_t/N_{t-1} &< (max\_growth\_rate + 1) \\
-N_{t-1}/N_t &< (max\_growth\_rate + 1)
-\end{aligned}
-$$
-
 A gamma distribution centres probability in the range $[0,1[$; adding 1 makes this range $[1-2[$. This prevents the number of sites from explosively increasing between two time periods, which would lead to problems for the convergence of the model. The estimation of this parameter for the entire model, as well as the estimation of the respective population change per time section, results from the modelling and the interaction with the data.
 
 ## Observational model
@@ -343,35 +368,36 @@ In this initial implementation, the observational model is essentially a Poisson
 
 $$
 \begin{aligned}
-z_t &= \frac{x_t - \bar{x}} {\sigma_x}\ |\ \sigma_x := Standard\ Deviation  \\
-\delta z{_t} &= z_t - z_{t-1}
+y'_t &= \frac{y_t - \bar{y}} {\sigma^2_y}\ |\ \sigma^2_y := Standard\ Deviation  \\
+\delta y'_t &= y'_t - y'_{t-1}
 \end{aligned}
+\tag{9}
 $$
 
-The sum of the resulting differences between the time steps, together with the settlement number of the previous step as the expected value, then forms $\lambda_t$: the expected value for the settlement number of the current time step.
+The fact that we use the difference here, and not the actual value, may need some explanation. 
 
-$$
-log(\lambda_t) = log(N_{t-1}) + \sum_{i=1}^n \beta_i \delta z_{i, t}
-$$
+The sum of the resulting differences between the time steps, together with the settlement number of the previous step as the expected value, then forms $\lambda_t$: the expected value for the settlement number of the current time step (see Equation 6).
 
-Here, $\beta_i$ is a scaling factor that represents the influence of the respective proxy. It is a confidence value of the model for the respective proxy, so that the sum of all $\beta_i$ results in 1.
+This means that we consider the development of population size and thus the number of settlements as autocorrelated per se. There are two reasons for this: First, the proxies we use are obviously autocorrelated. This can be seen as empirical confirmation that such an autocorrelation can also be regarded as probable for the latent variable of population size behind it. On the other hand, a model that does not assume such an autocorrelation would mean that population development is primarily controlled by migration, since the population already present in an area would play no role in this. We think it more likely that it is primarily births and death events, together with migration, that are responsible for population numbers and their change. Therefore, we view the population at time t as a function of the population at time t-1 plus a change that can be estimated from the change in the proxies. In this way, we make all time steps interdependent, which constrains the model in a comprehensible and justifiable way, and thus narrows the probability range for the prediction by providing additional information in the model. Here, $\beta_i$ is a scaling factor that represents the influence of the respective proxy. It is a confidence value of the model for the respective proxy, so that the sum of all $\beta_i$ results in 1.
 
 $$
 \sum_{i=1}^n \beta_i = 1
+\tag{10}
 $$
 
 A Dirichlet distribution—a multivariate generalization of the beta distribution—is commonly used for this purpose in hierarchical Bayesian modelling. Its density function gives the probabilities of $i$ different exclusive events. It has a parameter vector $\alpha = (\alpha_1, ..., \alpha_i)\ |\ (\alpha_1, ..., \alpha_i) > 0$, for which we have chosen a weakly informative log-normal prior. The priors for the log-normal distribution in turn come from a weakly informative exponential distribution for the mean and a log-nomal distribution with $\mu$ of 1 and $\sigma_{log}$ of 0.1:
 
 $$
 \begin{aligned}
-\beta_i &\sim Dir(\alpha_{1-i}) \\
-\alpha_i &\sim LogNormal(\mu_{alpha_i}, \sigma_{alpha_i}) \\
+\beta_i &\sim Dirichlet(\alpha_{1-i}) \\
+\alpha_i &\sim Lognormal(\mu_{alpha_i}, \sigma^2_{alpha_i}) \\
 \mu_{alpha_i} &\sim Exp(1) \\
-\sigma_{alpha_i} &\sim LogNormal(1,0.1)
+\sigma^2_{alpha_i} &\sim Lognormal(1,0.1)
 \end{aligned}
+\tag{11}
 $$
 
-Intuitively, we consider the sum of the proxies as determinant of the number of settlements. That is, the share of each individual proxy is variable and is estimated within the model. This share is recorded within the model as the parameter p.
+Intuitively, we consider the sum of the proxies as determinant of the change in number of settlements. That is, the share of each individual proxy is variable and is estimated within the model. This share is recorded within the model as the parameter p.
 
 The error value is represented by the Poisson process in the process model. In this implementation, the model finds the best possible combination between the individual proxies to describe a settlement dynamic. The number of sites is converted into population density using (certainly debatable) parameters defined by us, but which are only scaling factors for the intermediate value of number of settlements. We assume that each site represents a number of people that is poisson distributed around the value 50, a compromise, as both Mesolithic and Neolithic and Bronze Age settlement communities need to be represented. An evidence-based estimate data series of the temporal development of settlement sizes could enhance this specification. From the number of sites and the mean number of individuals a population density can be calculated using the case study area (12649 km²), making the models estimate comparable with estimates from other sources or the literature.
 
@@ -567,6 +593,8 @@ We have also demonstrated that, with Bayesian hierarchical modelling, it is poss
 Nevertheless, we consider this model as only the first step towards a more sophisticated Bayesian approach. We have trusted the individual proxies in aggregate, without individualised measurement error. Our estimates are based on a limited number of sources, almost all of which are subject to taphonomic biases in the archaeological record. Consequently, we can only transform the model's prediction into an absolute estimate of population density with predefined parameters: settlement size and the initial value of the reconstruction. Overcoming this limitation would represent a major refinement of our approach. 
 
 Incorporating additional proxies independent of the immediate, time-dependent conditions of the archaeological record could be one way to achieve this. These could be data on settlement sizes, parameters for economic-ecological carrying capacity, demographic data from burial groups or archaeogenetic data on population sizes. This data is available to varying degrees in different regions. On the Swiss Plateau, for example, we have little data on human remains over large spans of prehistory, in contrast to the abundance of wetland settlements.
+
+Another direction of development is to reconsider and improve some decisions currently made for practical reasons regarding the modelling approach. For example, one proposed alternative is to use the values of the proxies directly instead of using them via normalisation and differencing as an indicator of the change in a population from time t-1 to time t. This would require that explicit data models and observation models for the individual proxies become part of the hierarchical model in order to show in detail their dependence on the respective population numbers and to have their parameters estimated as probability distributions in the model. Consequently, we would have to compensate for the resulting degrees of freedom with additional information (more proxies, regionalisation), and we would have to cope with the increased numerical complexity and the resulting higher computational effort. This can be done, for example, by using a high performance computing environment, and is intended for the extension of the model.
 
 To apply this approach to other regions, the proxies we use here would have to be adapted to fit local conditions and research histories. By means of large-scale modelling, however, it would be possible to supplement gaps in the data in one region with data from another by regionalisation and a partial transfer of information (partial pooling). Such an extension would be the next logical step in the improvement of the model, to which end we hope to be able to contribute a further study in the near future.
 
