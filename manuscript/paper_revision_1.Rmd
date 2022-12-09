@@ -19,7 +19,7 @@ author:
       correspondence: false
   - Jan Kolář:
       email: jan.kolar@ibot.cas.cz
-      institute: [IBOT, IAMFAMU]
+      institute: [IBOT, IAMFAMU, IOA]
       correspondence: false
 institute:
   - IAW: Institute of Archaeological Sciences, University of Bern
@@ -27,6 +27,7 @@ institute:
   - SFB1266: CRC 1266 - Scales of Transformation, University of Kiel
   - IBOT: Department of Vegetation Ecology, Institute of Botany of the Czech Academy of Sciences
   - IAMFAMU: Institute of Archaeology and Museology, Faculty of Arts, Masaryk University
+  - IOA: Institute of Archaeology, University College London
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   bookdown::pdf_document2:
