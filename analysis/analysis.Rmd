@@ -69,7 +69,7 @@ The data used in this analysis are the following proxies obtained from the follo
 We start with the openness index, as this will set the spatial framework for our analyses. The five pollen profiles are the following:
 
 ```{r}
-pollen_locations <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "pollen_locations.csv")))
+pollen_locations <- read.csv(here("data","raw_data", "pollen_locations.csv"))
 pollen_locations
 ```
 
@@ -102,7 +102,7 @@ pollen_data <- get_download(pollen_locations$neotoma_id)
 Then we load a few help scripts which can be found under "code/neotoma_helpers.R".
 
 ```{r}
-source(file = normalizePath(file.path(here(), "code", "neotoma_helpers.R")))
+source(here("code", "neotoma_helpers.R"))
 ```
 
 Now we filter the data sets so that we only retain the pollen data that record "NISP".
@@ -121,7 +121,7 @@ pollen_data_comp <- transform_to_percent(pollen_data_filtered)
 Furthermore, we need a (handwritten) concordance list for the taxa names:
 
 ```{r}
-common_names <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "species.csv")), row.names = 1)
+common_names <- read.csv(here("data", "raw_data", "species.csv"), row.names = 1)
 common_names
 ```
 
@@ -245,7 +245,7 @@ pollenproxy_plot
 We save this plot for later use:
 
 ```{r}
-ggsave(normalizePath(file.path(here(), "figures","pollenproxy.pdf"), mustWork = F),
+ggsave(here("figures","pollenproxy.pdf"),
        plot = pollenproxy_plot, width = 21, height = 29.7/2, units = "cm")
 ```
 
@@ -269,7 +269,7 @@ ggplot(res.open_final,aes(x=1950-age)) +
 The data set for the 14C sum calibration is composed of the above-mentioned sources. This data consists of 1135 dates from 246 sites.
 
 ```{r}
-c14 <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "14c_swiss_plateau.csv")))
+c14 <- read.csv(here("data","raw_data", "14c_swiss_plateau.csv"))
 ```
 
 We can show this on the map:
@@ -321,7 +321,7 @@ seq(from=1000,
 The third proxy is the aoristic sum of the number of sites from the cantonal archaeology database. For these, we have obscured the coordinates to avoid the well-known problems that can arise from clear site coordinates.
 
 ```{r}
-sites <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "site_data_fuzzy.csv")))
+sites <- read.csv(here("data","raw_data", "site_data_fuzzy.csv"))
 ```
 
 We can depict this on the map:
@@ -346,15 +346,11 @@ The dates come in two categories, rough and very rough We use the rough datings 
 
 ```{r}
 
-chrono_rough <- read.csv(file = normalizePath(
-  file.path(here(), "data","raw_data", "chrono_rough.csv")
-  ),
-  row.names = 1)
+chrono_rough <- read.csv(here("data","raw_data", "chrono_rough.csv"),
+                         row.names = 1)
 
-chrono_vrough <- read.csv(file = normalizePath(
-  file.path(here(), "data","raw_data", "chrono_very_rough.csv")
-  ),
-  row.names = 1)
+chrono_vrough <- read.csv(here("data","raw_data", "chrono_very_rough.csv"),
+                          row.names = 1)
 ```
 
 Next, we prepare the beginning and end as a column:
@@ -420,7 +416,7 @@ This year-by-year dataset maps the number of lakeshore settlements in the Three 
 First we load the data:
 
 ```{r}
-lss <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "dendro_years.csv")))
+lss <- read.csv(here("data","raw_data", "dendro_years.csv"))
 ```
 
 Then we complete the data set so that it covers the entire period under consideration:
@@ -484,11 +480,7 @@ all_proxies
 We might like to store the result for the actual analysis:
 
 ```{r}
-write.csv(all_proxies, file = normalizePath(
-  file.path(here(), "data","preprocessed_data", "all_proxies.csv"
-            ),
-  mustWork = F)
-  )
+write.csv(all_proxies, here("data","preprocessed_data", "all_proxies.csv"))
 ```
 
 ## Transforming the Data
@@ -496,10 +488,8 @@ write.csv(all_proxies, file = normalizePath(
 If the data has already been created in a previous run, we can also reload it directly at this point:
 
 ```{r}
-all_proxies <- read.csv(file = normalizePath(
-  file.path(here(), "data","preprocessed_data", "all_proxies.csv")
-  ),
-  row.names = 1)
+all_proxies <- read.csv(here("data","preprocessed_data", "all_proxies.csv"),
+                        row.names = 1)
 ```
 
 First we reverse the order of the data so that it is sorted from oldest to youngest:
@@ -916,7 +906,7 @@ Finally, we can plot the result in comparison to the input data, superimposing t
 
 ```{r}
 
-all_proxies_orig <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
+all_proxies_orig <- read.csv(here("data","preprocessed_data", "all_proxies.csv"), row.names = 1)
 
 # MCMCvis methods are rather memory intensive. We implement the summary from scratch
 all_chains <- as.matrix(collector)
@@ -944,18 +934,15 @@ Then we obtain the population density estimates from these, and save them for fu
 ```{r}
 PopDens_summary <- this_mcmc_summary[grep("^PopDens", params),]
 PopDens_summary$age <- rev(all_proxies_orig$age)
-write.csv(PopDens_summary,
-          file = normalizePath(
-            file.path(here(), "data","preprocessed_data", "popdens_summary.csv"
-                      ),
-            mustWork = F)
-          )
+write.csv(PopDens_summary, 
+          here("data", "preprocessed_data", "popdens_summary.csv"))
 ```
 
 Finally, compile the plot:
 
 ```{r}
-all_proxies_orig <- read.csv(file = normalizePath(file.path(here(), "data","preprocessed_data", "all_proxies.csv")), row.names = 1)
+all_proxies_orig <- read.csv(here("data","preprocessed_data", "all_proxies.csv"), 
+                             row.names = 1)
 
 proxies_and_result <- rbind(melt(all_proxies_orig, id.vars = "age"),
                             melt(PopDens_summary[,2:5], id.vars = "age")
@@ -1013,8 +1000,9 @@ grid.draw(popdens_plot_adjusted)
 Save as result image to the figures folder.
 
 ```{r}
-ggsave(normalizePath(file.path(here(), "figures","popdens_estimation.pdf"), mustWork = F),
-       plot = popdens_plot_adjusted, width = 21, height = 29.7/2, units = "cm")
+ggsave(here("figures", "popdens_estimation.pdf"),
+       plot = popdens_plot_adjusted, 
+       width = 21, height = 29.7/2, units = "cm")
 ```
 
 And than, the final estimate of the influence of the different proxies on the result:
@@ -1034,7 +1022,7 @@ beta_plot
 Also save as result image.
 
 ```{r}
-ggsave(normalizePath(file.path(here(), "figures","beta_estimation.pdf"), mustWork = F),
+ggsave(here("figures","beta_estimation.pdf"),
        plot = beta_plot, width = 21, height = 29.7/2, units = "cm")
 ```
 Also interesting is the variation coefficient from the estimation of the Population density:
@@ -1086,6 +1074,6 @@ popvar_plot
 Also save as result image.
 
 ```{r}
-ggsave(normalizePath(file.path(here(), "figures","popvar_plot.pdf"), mustWork = F),
+ggsave(here("figures","popvar_plot.pdf"),
        plot = popvar_plot, width = 21, height = 29.7/2, units = "cm")
 ```
