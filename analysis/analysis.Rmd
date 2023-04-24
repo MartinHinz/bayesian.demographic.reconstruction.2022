@@ -10,8 +10,6 @@ bibliography: references.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-if (!webshot::is_phantomjs_installed()) webshot::install_phantomjs()
-library(magick)
 ```
 
 ## Preface
@@ -29,7 +27,7 @@ library(reshape2)
 library(here)
 library(RcppRoll)
 library(sf)
-library(mapview)
+library(ggspatial)
 library(vegan)
 library(neotoma)
 library(analogue)
@@ -50,6 +48,10 @@ if(!require('devtools')) install.packages('devtools')
 library(devtools)
 install_github('ISAAKiel/aoristAAR')
 require(aoristAAR)
+```
+
+```{r}
+source(here("code/map_helpers.R"))
 ```
 
 ## Data collection
@@ -76,21 +78,12 @@ pollen_locations
 We can also map these. To do this, we first transform the coordinate system into the Swiss national coordinate system, and then display them:
 
 ```{r}
-pollen_locations.sf <- st_as_sf(pollen_locations,
-                                coords = c("lng", "lat"), # coordinate columns
-                                crs = 4326)  # coordinate references system in epsg))
-pollen_locations.sf.lv95 <- st_transform(pollen_locations.sf, crs = 2056)
+pollen_locations.sf <- st_as_sf(pollen_locations, 
+                                coords = c("lng", "lat"), crs = 4326)
 
-pollenmap <- tempfile(fileext = ".png")
-mapshot(
-  mapview(pollen_locations.sf),
-  file = pollenmap
-  )
-
-img <- magick::image_read(pollenmap)
-old.par <- par(mar = c(0, 0, 0, 0))
-plot(img)
-par(old.par)
+base_map() + 
+  geom_sf(data = pollen_locations.sf, inherit.aes = FALSE) +
+  base_coord()
 ```
 
 We download the data from neotoma:
@@ -275,19 +268,13 @@ c14 <- read.csv(here("data","raw_data", "14c_swiss_plateau.csv"))
 We can show this on the map:
 
 ```{r}
-c14map <- tempfile(fileext = ".png")
-mapshot(
-  mapview(st_as_sf(c14,
-                   coords = c("lng", "lat"), 
-                   crs = 4326),layer.name = "14C Data"
-          ),
-  file = c14map
-  )
+c14.sf <- c14 |>
+  distinct(site, lat, lng) |>
+  st_as_sf(coords = c("lng", "lat"),  crs = 4326)
 
-img <- magick::image_read(c14map)
-old.par <- par(mar = c(0, 0, 0, 0))
-plot(img)
-par(old.par)
+base_map() +
+  layer_spatial(c14.sf) +
+  base_coord()
 ```
 
 Next, we calibrate the 14C data using rcarbon: 
@@ -327,19 +314,13 @@ sites <- read.csv(here("data","raw_data", "site_data_fuzzy.csv"))
 We can depict this on the map:
 
 ```{r}
-sitesmap <- tempfile(fileext = ".png")
-mapshot(
-  mapview(st_as_sf(sites,
+sites.sf <- st_as_sf(sites,
                    coords = c("LV03_Rechtswert_fuzzy", "LV03_Hochwert_fuzzy"),
-                   crs = 21781),
-          layer.name = "Sites"
-  ),
-  file = sitesmap
-)
-img <- magick::image_read(sitesmap)
-old.par <- par(mar = c(0, 0, 0, 0))
-plot(img)
-par(old.par)
+                   crs = 21781)
+
+base_map() + 
+  layer_spatial(sites.sf) +
+  base_coord()
 ```
 
 The dates come in two categories, rough and very rough We use the rough datings where they are available. Where they are not, we fall back on the very rough dates. But first we load the concordance table:
