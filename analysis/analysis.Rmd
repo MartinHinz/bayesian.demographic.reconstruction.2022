@@ -266,7 +266,7 @@ ggplot(res.open_final,aes(x=1950-age)) +
 
 ### ^14^C Summenkalibration
 
-The data set for the 14C sum calibration is composed of the above-mentioned sources.
+The data set for the 14C sum calibration is composed of the above-mentioned sources. This data consists of 1135 dates from 246 sites.
 
 ```{r}
 c14 <- read.csv(file = normalizePath(file.path(here(), "data","raw_data", "14c_swiss_plateau.csv")))
@@ -290,7 +290,7 @@ plot(img)
 par(old.par)
 ```
 
-Next, we calibrate the 14C data using rcarbon: <!--# uncal vs cal? -->
+Next, we calibrate the 14C data using rcarbon: 
 
 ```{r}
 c14.calibrated <- calibrate(x = c14$bp, errors = c14$std, verbose = F)
@@ -305,8 +305,7 @@ sumcal <- spd(c14.calibrated, timeRange = 1950-timeframe, bins = c14$site, runm 
 Below is the visualisation of the sum calibration:
 
 ```{r}
-plot(1950-sumcal$grid$calBP, sumcal$grid$PrDens,type="l", main = paste0("n=", length(c14.calibrated)))
-
+plot(1950-sumcal$grid$calBP, sumcal$grid$PrDens,type="l")
 ```
 
 Finally, we extract the values every 50 years:
@@ -512,17 +511,25 @@ all_proxies <- all_proxies %>% arrange(desc(age))
 Since the data influence the model in their respective change from the state t -\> t-1, we first normalise them by a z-transformation, and then calculate the individual difference to the predecessor. The first row is set to 0.
 
 ```{r}
-all_proxies[,2:5] <- all_proxies[,2:5] %>% scale() %>% diff() %>% rbind(0,.)
+all_proxies_diff <- all_proxies
+all_proxies_diff[,2:5] <- all_proxies_diff[,2:5] %>% scale() %>% diff() %>% rbind(0,.)
 ```
+
+We can also visualise these deltas of the proxies:
+
+```{r}
+all_proxies_diff %>% pivot_longer(2:5) %>% ggplot(aes(x = age, y = value)) + geom_line() + facet_wrap(. ~ name)
+```
+
 
 Furthermore, it has proven practical, at least in the development phase of the model, to be able to restrict the data set in order to quickly try out responses of the model. Each data point is included in the model as a separate parameter, and it therefore does not scale linearly with the number of data points. It can also be helpful for reproducing the analysis. To do this, we define a reduction factor that determines what proportion of the data is passed to the model and reduce the data set accordingly.
 
 ```{r}
 redux_factor <- 1
-redux_nrow <- round(nrow(all_proxies) * redux_factor)
-redux_seq <- round(seq(from=1,to=nrow(all_proxies), length.out = redux_nrow))
+redux_nrow <- round(nrow(all_proxies_diff) * redux_factor)
+redux_seq <- round(seq(from=1,to=nrow(all_proxies_diff), length.out = redux_nrow))
 
-model_data <- all_proxies[redux_seq,]
+model_data <- all_proxies_diff[redux_seq,]
 ```
 
 Furthermore, the model contains two constraints for the maximum growth rate. These help to speed up convergence. They are given as data and must be set to 1 for the constraint to be processed.
@@ -541,19 +548,19 @@ model_code <- nimbleCode( {
   # ---- Process Model ----
   
   # Estimate the initial state vector of population abundances
-  nEnd ~ dnorm(nSites[nYears] * MeanSiteSize / AreaSwissPlateau, sd=0.5)
+  nEnd ~ dnorm(z[nYears] * Meapize / AreaSwissPlateau, sd=0.5)
 
   # Autoregressive process for remaining years
   for(t in 2:(nYears)) {
     # The actual number of sites per year
-    nSites[t] ~ dpois(lambda[t])
+    z[t] ~ dpois(lambda[t])
     
     # limiting the change to a maximum value, estimated in the model
     constraint_lambda_lower[t] ~ dconstraint(
-      nSites[t]/nSites[t-1] < (max_growth_rate + 1)
+      z[t]/z[t-1] < (max_growth_rate + 1)
       )
     constraint_lambda_upper[t] ~ dconstraint(
-      nSites[t-1]/nSites[t] < (max_growth_rate + 1)
+      z[t-1]/z[t] < (max_growth_rate + 1)
       )
   }
   
@@ -563,16 +570,16 @@ model_code <- nimbleCode( {
   for(t in 2:(nYears)) {
     # lambda depends on the number of sites at the previous year, plus
     # changes in relation to the proxies
-    log(lambda[t]) <- log(nSites[t-1]) + (
-      p[1] * sumcal[t]  +
-        p[2] * openness[t] +
-        p[3] * aoristic_sum[t] + 
-        p[4] * dendro[t]
+    log(lambda[t]) <- log(z[t-1]) + (
+      beta[1] * sumcal[t]  +
+        beta[2] * openness[t] +
+        beta[3] * aoristic_sum[t] + 
+        beta[4] * dendro[t]
       )
   }
   # ---- Priors ----
   # Relevance of the proxies is estimated as Dirichlet distribution
-  p[1:4] ~ ddirch(alpha[1:4])
+  beta[1:4] ~ ddirch(alpha[1:4])
   
   # The parameters for the Dirichlet distribution have a weakly informative prior
   for(j in 1:4) {
@@ -592,7 +599,7 @@ model_code <- nimbleCode( {
   
   # Population density and total population as function of site number
   PopDens[1:(nYears)] <- PopTotal[1:(nYears)] / AreaSwissPlateau
-  PopTotal[1:nYears] <- nSites[1:nYears] * MeanSiteSize
+  PopTotal[1:nYears] <- z[1:nYears] * MeanSiteSize
 })
 ```
 
@@ -621,7 +628,7 @@ r <- log(1 - (10^(1/model_constants$nYears) - 1))
 model_inits <- list(
   lambda = rep(r,redux_nrow),
   PopDens = rep(model_constants$nEnd,redux_nrow),
-  nSites = rep(50,redux_nrow)
+  z = rep(50,redux_nrow)
 )
 ```
 
@@ -632,10 +639,10 @@ batches <- 100000 # run in batches of this length
 thinning <- 10 # save only each ... of the chains
 ```
 
-Finally, we have to define which parameters (apart from the top-level stochastic nodes of the model) are to be observed and stored. We also include the population density as a core parameter and the relative proportion of proxies p:
+Finally, we have to define which parameters (apart from the top-level stochastic nodes of the model) are to be observed and stored. We also include the population density as a core parameter and the relative proportion of proxies beta:
 
 ```{r}
-model_monitors <- c("PopDens", "p")
+model_monitors <- c("PopDens", "beta")
 ```
 
 ## Parallelisation
@@ -768,9 +775,9 @@ lines(1950-model_data$age, result$`95%_HPDU`, lty=2)
 This converged run is sufficient to check some initial parameter values. For example, we can see how the proportional importance of the proxies is distributed:
 
 ```{r}
-MCMCchains(mcmcSamples, params = "p") %>%
+MCMCchains(mcmcSamples, params = "beta") %>%
   as.data.frame %>%
-  rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>%
+  rename(sumcal = 'beta[1]', openness = 'beta[2]', aorist = 'beta[3]', dendro = 'beta[4]') %>%
   pivot_longer(everything()) %>%
   ggplot(aes(x = value, y = name)) + stat_halfeye()
 ```
@@ -866,7 +873,7 @@ collector <- readRDS("mcmc_collector.RDS")
 ```
 
 
-For comparison with the priors, we simulate from these, first for p:
+For comparison with the priors, we simulate from these, first for beta:
 
 ```{r}
 n_prior <- 100000
@@ -878,28 +885,28 @@ mu_alpha[[j]] <- rlnorm(n_prior, 1,sdlog=0.1)
 alpha[[j]] <- rlnorm(n_prior, mu_alpha[[j]],sdlog=a_alpha[[j]])
 }
 
-p_mat <- matrix(ncol = 4, nrow = n_prior)
+beta_mat <- matrix(ncol = 4, nrow = n_prior)
 for(i in 1:n_prior){
- p_mat[i,] <- rdirch(1, c(alpha[[1]][i], alpha[[2]][i], alpha[[3]][i], alpha[[4]][i]))
+ beta_mat[i,] <- rdirch(1, c(alpha[[1]][i], alpha[[2]][i], alpha[[3]][i], alpha[[4]][i]))
 }
-MCMCtrace(collector, params = "p", priors = p_mat, pdf = F, ind = T, Rhat = T)
+MCMCtrace(collector, params = "beta", priors = beta_mat, pdf = F, ind = T, Rhat = T)
 ```
 
-And then for lambda and nSites (respectively derived for PopDens):
+And then for lambda and z (respectively derived for PopDens):
 
 ```{r}
-nSites <- matrix(ncol = model_constants$nYears, nrow = n_prior)
+z <- matrix(ncol = model_constants$nYears, nrow = n_prior)
 MeanSiteSize <- rpois(n_prior, 50)
 
 nEnd <- rnorm(n_prior, model_constants$nEnd, sd=0.5)
 
-nSites[,model_constants$nYears] <- rpois(n_prior,nEnd / MeanSiteSize * model_constants$AreaSwissPlateau)
+z[,model_constants$nYears] <- rpois(n_prior,nEnd / MeanSiteSize * model_constants$AreaSwissPlateau)
 
 for(i in (model_constants$nYears-1):1) {
-  nSites[,i] <- rpois(n_prior, nSites[,i+1])
+  z[,i] <- rpois(n_prior, z[,i+1])
 }
 
-PopDens <- nSites * MeanSiteSize / model_constants$AreaSwissPlateau
+PopDens <- z * MeanSiteSize / model_constants$AreaSwissPlateau
 
 MCMCtrace(collector, params = "PopDens", priors = PopDens, pdf = F, ind = T, Rhat = T)
 gc(verbose=F)
@@ -1015,20 +1022,20 @@ And than, the final estimate of the influence of the different proxies on the re
 ```{r}
 gc(verbose = F)
 
-p_plot <- all_chains[,grep("^p\\[", params)] %>%
+beta_plot <- all_chains[,grep("^beta\\[", params)] %>%
   as.data.frame %>%
-  rename(sumcal = 'p[1]', openness = 'p[2]', aorist = 'p[3]', dendro = 'p[4]') %>%
+  rename(sumcal = 'beta[1]', openness = 'beta[2]', aorist = 'beta[3]', dendro = 'beta[4]') %>%
   pivot_longer(everything()) %>%
   ggplot(aes(x = value, y = name)) +
   stat_halfeye() + xlab("Percentage Influence") + ylab("Proxy") + theme_minimal()
-p_plot
+beta_plot
 ```
 
 Also save as result image.
 
 ```{r}
-ggsave(normalizePath(file.path(here(), "figures","p_estimation.pdf"), mustWork = F),
-       plot = p_plot, width = 21, height = 29.7/2, units = "cm")
+ggsave(normalizePath(file.path(here(), "figures","beta_estimation.pdf"), mustWork = F),
+       plot = beta_plot, width = 21, height = 29.7/2, units = "cm")
 ```
 Also interesting is the variation coefficient from the estimation of the Population density:
 
