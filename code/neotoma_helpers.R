@@ -22,34 +22,35 @@ filter_by_unit <- function(x, unit) {
 
 transform_to_percent <- function(x)
 {
-  x <- lapply(x, function(y) {
-    y$counts <- analogue::tran(x = y$counts, method ="percent")
-    return(y)
-  })
+  x$counts <- by(x, x$sampleid, function(y)
+    y$value/sum(y$value) * 100
+    ) %>% unlist()
+
   class(x) <- append(class(x), "download_list")
   return(x)
 }
 
 aggregate_by_joint_name <- function(x, common_names) {
 
-  out <- pollen_data_comp %>% lapply(function(y) {
-    y$taxon.list <- merge(y$taxon.list, common_names, by.x = "taxon.name", by.y = "name_orig")
-    counts.new <- data.frame(t(y$counts))
-    counts.new$name_joint <- NA
-    counts.new[y$taxon.list$taxon.name,]$name_joint <- y$taxon.list$name_joint
-    counts.collected <- counts.new  %>%
-      as_tibble() %>%
-      group_by(name_joint) %>%
-      summarise(across(where(is.numeric), sum))
-    counts.new <- data.frame(t(counts.collected[,2:ncol(counts.collected)]))
+  x <- merge(pollen_data_comp, common_names, by.x = "variablename", by.y = "name_orig")
 
-    colnames(counts.new) <- counts.collected$name_joint
-    rownames(counts.new) <- rownames(y$counts)
 
-    y$counts <- counts.new
-    return(y)
-  })
 
-  class(out) <- append(class(out), "download_list")
-  return(out)
+  counts.collected <- x %>%
+    as_tibble() %>%
+    group_by(name_joint, sampleid) %>%
+    summarise(counts = sum(value))
+
+
+  ages <- distinct(x, sampleid, age)
+
+  sites <- distinct(x, sampleid, sitename)
+
+  counts.new <- pivot_wider(counts.collected, names_from = name_joint, values_from = counts)
+
+  counts.new <- merge(counts.new, ages, by = "sampleid")
+
+  counts.new <- merge(counts.new, sites, by = "sampleid")
+
+  return(counts.new)
 }
