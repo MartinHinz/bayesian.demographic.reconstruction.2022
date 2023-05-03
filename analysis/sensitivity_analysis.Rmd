@@ -165,7 +165,7 @@ ggplot(res_for_plot) + geom_line(aes(x = age, y = value, color = name))
 
 The specification of a medium settlement size does not have a strong discernible effect on the result of the estimation.
 
-## Mean Site Size
+## Population End Value
 
 Next, we check the dependence on the proposed final population density.
 
