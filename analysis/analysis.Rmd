@@ -21,23 +21,23 @@ Running through the analysis can take a long time, especially the Bayesian model
 For this analysis we need the following libraries:
 
 ```{r message=FALSE}
-library(tidyverse)
-library(ggdist)
-library(reshape2)
-library(here)
-library(RcppRoll)
-library(sf)
-library(ggspatial)
-library(vegan)
-library(neotoma)
 library(analogue)
-library(rcarbon)
-library(doParallel)
-library(nimble)
 library(coda)
-library(MCMCvis)
+library(doParallel)
 library(fmcmc)
+library(ggdist)
+library(ggspatial)
 library(grid)
+library(here)
+library(MCMCvis)
+library(neotoma2)
+library(nimble)
+library(rcarbon)
+library(RcppRoll)
+library(reshape2)
+library(sf)
+library(tidyverse)
+library(vegan)
 ```
 
 If you have not yet installed these libraries (and receive a corresponding error message), please install them!
@@ -50,14 +50,6 @@ library(devtools)
 install_github('ISAAKiel/aoristAAR')
 require(aoristAAR)
 ```
-Also, neotoma is not longer available on cran, and it has been replaced by neotoma2, so we had to replace it. That is why we have to load it again:
-
-```{r}
-if(!require('neotoma2')) devtools::install_github('NeotomaDB/neotoma2')
-require(neotoma2)
-```
-
-
 
 ```{r}
 source(here("code/map_helpers.R"))
