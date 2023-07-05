@@ -16,11 +16,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Running through the analysis can take a long time, especially the Bayesian model. We point out the long runtimes again at the appropriate place. Also, you might need at least 64 GB of RAM to avoid crashes due to missing memory.
 
-## Loading the necessary libraries
+## Dependencies
 
 For this analysis we need the following libraries:
 
-```{r message=FALSE}
+```{r dependencies, message=FALSE}
 library(analogue)
 library(coda)
 library(doParallel)
@@ -44,18 +44,19 @@ If you have not yet installed these libraries (and receive a corresponding error
 
 For the aorist analysis we also use the package aoristAAR, which is not available on CRAN, but would have to be installed directly from GitHub:
 
-```{r message=FALSE}
+```{r dev-dependencies, message=FALSE}
 if(!require('devtools')) install.packages('devtools')
 library(devtools)
 install_github('ISAAKiel/aoristAAR')
 require(aoristAAR)
 ```
 
-```{r}
-source(here("code/map_helpers.R"))
+```{r source-dependencies}
+source(here("code", "map_helpers.R"))
+source(here("code", "neotoma_helpers.R"))
 ```
 
-## Data collection
+## Proxy data
 
 The data used in this analysis are the following proxies obtained from the following sources:
 
@@ -67,18 +68,17 @@ The data used in this analysis are the following proxies obtained from the follo
 
 -   The number of dated fell phases at lakeshore settlements in the Three Lakes Region from the doctoral thesis by Julian Laabs [\@laabs2019].
 
-### Openness index
+### Pollen (openness index)
 
 We start with the openness index, as this will set the spatial framework for our analyses. The five pollen profiles are the following:
 
-```{r}
-pollen_locations <- read.csv(here("data","raw_data", "pollen_locations.csv"))
-pollen_locations
+```{r data-pollen-locations}
+(pollen_locations <- read.csv(here("data","raw_data", "pollen_locations.csv")))
 ```
 
 We can also map these. To do this, we first transform the coordinate system into the Swiss national coordinate system, and then display them:
 
-```{r}
+```{r map-pollen-locations}
 pollen_locations.sf <- st_as_sf(pollen_locations, 
                                 coords = c("lng", "lat"), crs = 4326)
 
@@ -87,29 +87,13 @@ base_map() +
   base_coord()
 ```
 
-We download the data from neotoma:
+We download data for these locations using the neotoma2 package and some helper functions defined in `code/neotoma_helpers.R`.
+We retain only records that include the NISP, which we convert into a percentage.
 
-```{r message=FALSE, warning=FALSE}
+```{r data-pollen, message=FALSE, warning=FALSE}
 pollen_data <- get_downloads(pollen_locations$neotoma_id, all_data=T)
-```
-
-Then we load a few help scripts which can be found under "code/neotoma_helpers.R".
-
-```{r}
-source(here("code", "neotoma_helpers.R"))
-```
-
-Now we filter the data sets so that we only retain the pollen data that record "NISP".
-
-```{r}
 pollen_data.samples <- samples(pollen_data)
-
 pollen_data.samples.filtered <- pollen_data.samples %>% subset(element == "pollen" & units == "NISP")
-```
-
-Then we convert the NISP into percentages:
-
-```{r}
 pollen_data_comp <- transform_to_percent(pollen_data.samples.filtered)
 ```
 
@@ -259,17 +243,17 @@ ggplot(res.open_final,aes(x=1950-age)) +
   geom_segment(aes(y=mean-sd, yend =mean+sd, xend=1950-age), alpha = .25)
 ```
 
-### ^14^C Summenkalibration
+### Summed radiocarbon
 
-The data set for the 14C sum calibration is composed of the above-mentioned sources. This data consists of 1135 dates from 246 sites.
+The data set for the ^14^C sum calibration is composed of the above-mentioned sources. This data consists of 1135 dates from 246 sites.
 
-```{r}
+```{r read-c14}
 c14 <- read.csv(here("data","raw_data", "14c_swiss_plateau.csv"))
 ```
 
 We can show this on the map:
 
-```{r}
+```{r plot-c14}
 c14.sf <- c14 |>
   distinct(site, lat, lng) |>
   st_as_sf(coords = c("lng", "lat"),  crs = 4326)
@@ -281,41 +265,41 @@ base_map() +
 
 Next, we calibrate the 14C data using rcarbon: 
 
-```{r}
+```{r calibrate-c14}
 c14.calibrated <- calibrate(x = c14$bp, errors = c14$std, verbose = F)
 ```
 
 Subsequently, we perform the sum calibration, whereby we perform a binning at the level of the sites:
 
-```{r}
+```{r sum-c14}
 sumcal <- spd(c14.calibrated, timeRange = 1950-timeframe, bins = c14$site, runm = sw, verbose = F)
 ```
 
 Below is the visualisation of the sum calibration:
 
-```{r}
+```{r plot-c14-sum}
 plot(1950-sumcal$grid$calBP, sumcal$grid$PrDens,type="l")
 ```
 
 Finally, we extract the values every 50 years:
 
-```{r}
+```{r resample-c14-sum}
 res.sumcal <- sumcal$grid[sumcal$grid$calBP %in%
 seq(from=1000,
     to=10000, by=50),]
 ```
 
-### Aoristic Site Count
+### All settlements
 
 The third proxy is the aoristic sum of the number of sites from the cantonal archaeology database. For these, we have obscured the coordinates to avoid the well-known problems that can arise from clear site coordinates.
 
-```{r}
+```{r read-sites}
 sites <- read.csv(here("data","raw_data", "site_data_fuzzy.csv"))
 ```
 
 We can depict this on the map:
 
-```{r}
+```{r plot-sites}
 sites.sf <- st_as_sf(sites,
                    coords = c("LV03_Rechtswert_fuzzy", "LV03_Hochwert_fuzzy"),
                    crs = 21781)
@@ -392,13 +376,13 @@ seq(from=1000,
     to=10000, by=50),]
 ```
 
-### Dendro Dated Settlements
+### Lakeshore settlements
 
 This year-by-year dataset maps the number of lakeshore settlements in the Three Lakes Region. Details can be found in the publication by [@laabs2019]. To match the resolution of the other datasets, this dataset is also sampled at 50-year intervals, and smoothed accordingly beforehand using a moving average.
 
 First we load the data:
 
-```{r}
+```{r read-lss}
 lss <- read.csv(here("data","raw_data", "dendro_years.csv"))
 ```
 
@@ -419,24 +403,24 @@ res.lss <- lss %>%
 
 Here is yet another plot of the resulting curve:
 
-```{r}
+```{r plot-lss}
 plot(res.lss$date, res.lss$moving_mean,type="l")
 ```
 
 Picking the data points every 50 years again:
 
-```{r}
+```{r resample-lss}
 res.lss <- res.lss[res.lss$date %in% seq(from=timeframe[1],
                                          to=timeframe[2], by=50),
         ]
 res.lss$age <- 1950-res.lss$date
 ```
 
-### Combining the proxies
+## Combined proxies
 
 Thus we have all proxies available, and can display them (scaled) all together:
 
-```{r}
+```{r plot-proxies}
 ggplot() +
   geom_line(data = res.open_final, aes(x = 1950-age, y = scale(mean)), col="darkgreen", alpha = 0.75) +
   geom_line(data = res.sumcal, aes(x = 1950-calBP, y = scale(PrDens)), col="red", alpha = 0.75) +
@@ -449,7 +433,7 @@ ggplot() +
 
 We merge the dataset and restrict it to our observation window:
 
-```{r}
+```{r combine-proxies}
 all_proxies <- merge(res.sumcal, res.open_final, by.x = "calBP", by.y = "age") %>%
   merge(res.aorist, by.x = "calBP", by.y = "age") %>%
   merge(res.lss, by.x = "calBP", by.y = "age") %>%
@@ -462,15 +446,15 @@ all_proxies
 
 We might like to store the result for the actual analysis:
 
-```{r}
+```{r cache-proxies}
 write.csv(all_proxies, here("data","preprocessed_data", "all_proxies.csv"))
 ```
 
-## Transforming the Data
+### Transforming the Data
 
 If the data has already been created in a previous run, we can also reload it directly at this point:
 
-```{r}
+```{r read-cached-proxies}
 all_proxies <- read.csv(here("data","preprocessed_data", "all_proxies.csv"),
                         row.names = 1)
 ```
@@ -512,11 +496,11 @@ model_data$constraint_lambda_lower <- 1
 model_data$constraint_lambda_upper <- 1
 ```
 
-## The Model
+## Model definition
 
 The actual model consists of a nimble code block that describes the relationships and sets the priors for the parameters:
 
-```{r}
+```{r define-model}
 model_code <- nimbleCode( {
   # ---- Process Model ----
   
@@ -580,7 +564,7 @@ model_code <- nimbleCode( {
 
 A few things still need to be specified for the model: constants and initial values. Let's start with the constants:
 
-```{r}
+```{r define-model-constants}
 model_constants <- list(
   # an estimation for the population density at the end of the modeled period
   nEnd = 5, 
@@ -594,8 +578,7 @@ model_constants <- list(
 
 Finally, it helps for convergence to give meaningful starting values for the chains:
 
-```{r}
-
+```{r define-model-inits}
 # Calculation of an exponential increase of the factor 10
 r <- log(1 - (10^(1/model_constants$nYears) - 1))
 model_inits <- list(
@@ -607,14 +590,14 @@ model_inits <- list(
 
 Furthermore, we set the parameters for the runs until convergence:
 
-```{r}
+```{r define-run-params}
 batches <- 100000 # run in batches of this length
 thinning <- 10 # save only each ... of the chains
 ```
 
 Finally, we have to define which parameters (apart from the top-level stochastic nodes of the model) are to be observed and stored. We also include the population density as a core parameter and the relative proportion of proxies beta:
 
-```{r}
+```{r define-run-monitors}
 model_monitors <- c("PopDens", "beta")
 ```
 
@@ -622,7 +605,7 @@ model_monitors <- c("PopDens", "beta")
 
 The model runs significantly faster if we use multiple cores in parallel. Nimble itself does not have an option for parallelisation, so we use functions provided by the package `do_parallel` for this. The computer used for the analysis has 4 cores, you may need to adjust these values for your computer.
 
-```{r}
+```{r setup-parallel}
 
 # Spare 4 cores from the calculation
 ncore <- detectCores() - 4
@@ -654,7 +637,7 @@ for (j in seq_along(cl)) {
 
 In the first run, the clusters are set up and the models are instantiated and started within the clusters.
 
-```{r}
+```{r run-model-inital}
 start_time <- Sys.time()
 
 mcmcSamples <- clusterEvalQ(cl, {
@@ -696,7 +679,7 @@ end_time - start_time
 
 At the end of the 1st run, the model is instantiated in the individual cluster partitions, possibly already converged. But we now check the convergence in continued runs.
 
-```{r}
+```{r run-model-convergence}
 # Initialize with non-convergence
 converged <- F
 
@@ -770,7 +753,7 @@ Very few parameters have already reached the effective sample size of 10000 sugg
 
 The final run after convergence to get more than the min 10000 effective samples for each parameter takes quite some time. On my machine, it took nearly 5 hours. Therefore, I add a switch here for not doing this analysis, but feel free to proceed yourself, if you like:
 
-```{r}
+```{r run-model-final}
 do_final_run = F
 ```
 
